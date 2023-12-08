@@ -1558,3 +1558,60 @@ input[type="radio"]:checked + .button-label {
 .show-email-rotated {
     transform: rotate(180deg);
 }
+
+/* PAGINATION */
+
+.pagination-container {
+    display: flex;
+    gap: 10px;
+    /* background-color: red; */
+    justify-content: space-between;
+
+}
+
+.pagination-number {
+    display: flex;
+    gap: 10px;
+    /* background-color: red; */
+    justify-content: center;
+}
+
+.pagination-container a{
+    align-self: center;
+}
+
+.number-li {
+    /* padding: 12px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: rgba(216, 230, 239, 1);
+    transition: background 0.3s;
+}
+
+.number-li:hover {
+    cursor: pointer;
+    opacity: 0.9;
+    background-color: #4e6e81;
+    color: #fff;
+}
+
+.prev-next-button {
+    cursor: pointer;
+}
+
+.page-number-clicked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: #4e6e81;
+    transition: background 0.3s;
+    color: #fff;
+    cursor: pointer;
+}
