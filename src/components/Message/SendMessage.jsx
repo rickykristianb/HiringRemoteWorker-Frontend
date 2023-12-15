@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import Button from './Button'
-import AuthContext from '../Context/AuthContext'
-import AlertNotification from './AlertNotification'
+import Button from '../Button'
+import AuthContext from '../../Context/AuthContext'
+import AlertNotification from '../AlertNotification'
 // import CustomCKEditor from './CustomCKEditor'
 
-const SendMessage = () => {
+const SendMessage = (props) => {
 
   let {authToken} = useContext(AuthContext)
   let userToken = authToken.access
@@ -22,7 +22,7 @@ const SendMessage = () => {
       errors, isSubmitting, isSubmitSuccessful
     }} = useForm({
       defaultValues: {
-        "to_user": "",
+        "to_user": props.recipient ? props.recipient : "",
         "subject": "",
         "message_body": "",
       }

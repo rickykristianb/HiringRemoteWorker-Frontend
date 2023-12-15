@@ -15,18 +15,18 @@ import EmailContext from "../Context/EmailContext";
 
 const Headers = (props) => {   
 
+  const [loginUserId, setLoginUserId] = useState()
   const navigate = useNavigate()
   let {user, logoutUser} = useContext(AuthContext)
-  let {profile} = useContext(ProfileContext)
 
   let localDataUserName = localStorage.getItem("username")
-  const [userName, setUsername] = useState(() => localDataUserName)
+  let localLoginUserId = localStorage.getItem("userId")
 
-  let localDataProfilePicture = localStorage.getItem("profile_picture")
-  const [profilePicture, setProfilePicture] = useState(() => localDataProfilePicture) 
+  let localDataProfilePicture = localStorage.getItem("login_user_profile_picture")
+  const [profilePicture, setProfilePicture] = useState(localDataProfilePicture) 
 
   useEffect(() => {
-    setProfilePicture(localStorage.getItem("profile_picture"))
+    setProfilePicture(localDataProfilePicture)
   }, [localDataProfilePicture])
 
   const {messageUnreadCount} = useContext(EmailContext)
@@ -43,17 +43,19 @@ const Headers = (props) => {
         {user && 
         <>
         <li>
-          <Link to="/profile/" >
-            <li><a className="user-name">{ userName }</a></li>   {/*//  <--- name Auth context */}
+          <Link to={`/profile/?id=${loginUserId}`} >
+            <li><a className="user-name">{ localDataUserName }</a></li>   {/*//  <--- name Auth context */}
           </Link>
           </li>
           <li>
             <Link to="/messages/">
-              <Badge badgeContent={messageUnreadCount} color="error" >
+              <Badge badgeContent={messageUnreadCount ? messageUnreadCount : null} color="error" >
                 <MailIcon sx={{ width: 30, height: 30, color: "#4e6e81"}} />
               </Badge>
             </Link>
           </li>
+          </>
+        }
           <li>
             <Link to={"/"}>
               <a href="/home">
@@ -61,17 +63,16 @@ const Headers = (props) => {
               </a>
             </Link>
           </li>
-        </>
-        }
+        
           
           {user ? 
-            <Link to="/profile/" >
+            <Link to={`/profile/?id=${localLoginUserId}`} >
             <li>
                 <Avatar alt="Remy Sharp" src={profilePicture} sx={{ width: 30, height: 30, color: "#4e6e81" }} /> 
             </li>
           </Link>
           :
-            <Link to="/profile/" >
+            <Link to={`/profile/?id=${localLoginUserId}`} >
             <li>
               <AccountCircle sx={{ width: 30, height: 30, color: "#4e6e81" }} />    {/*If not login */}
             </li>

@@ -1,17 +1,27 @@
 import React, {useState, useRef, useContext, useEffect} from 'react'
-import Button from '../components/Button'
-import AuthContext from '../Context/AuthContext';
-import ProfileContext from '../Context/ProfileContext';
-import Tooltip from '@mui/material/Tooltip';
-import Zoom from '@mui/material/Zoom';
+import Button from '../Button'
+import AuthContext from '../../Context/AuthContext';
+import ProfileContext from '../../Context/ProfileContext';
 import ProfileIntroduction from './ProfileIntroduction';
+import RateGenerator from '../RateGenerator';
+import Location from './Location';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileHeaders = (props) => {
+    const navigate = useNavigate()
 
+    const [loginUserId, setLoginUserId] = useState()
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let  userAuthToken
     let { authToken } = useContext(AuthContext)
-    let { profile } = useContext(ProfileContext)
-
-    const userToken = authToken.access
+    if (authToken){
+        userAuthToken = authToken.access
+    } 
+    
+    let { profile } = useContext(ProfileContext) 
 
     const [uploadProgress, setUploadProgress] = useState(0);
     const fileInputRef = useRef();
@@ -38,7 +48,7 @@ const ProfileHeaders = (props) => {
             
             method: "POST",
             headers: {
-                "Authorization": `JWT ${userToken}`
+                "Authorization": `JWT ${userAuthToken}`
             },
             body: formData
         })
@@ -53,31 +63,8 @@ const ProfileHeaders = (props) => {
         fileInputRef.current.click();
     }
 
-    const generateStars = () => {
-        const stars = []
-        const userRate = props.userData.userRate
-
-        for (let i=1; i< 6; i++){
-            if ( i === userRate ){
-                const starClass = 'fa fa-star'
-                stars.push(<li key={i}><p><i className={starClass}></i></p></li>);
-            } else if ( i < userRate ){
-                const starClass = 'fa fa-star'
-                stars.push(<li key={i}><p><i className={starClass}></i></p></li>);
-            } else if (i > userRate && i - 1 < userRate){
-                // const starClass = 'fa fa-star-o'
-                const starClass = 'fa-solid fa-star-half-stroke'
-                stars.push(<li key={i}><p><i className={starClass}></i></p></li>);
-            } else if (i < userRate < i+1){
-                const starClass = 'fa fa-star-o'
-                stars.push(<li key={i}><p><i className={starClass}></i></p></li>);
-            } else {
-                const starClass = 'fa fa-star-o'
-                // const starClass = 'fa-solid fa-star-half-stroke'
-                stars.push(<li key={i}><p><i className={starClass}></i></p></li>);
-            }
-        }
-        return stars
+    const sendMessage = (data) => {
+        navigate(`/messages/?email=${data}`)
     }
 
   return (
@@ -92,9 +79,12 @@ const ProfileHeaders = (props) => {
                     />
                 </div>
                 <div className='change-progress-image-button'>
-                    <div className='input-button-change-image' onClick={handleClickChange}>
-                        Change
-                    </div>
+                    {loginUserId === props.clickedUserId &&
+                        <div className='input-button-change-image' onClick={handleClickChange}>
+                            Change
+                        </div>
+                    }
+                    
                     {/* {uploadProgress !== 0 && <progress value={uploadProgress} max="100"></progress> } */}
                     <input
                         type='file'
@@ -106,20 +96,21 @@ const ProfileHeaders = (props) => {
             </div>
             <div className='rate-name'>
                 <div className='profile-rate'>
-                    <Tooltip className='tooltip'  TransitionComponent={Zoom} placement="right" title={props.userData.userRate} arrow>
-                        <ul className='rate-stars'>{generateStars()}</ul>
-                    </Tooltip>
+                    <RateGenerator rating={props.userData.userRate} />
                 </div>
                 <div className='user-fullname'>
                     <h1>{props.userData.name}</h1>
                 </div>
             </div>
-            <div className='profile_action'>
-                <Button label="Send Message" buttonType="button" />
-                <Button label="Eliminate" buttonType="button" customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
-            </div>
+            <Location userData={props.userData.location} clickedUserId={props.clickedUserId} />
+            {loginUserId !== props.clickedUserId && 
+                <div className='profile_action'>
+                    <Button clickedButton={() => sendMessage(props.userData.email)} label="Send Message" buttonType="button" />
+                    <Button label="Eliminate" buttonType="button" customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
+                </div>
+            }
         </div>
-        <ProfileIntroduction userData={props.userData} />
+        <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} />
         
         
         {/* <div className='total_payment_summary_container'>

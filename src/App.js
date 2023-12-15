@@ -32,10 +32,10 @@ function App() {
             <Headers />
               <Routes >
                   <Route element={<PrivateRoutes />} >
-                    <Route path="/profile/" element={<UserProfile />} />
                     <Route path="/messages/" element={<Messages />} />
                     <Route path="/reply/message/" element={<ReplyMessage />} />
                   </Route>
+                  <Route path="/profile/" element={<UserProfile />} />
                   <Route path="/" element={<CompanyView />} exact />
                   <Route path="/login/" element={<LoginPage />} />
                   <Route path="/reset-password/" element={<ResetPassword />}/>

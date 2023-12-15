@@ -109,6 +109,23 @@ li {
     left: 80px;
 }
 
+.profile-location-container {
+    margin-top: 10px;
+}
+
+.profile-location {
+    display: flex;
+    gap: 5px;
+}
+
+.location {
+    align-self: flex-end;
+}
+
+.location-selection {
+    display: flex;
+}
+
 .image-rate-name {
     display: flex;
     flex-direction: column;
@@ -197,18 +214,19 @@ li {
 /* USER LIST ----------------------------------------------------------------------------------------------------- */
 .container-user-list {
     display: flex;
-    width: 90vw;
+    width: 95vw;
     margin: 20px auto 20px auto;
     flex-direction: row;
-    align-content: center;
+    align-items: flex-start;
+    /* align-content: center; */
     /* background-color: blue; */
     flex-direction: column;
 }
 
 .user-list {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    justify-content: flex-start;
+    gap: 40px;
     flex-wrap: wrap;
     margin: 2%;
     /* background-color: red; */
@@ -234,9 +252,23 @@ li {
 
 .user-image-name {
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
     margin: 5%;
+    height: 110px;
 }
+
+.user-card-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 9999;
+    width: 350px;
+    height: 198px;
+    position: absolute;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
+  }
+  
 
 .user-info {
     background-color: white;
@@ -245,6 +277,25 @@ li {
 
 .user-info ul {
     padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.user-info ul li {
+    /* background-color: yellow; */
+    display: flex;
+    gap: 7px;
+}
+
+.user-info ul li span {
+    /* background-color: red; */
+    align-self: flex-end;
+}
+
+.icon-user-list {
+    align-content: flex-end;
+    /* background-color: blue; */
 }
 
 .user-skills {
@@ -260,6 +311,7 @@ li {
     gap: 10px;
     margin-bottom: 0;
 }
+
 
 .add-skill-section,
 .add-emp-type-section,
@@ -322,8 +374,14 @@ li {
     height: 0px;
 }
 
-.tooltip {
+.user-list-rating {
     /* background-color: red; */
+    position: relative;
+    left: 60px;
+}
+
+.tooltip {
+    /* background-color: blue; */
     width: 90px;
 }
 
@@ -453,8 +511,9 @@ li {
 /* PAGINATION ---------------------------------------------------------------------- */
 
 .container-pagination {
-    /* background-color: red; */
-    margin: 20px auto;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
 }
 
 
@@ -642,6 +701,29 @@ li {
     background-color: blue;
 } */
 
+.emp-type-user-list ul {
+    display: flex;
+    flex-direction: row;
+    /* background-color: red; */
+}
+
+.emp-type-user-list li {
+    display: flex;
+    flex-direction: row;
+    /* background-color: red; */
+    align-self: flex-end;
+    padding: 0px;
+}
+
+.emp-type-user-list span {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-list-emp-type {
+
+}
+
 .button-label {
     display: flex;
     gap: 10px;
@@ -763,7 +845,9 @@ input[type="radio"]:checked + .button-label {
 }
 
 .profile_detail_header {
-    display: flex;
+    /* display: flex; */
+    display: grid;
+    grid-template-columns: 0.7fr 1.5fr;
     background-color: rgba(216, 230, 239, 0.5);
     border: 0px solid #4e6e81;
     border-radius: 5px;
@@ -811,9 +895,11 @@ input[type="radio"]:checked + .button-label {
 }
 
 .profilepicture-rate-name {
-    width: 100%;
+    /* width: 25%; */
     padding-left: 30px;
     padding-top: 30px;
+    margin-right: 30px;
+    /* background-color: red; */
 }
 
 /* Profile Image */
@@ -983,7 +1069,7 @@ input[type="radio"]:checked + .button-label {
 .profile_language,
 .portfolio-container,
 .working-history-container {
-    margin-top: 80px;
+    /* margin-top: 80px; */
 }
 
 .profile-input-field {
@@ -1563,8 +1649,7 @@ input[type="radio"]:checked + .button-label {
 
 .pagination-container {
     display: flex;
-    gap: 10px;
-    /* background-color: red; */
+    gap: 200px;
     justify-content: space-between;
 
 }
@@ -1615,3 +1700,5 @@ input[type="radio"]:checked + .button-label {
     color: #fff;
     cursor: pointer;
 }
+
+

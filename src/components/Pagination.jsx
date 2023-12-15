@@ -7,15 +7,13 @@ const InboxPagination = (props) => {
     const DOTS = "..."
 
     const { 
-        totalInboxMessage, 
         onLoadMessages, 
         messages, 
         sentMessages,
         deletedMessages,
         onCheckSentMessages, 
-        totalSentMessage, 
-        onCheckDeletedMessages,
-        totalDeletedMessage } = useContext(EmailContext)
+        onCheckDeletedMessages } = useContext(EmailContext)
+
     const [isCLicked, setIsClicked] = useState(false)
     const [isDisabled, setIsDisabled] = useState()
     const [totalPages, setTotalPages] = useState(0)
@@ -25,14 +23,16 @@ const InboxPagination = (props) => {
 
     const onClickPageNumber = (item) => {
         // When user click the number on the pagination, load the message (call api) based on the type
-        console.log(props.message_type)
-        if (props.message_type === "inbox"){
+        if (props.type === "inbox"){
             onLoadMessages(item)
-        } else if (props.message_type === "sent"){
+        } else if (props.type === "sent"){
             console.log("SENT");
             onCheckSentMessages(item)
-        } else if (props.message_type === "deleted"){
+        } else if (props.type === "deleted"){
             onCheckDeletedMessages(item)
+        } else if (props.type === "userList"){
+            console.log("MASK");
+            props.loadUserList(item)
         }
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
@@ -40,24 +40,22 @@ const InboxPagination = (props) => {
     }
 
     const getTotalPages = () => {
-        const totalMessagePerPage = 5
-        let totalPages = 0
-
-        if (props.message_type === "inbox"){
-            totalPages = Math.ceil(totalInboxMessage / totalMessagePerPage)
-        } else if (props.message_type === "sent"){
-            totalPages = Math.ceil(totalSentMessage / totalMessagePerPage)
-        } else if (props.message_type === "deleted"){
-            totalPages = Math.ceil(totalDeletedMessage / totalMessagePerPage)
+        console.log("CEK TOTAL DATA", props.totalData);
+        let totalMessagePerPage = 0;
+        if (props.type === "userList") {
+            totalMessagePerPage = 4     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
+        } else {
+            totalMessagePerPage = 5     // need to match with the backend pagination setting, check your MessagesResultsSetPagination page size.
         }
-        console.log(totalPages);
+        
+        let totalPages = 0
+        totalPages = Math.ceil(props.totalData / totalMessagePerPage)
         setTotalPages(totalPages)
-
     }
 
     useEffect(() => {
         getTotalPages()
-    }, [props.message_type, messages, sentMessages, deletedMessages])
+    }, [props.type, props.totalData, messages, sentMessages, deletedMessages])
 
 
     const loadPreviousNextData = (buttonType, type) => {
@@ -71,6 +69,8 @@ const InboxPagination = (props) => {
                         onCheckSentMessages(page.current - 1)
                     } else if (type.type === "deleted"){
                         onCheckDeletedMessages(page.current - 1)
+                    } else if (type.type === "userList"){
+                        props.loadUserList(page.current - 1)
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
@@ -85,6 +85,8 @@ const InboxPagination = (props) => {
                         onCheckSentMessages(page.current + 1)
                     } else if (type.type === "deleted"){
                         onCheckDeletedMessages(page.current + 1)
+                    } else if (type.type === "userList"){
+                        props.loadUserList(page.current + 1)
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)
@@ -176,7 +178,6 @@ const InboxPagination = (props) => {
             }
             paginateNumber.push(DOTS)
             paginateNumber.push(totalPages)
-            console.log(paginateNumber);
 
             return (
                 pageNumberList({paginateNumber, totalPages, type})
@@ -187,7 +188,7 @@ const InboxPagination = (props) => {
   return (
 
     <div className='pagination-container'>
-        {onCheckPaginationConditional({type: props.message_type})}
+        {onCheckPaginationConditional({type: props.type})}
     </div>
   )
 }

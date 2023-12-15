@@ -1,17 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Select from "react-select";
 import Divider from '@mui/material/Divider';
-import Button from './Button';
+import Button from '../Button';
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../Context/AuthContext';
-import AlertNotification from './AlertNotification';
+import AuthContext from '../../Context/AuthContext';
+import AlertNotification from '../AlertNotification';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 const Portfolio = (props) => {
 
-    const {authToken} = useContext(AuthContext)
-    const userToken = authToken.access
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let userAuthToken
+    let { authToken } = useContext(AuthContext)
+    if (authToken){
+        userAuthToken = authToken.access
+    }
 
     const portfolio = [ "Personal Website", "Website", "Github", "Others" ]
 
@@ -79,7 +88,7 @@ const Portfolio = (props) => {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
-                    "Authorization": `JWT ${userToken}`
+                    "Authorization": `JWT ${userAuthToken}`
                 },
                 body: JSON.stringify(dataSend)
             })
@@ -119,7 +128,7 @@ const Portfolio = (props) => {
             method: "DELETE",
             headers: {
                 "content-type": "application/json",
-                "Authorization": `JWT ${userToken}`
+                "Authorization": `JWT ${userAuthToken}`
             }
         })
         const data = await response.json()
@@ -159,7 +168,7 @@ const Portfolio = (props) => {
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
-                "Authorization": `JWT ${userToken}`
+                "Authorization": `JWT ${userAuthToken}`
             },
             body: JSON.stringify(portfolioList[index])
         })
@@ -197,8 +206,11 @@ const Portfolio = (props) => {
 
   return (
     <div className='portfolio-container'> 
-        <h1>Portfolio</h1> 
+        <br />
+        <br />
         <Divider />
+        <h1>Portfolio</h1> 
+        
         <div className='portfolio-list'>
 
         <div className='portfolio-list'>
@@ -227,11 +239,12 @@ const Portfolio = (props) => {
                         <div className='portfolio-item'>
                             <a href={`https://${item.link}`} target='_blank' rel="noopener noreferrer" >{item.type} <OpenInNewIcon /></a>
                         </div>
-                        {isHover === index &&
-                            <div className='portfolio-edit-delete-button'>
-                                <Button buttonType="button" label="Edit" clickedButton={() => onClickedEdit(index)} />
-                                <Button buttonType="button" label="Delete" clickedButton={() => onRemovePortfolio(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
-                            </div>
+                        {loginUserId === props.clickedUserId &&
+                            isHover === index &&
+                                <div className='portfolio-edit-delete-button'>
+                                    <Button buttonType="button" label="Edit" clickedButton={() => onClickedEdit(index)} />
+                                    <Button buttonType="button" label="Delete" clickedButton={() => onRemovePortfolio(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
+                                </div>
                         }
                     </div>
                     }
@@ -260,7 +273,13 @@ const Portfolio = (props) => {
         {alertField && <p className='error-field'>{alertField.message}</p>}
         <br />
         <br />
-        <Button buttonType="button" label="Add Portfolio" clickedButton={() => onAddMorePortfolio()} />
+        {loginUserId === props.clickedUserId && 
+            <>
+                <Button buttonType="button" label="Add Portfolio" clickedButton={() => onAddMorePortfolio()} />
+                <br />
+                <br />
+            </>
+        }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

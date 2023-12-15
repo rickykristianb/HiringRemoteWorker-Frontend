@@ -1,18 +1,27 @@
 import { type } from '@testing-library/user-event/dist/type';
 import React, { useEffect, useState } from 'react'
 import Select from "react-select";
-import Button from './Button';
+import Button from '../Button';
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
-import AuthContext from '../Context/AuthContext';
+import AuthContext from '../../Context/AuthContext';
 import { useContext } from 'react';
-import AlertNotification from './AlertNotification';
+import AlertNotification from '../AlertNotification';
 
 
 const EmploymentType = (props) => {
 
-    const {authToken} = useContext(AuthContext)
-    const userToken = authToken.access
+    let userAuthToken
+    let { authToken } = useContext(AuthContext)
+    if (authToken){
+        userAuthToken = authToken.access
+    }
+
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
 
 
     const [employmentTypeList, setEmploymentTypeList] = useState([])
@@ -94,7 +103,7 @@ const EmploymentType = (props) => {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
-                    "Authorization": `JWT ${userToken}`
+                    "Authorization": `JWT ${userAuthToken}`
                 },
                 body: JSON.stringify(selectedType)
             })
@@ -123,7 +132,7 @@ const EmploymentType = (props) => {
             method: "DELETE",
             headers: {
                 "content-type": "application/json",
-                "Authorization": `JWT ${userToken}`
+                "Authorization": `JWT ${userAuthToken}`
             }
         })
         const data = await response.json()
@@ -142,14 +151,18 @@ const EmploymentType = (props) => {
 
   return (
     <div className='profile-employment-type'>
+        <br />
+        <br />
+        <Divider />
+
         <h1>Employment Type</h1>
-            <Divider />
+        <br />
         <div className='emp-type-list'>
             {employmentTypeListSelected.map((item, index) => {
                 return (
                     <div key={index} className='emp-type-container'>
                         <div className='skill-item'><b>{item.type}</b></div>
-                        <CloseIcon onClick={() => onRemoveType(index)} sx={{width: "20px"}} className='emp-type-list-close-button'/>
+                        {loginUserId === props.clickedUserId && <CloseIcon onClick={() => onRemoveType(index)} sx={{width: "20px"}} className='emp-type-list-close-button'/> }
                     </div>
                 )
             })}
@@ -171,7 +184,13 @@ const EmploymentType = (props) => {
         })}
         {alertField && <p className='error-field'>{alertField.message}</p>}  
         <br />   
-        <Button buttonType="button" label="Add Employment Type" clickedButton={onAddMoreEmploymentTypeSection} />
+        {loginUserId === props.clickedUserId && 
+            <>
+                <Button buttonType="button" label="Add Employment Type" clickedButton={onAddMoreEmploymentTypeSection} />
+                <br />
+                <br />
+            </>
+         }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

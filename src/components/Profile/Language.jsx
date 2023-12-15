@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react'
 import Divider from '@mui/material/Divider';
-import Button from './Button';
+import Button from '../Button';
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../Context/AuthContext';
-import AlertNotification from './AlertNotification';
+import AuthContext from '../../Context/AuthContext';
+import AlertNotification from '../AlertNotification';
 import Select from "react-select";
 
 const Language = (props) => {
@@ -11,12 +11,22 @@ const Language = (props) => {
     const [language, setLanguage] = useState([])
     const [languageList, setLanguageList] = useState([])
     const [isSaved, setIsSaved] = useState(null)
-    const [alertAdd, setAlertAdd] = useState(null)
+    const [alertField, setAlertField] = useState(null)
     const [alert, setAlert] = useState(null)
     const [alertResponse, setAlertResponse] = useState(null)
 
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let userAuthToken
     let { authToken } = useContext(AuthContext)
-    const userToken = authToken.access
+    if (authToken){
+        userAuthToken = authToken.access
+    }
+
 
     const languageProficiency = [
       "Beginner", "Elementary", "Intermediate", "Advanced", "Fluent", "Native"
@@ -62,17 +72,17 @@ const Language = (props) => {
 
     const onAddLanguage = async (e, index) => {
       if (language[index].language === "" && language[index].proficiency === ""){
-        setAlertAdd({
+        setAlertField({
           "field": "language-proficiency",
           "message": "Language and proficiency is required"
         })
       } else if (language[index].language === "") {
-        setAlertAdd({
+        setAlertField({
           "field": "language",
           "message": "Language is required"
         })
       } else if (language[index].proficiency === ""){
-        setAlertAdd({
+        setAlertField({
           "field": "proficiency",
           "message": "Proficiency is required"
         })
@@ -82,7 +92,7 @@ const Language = (props) => {
             method: "POST",
             headers: {
               "content-type": "application/json",
-              "Authorization": `JWT ${userToken}`
+              "Authorization": `JWT ${userAuthToken}`
             },
             body: JSON.stringify(language[index])
           })
@@ -98,9 +108,9 @@ const Language = (props) => {
             ])
             setAlertResponse({"success": data.success})
             setIsSaved(true)
-            setAlertAdd(null)
+            setAlertField(null)
           } else {
-            setAlertResponse({"error": data.error})
+            setAlertField({"message": data.error})
           }
         } catch(errors){
           console.error(errors)
@@ -116,7 +126,7 @@ const Language = (props) => {
           method:"DELETE",
           headers: {
             "content-type": "application/json",
-            "Authorization": `JWT ${userToken}`
+            "Authorization": `JWT ${userAuthToken}`
           }
         })
         let data = await response.json()
@@ -138,9 +148,9 @@ const Language = (props) => {
 
   return (
     <div className='profile_language'>
-    <h1>Language</h1>
-        <Divider />
-
+      <br />
+      <Divider />
+      <h1>Language</h1>
         <div className='language-list'>
         {languageList.map((languageItem, index) => {
           return ( 
@@ -148,7 +158,7 @@ const Language = (props) => {
                 <div className='language-item'><b>{languageItem.language}</b></div>
                   <Divider />
                 <div className='language-proficiency-item'>{languageItem.proficiency}</div>
-                <CloseIcon onClick={() => onRemoveLanguage(index)} className='language-list-close-button'/>
+                {loginUserId === props.clickedUserId && <CloseIcon onClick={() => onRemoveLanguage(index)} className='language-list-close-button'/> }
               </div>
           )
           })}
@@ -170,12 +180,12 @@ const Language = (props) => {
                 ))}
               </select>
               <Button buttonType="button" label="Add" customClassName="language-save-button" clickedButton={(e) => onAddLanguage(e, index)} />
-              <CloseIcon onClick={() => {return setIsSaved(true), setAlertAdd(null)}} />
+              <CloseIcon onClick={() => {return setIsSaved(true), setAlertField(null)}} />
             </div>
           ))
         }
-        {alertAdd && <p className='error-field'>{alertAdd.message}</p>}
-        <Button buttonType="button" label="Add Language" clickedButton={onAddMoreLanguageSection} />
+        {alertField && <p className='error-field'>{alertField.message}</p>}
+        { loginUserId === props.clickedUserId && <Button buttonType="button" label="Add Language" clickedButton={onAddMoreLanguageSection} /> }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

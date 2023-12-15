@@ -58,7 +58,7 @@ const UserActivationConfirmation = () => {
         
         setButtonLabel("Activating ...")
         try {
-            let response = await fetch("http://127.0.0.1:8000/auth/users/activation/", {
+            let response = await fetch("/auth/users/activation/", {
                 method: "POST",
                 headers: {
                     "content-type": "application/json"

@@ -4,8 +4,10 @@ import Divider from '@mui/material/Divider';
 const WorkingHistory = () => {
   return (
     <div className='working-history-container'>
-        <h1>Working History</h1>
+        <br />
+        <br />
         <Divider />
+        <h1>Working History</h1>
     </div>
   )
 }

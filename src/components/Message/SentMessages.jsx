@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import EmailContext from '../Context/EmailContext'
+import EmailContext from '../../Context/EmailContext'
 import MessageDetail from './MessageDetail'
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { ReactComponent as Refresh } from "../assets/images/Refresh.svg"
-import AlertNotification from './AlertNotification'
-import Pagination from './InboxPagination';
+import { ReactComponent as Refresh } from "../../assets/images/Refresh.svg"
+import AlertNotification from '../AlertNotification'
+import Pagination from '../Pagination';
 
 const SentMessages = () => {
 
@@ -21,7 +21,7 @@ const SentMessages = () => {
       sentMessages,
       isVisibile,
       messageData,
-      isRead,
+      totalSentMessage,
       onLoadBody,
       onMessageClicked,
       onMessageDetailCloseClicked,
@@ -118,7 +118,7 @@ const onMouseLeave = () => {
         </div>
         }
         <br />
-        <Pagination message_type="sent" />
+        <Pagination type="sent" totalData={totalSentMessage} />
         {isVisibile && (<MessageDetail data={{data: messageData, type: "sent"}} clickedClosed={onMessageDetailCloseClicked} />) }
         <AlertNotification alertData={alertDeleteSentMessage}/>
     </div>

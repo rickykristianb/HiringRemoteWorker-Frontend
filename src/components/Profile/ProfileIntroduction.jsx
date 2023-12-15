@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react'
-import Button from './Button'
-import AuthContext from '../Context/AuthContext'
-import AlertNotification from './AlertNotification';
+import Button from '../Button'
+import AuthContext from '../../Context/AuthContext'
+import AlertNotification from '../AlertNotification';
 import { Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileIntroduction = (props) => {
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
     const navigate = new useNavigate()
     const [userData, setUserData] = useState(null)
     const [isSaved, setIsSaved] = useState(true)
@@ -124,7 +130,12 @@ const ProfileIntroduction = (props) => {
                 <p className='profile-content'>{profile.email}</p>
                 <label><b>Phone Number</b></label>
                 <p className='profile-content'>{profile.phoneNumber}</p>
-                <Button buttonType="button" label="Edit" clickedButton={() => setIsSaved(false)} />
+
+                {loginUserId === props.clickedUserId && 
+                    <Button buttonType="button" label="Edit" clickedButton={() => setIsSaved(false)} />
+                }
+                
+
             </div>
         :
             <div className='profile-input'>

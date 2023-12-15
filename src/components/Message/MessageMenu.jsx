@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import EmailContext from '../Context/EmailContext'
+import EmailContext from '../../Context/EmailContext'
 
 const MessageMenu = (props) => {
 

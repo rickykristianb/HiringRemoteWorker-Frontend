@@ -2,12 +2,12 @@ import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
-import Button from './Button'
-import EmailContext from '../Context/EmailContext';
+import Button from '../Button'
+import EmailContext from '../../Context/EmailContext';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import AlertNotification from './AlertNotification'
+import AlertNotification from '../AlertNotification'
 
 const MessageDetail = (props) => {
 

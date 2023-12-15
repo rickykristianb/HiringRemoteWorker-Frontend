@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import Box from '@mui/material/Box';
 import FilterBar from './FilterBar';
-import Users from './Users';
+import UsersList from './UsersList';
 
 const Search = () => {
     const [filterClicked, setFilterClicked] = useState(false)
@@ -49,7 +49,7 @@ const Search = () => {
                         </Tooltip>
                     </ul>
                 </div>     
-                <Users filterClicked = {filterClicked} />
+                <UsersList filterClicked = {filterClicked} />
             </div>
         </div>
   )

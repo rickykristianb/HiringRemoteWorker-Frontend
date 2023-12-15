@@ -59,24 +59,28 @@ export const EmailProvider = ({ children }) => {
 
     
     const unreadMessageCount = async() => {
-        const response = await fetch("/api/user/count_unread_messages/", {
-            method: "GET",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `JWT ${userToken.current}`
-            }
-        })
-        const data = await response.json()
-        setMessageUnreadCount(data)
+        if (userToken.current){
+            console.log("MASUK SINI KAH????");
+            const response = await fetch("/api/user/count_unread_messages/", {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `JWT ${userToken.current}`
+                }
+            })
+            const data = await response.json()
+            setMessageUnreadCount(data)
+        }
     }
+
+    useEffect(() => {
+        unreadMessageCount()
+    },[userToken.current])
 
     // useMemo(() => {
     //     const count = messages.filter(message => !message.is_read).length
     //     setMessageUnreadCount(count)
     // }, [messages])
-
-
-
 
     const onLoadBody = (body) => {
         if (body.length > 95){
@@ -133,7 +137,6 @@ export const EmailProvider = ({ children }) => {
                 ]))       
                 setMessageUnreadCount((prevValue) => (prevValue - 1))             
             }
-            
         }
         setIsVisible(!isVisibile)
         setMessageData(messageDetailData)
@@ -165,9 +168,9 @@ export const EmailProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        unreadMessageCount()
         setAlertResponse()
     }, [onDeleteMessage])
+
     
     // DELETE MESSAGE FOREVER -------------------------------------------------------------------------
     const onDeleteMessageForever = async(index) => {

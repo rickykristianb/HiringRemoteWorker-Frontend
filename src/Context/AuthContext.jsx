@@ -41,17 +41,18 @@ export const AuthProvider = ({children}) => {
         }
       })
       const data = await response.json()
-
+      console.log("CEK DATA: ", data);
       if (response.ok){
-        let localProfilePicture = localStorage.getItem("profile_picture")
+        let localLoginProfilePicture = localStorage.getItem("login_user_profile_picture")
         let localUserName = localStorage.getItem("username")
+        let localUserId = localStorage.getItem("userId")
         
         // Check if the localstorage has profile picture, if not, create
-        if (localProfilePicture === null) {
-          localStorage.setItem("profile_picture", data["profile_picture"])
-        } else if (localProfilePicture && localProfilePicture !== data["profile_picture"]){
+        if (localLoginProfilePicture === null) {
+          localStorage.setItem("login_user_profile_picture", data["profile_picture"])
+        } else if (localLoginProfilePicture && localLoginProfilePicture !== data["profile_picture"]){
           // Check if the localstorage has profile picture, if yes, check if the content is same, if not, create
-          localStorage.setItem("profile_picture", data["profile_picture"])
+          localStorage.setItem("login_user_profile_picture", data["profile_picture"])
         }
 
         // Check if the localstorage has username, if not, create
@@ -60,6 +61,14 @@ export const AuthProvider = ({children}) => {
           // Check if the localstorage has username, if yes, check if the content is same, if not, create
         } else if (localUserName === null){
           localStorage.setItem("username", data["username"])
+        }
+
+        // Check if the localstorage has userId, if not, create
+        if (localUserId === null) {
+          localStorage.setItem("userId", data["user_id"])
+        } else if (localUserId && localUserId !== data["user_id"]){
+          // Check if the localstorage has profile picture, if yes, check if the content is same, if not, create
+          localStorage.setItem("userId", data["user_id"])
         }
       }
     }
@@ -171,7 +180,7 @@ export const AuthProvider = ({children}) => {
     let logoutUser = () => {
         setAuthToken(null)
         setUser(null)
-        localStorage.removeItem("authToken")
+        localStorage.clear()
         navigate("/")
     }
 

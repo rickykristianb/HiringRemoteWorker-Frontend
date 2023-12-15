@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import EmailContext from '../Context/EmailContext'
+import EmailContext from '../../Context/EmailContext';
 import MessageDetail from './MessageDetail'
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import AlertNotification from './AlertNotification';
-import { ReactComponent as Refresh } from "../assets/images/Refresh.svg"
-import InboxPagination from './InboxPagination';
+import AlertNotification from '../AlertNotification';
+import { ReactComponent as Refresh } from "../../assets/images/Refresh.svg"
+import InboxPagination from '../Pagination';
 
 const DeletedMesages = () => {
 
@@ -19,7 +19,7 @@ const DeletedMesages = () => {
     const {
         onLoadMessages,
         messages,
-        sentMessages,
+        totalDeletedMessage,
         deletedMessages,
         isVisibile,
         messageData,
@@ -122,7 +122,7 @@ const DeletedMesages = () => {
         </div>
         }
         <br />
-        <InboxPagination message_type="deleted" />
+        <InboxPagination type="deleted" totalData={totalDeletedMessage} />
         {isVisibile && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
         <AlertNotification alertData={alertDeleteForeverResponse}/>
     </div>

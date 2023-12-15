@@ -1,12 +1,12 @@
 import React, {useState, useContext, useEffect} from 'react'
 import Divider from '@mui/material/Divider';
-import AuthContext from '../Context/AuthContext';
+import AuthContext from '../../Context/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
-import Button from './Button';
-import AlertNotification from './AlertNotification';
+import Button from '../Button';
+import AlertNotification from '../AlertNotification';
 import Select from "react-select";
 
-const Skills = () => {
+const Skills = (props) => {
     const [skill, setSkill] = useState([])
     const [skillLevel, setSkillLevel] = useState([])
     const [skillList, setSkillList] = useState([])
@@ -20,8 +20,17 @@ const Skills = () => {
     const [alertField, setAlertField] = useState()
     const [alertResponse, setAlertResponse] = useState()
     
+    let userAuthToken
     let { authToken } = useContext(AuthContext)
-    const userToken = authToken.access
+    if (authToken){
+        userAuthToken = authToken.access
+    } 
+
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
 
     const onLoadSkills = async() => {
         const response = await fetch("/api/user/get_skills/",{
@@ -43,31 +52,22 @@ const Skills = () => {
         }
     }
 
-    const onLoadSkillLevelData = async () => {
-        const response = await fetch("/api/user/get_user_skills/", {
-            method: "GET",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `JWT ${userToken}`
+    const onLoadSkillLevelData = () => {
+        const dataList = props.userData.map((item) => {
+            return {
+                id: item.id,
+                skill_name: item.skills.skill_name,
+                skill_level: item.skill_level.skill_level
             }
         })
-        const data = await response.json()
-        if (response.status === 200){
-            setSkillAndLevelList(data.map((item) => {
-                return {
-                    id: item.id,
-                    skill_name: item.skills.skill_name,
-                    skill_level: item.skill_level.skill_level
-                }
-            }))
-        }
+        setSkillAndLevelList(dataList)
     }
 
     useEffect(() => {
         onLoadSkills()
         onLoadSkillLevel()
         onLoadSkillLevelData()
-    }, [])
+    }, [props.userData])
 
     const onAddMoreSkillsSection = () => {
         setIsAdd(true)
@@ -105,7 +105,7 @@ const Skills = () => {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
-                    "Authorization": `JWT ${userToken}`
+                    "Authorization": `JWT ${userAuthToken}`
                 },
                 body: JSON.stringify(dataSend)
             })
@@ -125,7 +125,7 @@ const Skills = () => {
                 setAlertField()
                 setAlertResponse({"success": data.success})
             } else {
-                setAlertResponse({"error": data.error})
+                setAlertField({"message": data.error})
             }
         }        
     }
@@ -136,7 +136,7 @@ const Skills = () => {
             method: "DELETE",
             headers: {
                 "content-type": "application/json",
-                "Authorization": `JWT ${userToken}`
+                "Authorization": `JWT ${userAuthToken}`
             }
         })
         const data = await response.json()
@@ -173,15 +173,16 @@ const Skills = () => {
 
   return (
     <div className='skills-container'>
+    {/* <Divider /> */}
         <h1>Skills</h1>
-        <Divider />
+        <br />
         <div className='skill-level-list'>
         {skillAndLevelList.map((item, index) => (
             <div key={index} className='skill-level-container'>
                 <div className='skill-item'><b>{item.skill_name}</b></div>
                   <Divider />
                 <div className='skill-level-item'>{item.skill_level}</div>
-                <CloseIcon onClick={() => onRemoveSkill(index)}  className='skill-list-close-button'/>
+                {props.clickedUserId === loginUserId && <CloseIcon onClick={() => onRemoveSkill(index)}  className='skill-list-close-button'/> }
               </div>
         ))}
         </div>
@@ -215,7 +216,14 @@ const Skills = () => {
         </div>
         }
         {alertField && <p className='error-field'>{alertField.message}</p>}
-        <Button buttonType="button" label="Add Skills" clickedButton={onAddMoreSkillsSection} />
+        {props.clickedUserId === loginUserId && 
+            <>
+                <Button buttonType="button" label="Add Skills" clickedButton={onAddMoreSkillsSection} />
+                <br />
+                <br />
+            </>
+        }
+        
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

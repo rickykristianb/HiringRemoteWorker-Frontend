@@ -1,23 +1,21 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react'
 import Button from '../components/Button'
 import Divider from '@mui/material/Divider';
-import ProfileHeaders from '../components/ProfileHeaders';
-import Education from '../components/Education';
-import Language from '../components/Language';
-import ProfileIntroduction from '../components/ProfileIntroduction';
-import Experience from '../components/Experience';
-import Skills from '../components/Skills';
+import ProfileHeaders from '../components/Profile/ProfileHeaders';
+import Education from '../components/Profile/Education';
+import Language from '../components/Profile/Language';
+import ProfileIntroduction from '../components/Profile/ProfileIntroduction';
+import Experience from '../components/Profile/Experience';
+import Skills from '../components/Profile/Skills';
 import AuthContext from '../Context/AuthContext';
-import EmploymentType from '../components/EmploymentType';
-import Portfolio from '../components/Portfolio';
-import Rate from '../components/Rate';
-import WorkingHistory from '../components/WorkingHistory';
+import EmploymentType from '../components/Profile/EmploymentType';
+import Portfolio from '../components/Profile/Portfolio';
+import Rate from '../components/Profile/Rate';
+import WorkingHistory from '../components/Profile/WorkingHistory';
 import EmailContext from '../Context/EmailContext';
+import { useLocation } from 'react-router-dom';
 
 const UserProfile = (props) => {
-
-  const {authToken} = useContext(AuthContext)
-  const userToken = authToken.access
 
   const {onLoadMessages} = useContext(EmailContext)
 
@@ -30,18 +28,24 @@ const UserProfile = (props) => {
   const [employmentTypeData, setEmploymentTypeData] = useState([])
   const [portfolioUserData, setPortfolioUserData] = useState([])
   const [expectedRateUserData, setExpectedRateUserData] = useState([])
+  const [skillsUserData, setSkillsUserData] = useState([])
+  const [clickedUserId, setClickedUserId] = useState()
+
+  const location = useLocation();
 
   useEffect(() => {
-    onLoadMessages()
-  },[])
+    const searchParams = new URLSearchParams(location.search);
+    const id = searchParams.get('id');
+    setClickedUserId(id)
+  }, [location.search])
 
   const onGetProfile = async () => {
+    const id = clickedUserId
     try {
-        const response = await fetch("/api/user/profile/", {
+        const response = await fetch(`/api/user/profile/${id.toString()}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `JWT ${userToken}`
             }
         });
 
@@ -56,14 +60,14 @@ const UserProfile = (props) => {
                 email: data.email,
                 phoneNumber: data.phone_number
             });
-            localStorage.setItem("profile", JSON.stringify({
-              name: data.name,
-              shortIntro: data.short_intro,
-              bio: data.bio,
-              username: data.username,
-              email: data.email,
-              phoneNumber: data.phone_number
-          }))
+          //   localStorage.setItem("profile", JSON.stringify({
+          //     name: data.name,
+          //     shortIntro: data.short_intro,
+          //     bio: data.bio,
+          //     username: data.username,
+          //     email: data.email,
+          //     phoneNumber: data.phone_number
+          // }))
 
             setHeaderUserData({
               userRate: data.rate_ratio,
@@ -73,18 +77,23 @@ const UserProfile = (props) => {
               username: data.username,
               email: data.email,
               phoneNumber: data.phone_number,
-              profilePicture: data.profile_picture  // Use the correct method name
+              profilePicture: data.profile_picture,  // Use the correct method name
+              location: data.userlocation ? data.userlocation["location"]["location"] : null
             });
             setLanguageUserData("profile_picture", data.profile_picture);
             setEmploymentTypeData(data.useremploymenttype)
             setPortfolioUserData(data.portfolios)
-            localStorage.setItem("userRate", JSON.stringify({userRate: data.rate_ratio}))
+            setSkillsUserData(data.skills)
+            // localStorage.setItem("userRate", JSON.stringify({userRate: data.rate_ratio}))
             setLanguageUserData(data.languages);
-            localStorage.setItem("language", JSON.stringify(data.languages))
-            setExperienceUserData(data.experiences);
-            localStorage.setItem("experience", JSON.stringify(data.experiences))
+            // localStorage.setItem("language", JSON.stringify(data.languages))
+            setExperienceUserData([{
+              "experience": data.experiences.data,
+              "total_exp": data.experiences.total_exp
+            }]);
+            // localStorage.setItem("experience", JSON.stringify(data.experiences))
             setEducationUserData(data.educations);
-            localStorage.setItem("education", JSON.stringify(data.educations))
+            // localStorage.setItem("education", JSON.stringify(data.educations))
             setExpectedRateUserData(data.expectedsalary)
             setLoading(false);
         } else {
@@ -97,26 +106,26 @@ const UserProfile = (props) => {
 
   useEffect(() => {
     onGetProfile()
-  }, [userToken.access])
+  }, [clickedUserId])
 
   return (
     <div className='profile_container'>
       <div className='profile-header'>
-        <ProfileHeaders userData={headerUserData} />
+        <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
       </div>
       <div className='profile-and-job-section'>
         <div className='profile-section'>
-          <Skills />
-          <Portfolio userData={portfolioUserData} />
-          <Experience userData={experienceUserData} />
-          <EmploymentType userData={employmentTypeData}/>
-          <Education userData={educationUserData} />
-          <Language userData={languageUserData} />
+          <Skills userData={skillsUserData} clickedUserId={clickedUserId} />
+          <Portfolio userData={portfolioUserData} clickedUserId={clickedUserId} />
+          <Experience userData={experienceUserData} clickedUserId={clickedUserId} />
+          <EmploymentType userData={employmentTypeData} clickedUserId={clickedUserId} />
+          <Education userData={educationUserData} clickedUserId={clickedUserId} />
+          <Language userData={languageUserData} clickedUserId={clickedUserId} />
         </div>
         <hr class="divider" />
         <div className='job-section'>
-          <Rate userData={expectedRateUserData} />
-          <WorkingHistory />
+          <Rate userData={expectedRateUserData} clickedUserId={clickedUserId} />
+          <WorkingHistory clickedUserId={clickedUserId} />
         </div>
       </div>
     </div>

@@ -1,12 +1,25 @@
-import React, { useContext, useState } from 'react'
-import MessageMenu from '../components/MessageMenu'
-import SendMessage from '../components/SendMessage'
-import Inbox from '../components/Inbox'
-import SentMessages from '../components/SentMessages'
-import DeletedMesages from '../components/DeletedMesages'
-
+import React, { useContext, useEffect, useState } from 'react'
+import MessageMenu from '../components/Message/MessageMenu'
+import SendMessage from '../components/Message/SendMessage'
+import Inbox from '../components/Message/Inbox'
+import SentMessages from '../components/Message/SentMessages'
+import DeletedMesages from '../components/Message/DeletedMesages'
+import { useLocation, useParams } from 'react-router-dom'
 
 const Messages = () => {
+
+  const [email, setEmail] = useState()
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const emailParam = searchParams.get('email');
+    setEmail(emailParam)
+    console.log('Email from URL:', emailParam);
+
+  }, [location.search])
+
 
   const [menuClicked, setMenuClicked] = useState()
 
@@ -31,7 +44,7 @@ const Messages = () => {
             case "deleted":
               return <DeletedMesages />;
             default:
-              return <Inbox />;
+              return email ? <SendMessage recipient={email} /> :<Inbox />
           }
         })()}
         </div>

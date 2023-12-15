@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef, Fragment } from 'react'
-import Button from './Button'
+import Button from '../Button'
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 import Accordion from '@mui/material/Accordion';
@@ -8,8 +8,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useForm } from 'react-hook-form';
-import AuthContext from '../Context/AuthContext';
-import AlertNotification from './AlertNotification';
+import AuthContext from '../../Context/AuthContext';
+import AlertNotification from '../AlertNotification';
 
 const Experience = (props) => {
   const [experience, setExperience] = useState([])
@@ -19,9 +19,19 @@ const Experience = (props) => {
   const [isAdded, setIsAdded] = useState(false)
   const [isEdit, setIsEdit] = useState(null)
   const [alertResponse, setAlertResponse] = useState()
+  const [totalExp, setTotalExp] = useState()
 
-  const {authToken} = useContext(AuthContext)
-  const userToken = authToken.access
+  const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let userAuthToken
+    let { authToken } = useContext(AuthContext)
+    if (authToken){
+        userAuthToken = authToken.access
+    }
 
   const {register, handleSubmit, reset,
     formState: {
@@ -36,26 +46,31 @@ const Experience = (props) => {
         "jobDescription": "",
       }
     })
-
-    const onLoadExperience =  () => {
-      const experiencesData = props.userData
-      setExperienceList(experiencesData.map((experience, index) => {
-        return {
-          id: experience.id,
-          companyName: experience.company_name,
-          jobTitle: experience.job_name,
-          jobStartDate: experience.start_date,
-          jobEndDate: experience.end_date === "9999-12-31" ? "9999-12-31" : experience.end_date,
-          jobDescription: experience.details
-        }
-      }))
-    }
-
-    useEffect( () => { 
-      onLoadExperience()
-    }, [props.userData])
-
+    const onLoadExperience = async () => {
+      try {
+        console.log("APE NIH",props.userData[0]["experience"]);
+        const experiencesData = await props.userData[0]["experience"];
+        setExperienceList(
+          experiencesData.map((experience, index) => ({
+            id: experience.id,
+            companyName: experience.company_name,
+            jobTitle: experience.job_name,
+            jobStartDate: experience.start_date,
+            jobEndDate:
+              experience.end_date === "9999-12-31" ? "present" : experience.end_date,
+            jobDescription: experience.details,
+          }))
+        );
+        setTotalExp(props.userData[0]["total_exp"]);
+      } catch (error) {
+        console.error("Error loading experience:", error);
+      }
+    };
     
+    useEffect(() => {
+      onLoadExperience();
+    }, [props.userData]);
+        
     const onAddMoreExperienceSection = () => {
       setIsAdded(true)
       return(
@@ -72,11 +87,11 @@ const Experience = (props) => {
     const onAddExperience = async (index) => {
       console.log(experience[index]);
       try{
-        const response = await fetch("http://127.0.0.1:8000/api/user/add_experience/",{
+        const response = await fetch("/api/user/add_experience/",{
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "Authorization": `JWT ${userToken}`
+            "Authorization": `JWT ${userAuthToken}`
           },
           body: JSON.stringify(experience[index])
         })
@@ -159,11 +174,11 @@ const Experience = (props) => {
     const allExperience = [...experienceList]
     const id = allExperience[index]["id"]
     try{
-      const response = await fetch(`http://127.0.0.1:8000/api/user/delete_experience/${id}`, {
+      const response = await fetch(`/api/user/delete_experience/${id}`, {
         method: "DELETE",
         headers: {
           "content-type": "application/json",
-          "Authorization": `JWT ${userToken}`
+          "Authorization": `JWT ${userAuthToken}`
         },
       })
   
@@ -183,11 +198,11 @@ const Experience = (props) => {
   const onSaveEditExperience = async (index) => {
     const id = experienceList[index].id
     try{
-      const response = await fetch(`http://127.0.0.1:8000/api/user/save_experience/${id}`, {
+      const response = await fetch(`/api/user/save_experience/${id}`, {
         method: "PATCH",
         headers: {
           "content-type": "application/json",
-          "Authorization": `JWT ${userToken}`
+          "Authorization": `JWT ${userAuthToken}`
         },
         body: JSON.stringify(experienceList[index])
       })
@@ -210,16 +225,26 @@ const Experience = (props) => {
     // reset()
   }
 
-  const onClickCloseEditForm = (index) => {
+  const onClickCloseEditForm = () => {
     return setIsEdit(false)
   }
+
+  const onLoadTotalExp = () => {
+    const year = (totalExp / 365.25).toString();
+    const year_dec = year.split(".")[0];
+    const month = Math.round((year - year_dec) * 12);
+    return <span>{year_dec} year {month === 0 ? null : `${month} ${month === 1 ? 'month' : 'months'}`}</span>;
+  };
 
 
   return (
     <div className='profile_experience'>
-      <h1>Experience</h1>
+      <br />
+      <br />
       <Divider />
-      <p>Total Experience ........ years</p>
+      <h1>Experience</h1>
+      
+      <p>Total Experience:  {totalExp < 365 && totalExp > 0 ? <span>&nbsp;&nbsp;&lt; 1 year</span> : (totalExp === 0 ? `${totalExp} year` : <span>{onLoadTotalExp()}</span>)}  </p>
 
       {/* LIST OF EXPERIENCE */}
       {experienceList.map((experience, index) => (        
@@ -300,10 +325,12 @@ const Experience = (props) => {
                     </Fragment>
                   ))}
                 </p>
+                {loginUserId === props.clickedUserId &&
                 <div className='edit-delete-exp-button'>
                   <Button buttonType="button" label="Edit" clickedButton={() => onEditExperience(index)} />
                   <Button buttonType="button" label="Delete" clickedButton={() => onDeleteExperience(index) } customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
                 </div>
+                }
               </AccordionDetails>
             </Accordion>
           }  
@@ -373,7 +400,13 @@ const Experience = (props) => {
         )
       })}
       <br />
-      <Button buttonType="button" label="Add Experience" clickedButton={() => onAddMoreExperienceSection()} />
+      {loginUserId === props.clickedUserId && 
+        <>
+          <Button buttonType="button" label="Add Experience" clickedButton={() => onAddMoreExperienceSection()} />
+          <br />
+          <br />
+        </>
+       }
       <AlertNotification alertData={alertResponse}/>
     </div>
   )

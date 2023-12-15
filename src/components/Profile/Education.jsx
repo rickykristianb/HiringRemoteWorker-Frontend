@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
-import Button from './Button';
+import Button from '../Button';
 import Divider from '@mui/material/Divider';
-import AuthContext from '../Context/AuthContext';
+import AuthContext from '../../Context/AuthContext';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import AlertNotification from './AlertNotification';
+import AlertNotification from '../AlertNotification';
 
 const Education = (props) => {
     const [ education, setEducation ] = useState([])
@@ -15,8 +15,17 @@ const Education = (props) => {
     const [ alert, setAlert ] = useState()
     const [ alertResponse, setAlertResponse ] = useState()
 
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let userAuthToken
     let { authToken } = useContext(AuthContext)
-    const userToken = authToken.access
+    if (authToken){
+        userAuthToken = authToken.access
+    }
 
   const loadEducation = () => {
     const dataList = props.userData.map((item) => {
@@ -73,7 +82,7 @@ const Education = (props) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'Authorization': `JWT ${userToken}`
+            'Authorization': `JWT ${userAuthToken}`
           },
           body: JSON.stringify(education[index])
         })
@@ -106,7 +115,7 @@ const Education = (props) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `JWT ${userToken}`
+          'Authorization': `JWT ${userAuthToken}`
         }
       })
       const data = await response.json()
@@ -157,7 +166,7 @@ const Education = (props) => {
         method: "PATCH",
         headers: {
           "content-type": "application/json",
-          "Authorization": `JWT ${userToken}`
+          "Authorization": `JWT ${userAuthToken}`
         },
         body: JSON.stringify({
           id: educationList[index].id,
@@ -190,9 +199,10 @@ const Education = (props) => {
 
   return (
     <div className='profile_education'>
+      <br />
+      <br />
+      <Divider />
         <h1>Education</h1>
-        <Divider />
-
         {/* DISPLAY ALL EDUCATION. ADD FORM TO EDIT THE EDUCATION */}
         {educationList.map((item, index) => {
               return (
@@ -233,7 +243,7 @@ const Education = (props) => {
                       <li>{item.major}</li>
                       <li>{item.degree}</li>
                     </div>
-                    {isHovered === index && (
+                    {loginUserId === props.clickedUserId && isHovered === index && (
                       <div className='profile-edit-delete-button'>
                         <Button buttonType="button" label="Edit" clickedButton={() => onClickedEdit(index)} />
                         <Button buttonType="button" label="Delete" clickedButton={() => onRemoveEducation(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
@@ -265,7 +275,13 @@ const Education = (props) => {
         ))
         }    
         <br /> 
-        <Button buttonType="button" label="Add Education" clickedButton={onAddMoreEducationSection} />
+        {loginUserId === props.clickedUserId && 
+          <>
+            <Button buttonType="button" label="Add Education" clickedButton={onAddMoreEducationSection} />
+            <br />
+            <br />
+          </>
+         }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

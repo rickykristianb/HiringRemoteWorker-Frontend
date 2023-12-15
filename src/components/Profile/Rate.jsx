@@ -1,15 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Divider } from '@mui/material'
-import Button from './Button';
+import Button from '../Button';
 import Select from "react-select";
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../Context/AuthContext';
-import AlertNotification from './AlertNotification';
+import AuthContext from '../../Context/AuthContext';
+import AlertNotification from '../AlertNotification';
 
 const Rate = (props) => {
 
-    const {authToken} = useContext(AuthContext)
-    const userToken = authToken.access
+    const [loginUserId, setLoginUserId] = useState()
+
+    useEffect(() => {
+        setLoginUserId(localStorage.getItem("userId"))
+    }, [])
+
+    let userAuthToken
+    let { authToken } = useContext(AuthContext)
+    if (authToken){
+        userAuthToken = authToken.access
+    }
 
     const period = ["Year", "Month", "Hour"]
     const [savedRate, setSavedRate] = useState([])
@@ -63,7 +72,7 @@ const Rate = (props) => {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
-                    "Authorization": `JWT ${userToken}`
+                    "Authorization": `JWT ${userAuthToken}`
                 },
                 body: JSON.stringify({
                     "amount": amount,
@@ -105,7 +114,7 @@ const Rate = (props) => {
                 method: "PATCH",
                 headers: {
                     "content-type": "application/json",
-                    "Authorization": `JWT ${userToken}`
+                    "Authorization": `JWT ${userAuthToken}`
                 },
                 body: JSON.stringify({
                     "amount": amount,
@@ -150,7 +159,8 @@ const Rate = (props) => {
     <div className='expected-rate-container'>
         <br />
         <h1>Rate</h1>
-        <Divider />
+        {/* <Divider /> */}
+        <br />
         <br />
         { savedRate !== null &&
             savedRate.map((item, index) => {
@@ -165,7 +175,11 @@ const Rate = (props) => {
                         <p><b>{item.period}</b></p>
                     </div>
                     <br />
-                    <Button clickedButton={onClickedEditRate} buttonType="button" label="Edit" />
+                    {loginUserId === props.clickedUserId && 
+                        <>
+                            <Button clickedButton={onClickedEditRate} buttonType="button" label="Edit" />
+                        </>
+                     }
                 </div> 
                 :
                 <div key={index} className='expected-rate-form' >
@@ -188,8 +202,7 @@ const Rate = (props) => {
             )
         })
         }
-        
-        
+               
         {isShow && 
             <div className='expected-rate-form' >
                 <div className='currency-expected-rate-form'>
@@ -206,10 +219,14 @@ const Rate = (props) => {
         }
         {alertField && <p className='error-field'>{alertField.message}</p>}
         <AlertNotification alertData={alertResponse}/>
-        {savedRate === null && 
-            <Button clickedButton={onClickAddRate} buttonType="button" label="Add Rate" />
+        {loginUserId === props.clickedUserId && savedRate === null && 
+            <>
+                <Button clickedButton={onClickAddRate} buttonType="button" label="Add Rate" />
+                <br />
+                <br />
+            </>
         }
-        
+        <br />
     </div>
   )
 }
