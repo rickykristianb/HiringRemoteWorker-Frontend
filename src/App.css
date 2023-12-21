@@ -2,7 +2,7 @@
 
     /* font: 'Montserrat', sans-serif;
     color-hex: #4e6e81;
-    colod-rgb: rgba(78, 110, 110);
+    color-rgb: rgba(78, 110, 110);
     soft background color: rgba(216, 230, 239, 1) */
 
 
@@ -165,6 +165,9 @@ li {
 .filter-box {
     /* margin-top: 6px; */
     /* background-color: red; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    justify-content: flex-start;
     padding: 3px 10px;
     width: 30vw;
     border: 0 1px 0 0;
@@ -211,11 +214,45 @@ li {
     display: flex;
 }
 
+.filter-show-button {
+    position: relative;
+    left: 60%;
+    /* top: 10%; */
+    border: 1.5px solid #4e6e81;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    background-color: #4e6e81;
+    color: white;
+}
+
+.filter-show-button:hover {
+    background-color: white;
+    opacity: 0.9;
+    color: #4e6e81;
+}
+
+.clear-advanced-filter {
+    position: relative;
+    left: 43%;
+    cursor: pointer;
+}
+
+.show-refresh-button {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
 /* USER LIST ----------------------------------------------------------------------------------------------------- */
 .container-user-list {
     display: flex;
     width: 95vw;
-    margin: 20px auto 20px auto;
+    padding-top: 10px;
+    padding-left: 55px;
+    /* height: 600px; */
+    /* margin: 20px auto 20px auto; */
     flex-direction: row;
     align-items: flex-start;
     /* align-content: center; */
@@ -231,6 +268,54 @@ li {
     margin: 2%;
     /* background-color: red; */
 }
+
+.user-list-loader-container {
+    z-index: 9999;
+    position: absolute;
+    display: flex;
+    display: flex;
+    justify-content: center;
+    /* align-self: center; */
+    /* align-items: center; */
+    width: 99vw;
+    height: 80vh;
+    margin: 20px auto 20px auto;
+    /* background:rgba(216, 230, 239, 0.6);  */
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    align-self: center;
+    /* position: absolute;
+    left: 50%; */
+    border-top: 4px solid #4e6e81;
+    border-right: 4px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  .loader::after {
+    content: '';  
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border-left: 4px solid #4e6e81;
+    border-bottom: 4px solid transparent;
+    animation: rotation 0.5s linear infinite reverse;
+  }
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 
 
 /* User Card */
 .user-card {
@@ -342,7 +427,7 @@ li {
 .user-skills-list ul li{
     padding: 10px 10px;
     background-color: #d8e6ef;
-    border-radius: 20px;
+    border-radius: 10px;
     margin-bottom: 10px;
 }
 
@@ -1701,4 +1786,61 @@ input[type="radio"]:checked + .button-label {
     cursor: pointer;
 }
 
+/* SEARCH */
 
+/* .search-box {
+    width: 500px;
+    height: 50px;
+    max-width: 100%;
+    border-radius: 30px;
+    box-shadow: 0 1px 5px 0px rgba(78, 110, 110, 0.3);
+} */
+
+.searchResultList-container {
+    z-index: 9999999;
+    margin-top: 10px;
+    margin-left: 10px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    /* gap: 20px; */
+    width: 460px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    /* border: 0.5px solid #4e6e81; */
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+}
+
+/* .skill-div {
+    height: 120px;
+    overflow-y: auto;
+} */
+
+.searchResultList-item,
+.searchResultList-item-many-more {
+    background-color: #ffff;
+    /* height: 40px; */
+    border: 1px solid rgba(216, 230, 239, 1);
+    cursor: pointer;
+    align-items: center;
+    padding: 10px;
+}
+
+.searchResultList-title {
+    background-color: rgba(216, 230, 239, 1);
+    /* height: 40px; */
+    border: 1px solid rgba(216, 230, 239, 1);
+    align-items: center;
+    padding: 10px;
+    font-style: italic;
+}
+
+.searchResultList-item:hover {
+    box-shadow: 1px 5px 45px -29px #4e6e81 inset;
+}
+
+.searchResultList-item-many-more {
+    cursor:auto;
+}

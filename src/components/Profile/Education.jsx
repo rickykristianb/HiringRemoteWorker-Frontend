@@ -66,7 +66,7 @@ const Education = (props) => {
   const onAddEducation = async (index) => {
     if (education[index].schoolName === "" && education[index].major === ""){
       setAlert({
-        "message": "School name and Major is required"
+        "message": "School name and Major are required"
       })
     } else if (education[index].schoolName === "") {
       setAlert({

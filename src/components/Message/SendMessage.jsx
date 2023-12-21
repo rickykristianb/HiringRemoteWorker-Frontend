@@ -29,7 +29,7 @@ const SendMessage = (props) => {
     })
 
     const onSendMessage = async(data) => {
-      const response = await fetch("/api/user/send_message/", {
+      const response = await fetch("/api/message/send_message/", {
         method: "POST",
         headers: {
           "content-type": "application/json",

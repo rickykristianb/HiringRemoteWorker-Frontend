@@ -39,7 +39,7 @@ const Footer = () => {
         
         if (formState.isValid){
             try{
-                const response = await fetch("http://127.0.0.1:8000/api/user/send_email/", {
+                const response = await fetch("/api/message/send_email/", {
                     method: "POST",
                     headers: {
                         "content-type": "application/json",

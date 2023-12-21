@@ -72,7 +72,7 @@ const Headers = (props) => {
             </li>
           </Link>
           :
-            <Link to={`/profile/?id=${localLoginUserId}`} >
+            <Link to={"/login/"} >
             <li>
               <AccountCircle sx={{ width: 30, height: 30, color: "#4e6e81" }} />    {/*If not login */}
             </li>

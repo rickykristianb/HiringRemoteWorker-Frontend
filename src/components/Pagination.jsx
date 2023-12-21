@@ -31,8 +31,9 @@ const InboxPagination = (props) => {
         } else if (props.type === "deleted"){
             onCheckDeletedMessages(item)
         } else if (props.type === "userList"){
-            console.log("MASK");
             props.loadUserList(item)
+        } else if (props.type === "userSearchList"){
+            props.loadUserSearchList({page: item})
         }
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
@@ -71,6 +72,8 @@ const InboxPagination = (props) => {
                         onCheckDeletedMessages(page.current - 1)
                     } else if (type.type === "userList"){
                         props.loadUserList(page.current - 1)
+                    } else if (type.type === "userSearchList"){
+                        props.loadUserSearchList({page: page.current - 1})
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
@@ -87,6 +90,8 @@ const InboxPagination = (props) => {
                         onCheckDeletedMessages(page.current + 1)
                     } else if (type.type === "userList"){
                         props.loadUserList(page.current + 1)
+                    } else if (type.type === "userSearchList"){
+                        props.loadUserSearchList({page: page.current + 1})
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)

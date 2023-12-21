@@ -42,7 +42,7 @@ export const EmailProvider = ({ children }) => {
         if (!page){
             page = 1
         }
-        const response = await fetch(`/api/user/get_inbox_pagination/?page=${page}`, {
+        const response = await fetch(`/api/message/get_inbox_pagination/?page=${page}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -61,15 +61,21 @@ export const EmailProvider = ({ children }) => {
     const unreadMessageCount = async() => {
         if (userToken.current){
             console.log("MASUK SINI KAH????");
-            const response = await fetch("/api/user/count_unread_messages/", {
+            const response = await fetch("/api/message/count_unread_messages/", {
                 method: "GET",
                 headers: {
                     "content-type": "application/json",
                     "Authorization": `JWT ${userToken.current}`
                 }
             })
+
             const data = await response.json()
-            setMessageUnreadCount(data)
+            if (response.ok){
+                setMessageUnreadCount(data)
+            } else {
+                setMessageUnreadCount(0)
+            }
+            
         }
     }
 
@@ -115,7 +121,7 @@ export const EmailProvider = ({ children }) => {
                 messageId.current = deletedMessages[index]["id"];
                 break;
         }
-        const response = await fetch(`/api/user/read_message/${messageId.current}/`,{
+        const response = await fetch(`/api/message/read_message/${messageId.current}/`,{
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
@@ -149,7 +155,7 @@ export const EmailProvider = ({ children }) => {
         console.log(index);
         console.log(messages[index]);
         const id = messages[index].id
-        const response = await fetch(`/api/user/delete_message/${id}/`,{
+        const response = await fetch(`/api/message/delete_message/${id}/`,{
             method: "DELETE",
             headers: {
                 "content-type": "application/json",
@@ -169,13 +175,14 @@ export const EmailProvider = ({ children }) => {
 
     useEffect(() => {
         setAlertResponse()
+        unreadMessageCount()
     }, [onDeleteMessage])
 
     
     // DELETE MESSAGE FOREVER -------------------------------------------------------------------------
     const onDeleteMessageForever = async(index) => {
         const id = deletedMessages[index].id
-        const response = await fetch(`/api/user/delete_message_forever/${id}/`, {
+        const response = await fetch(`/api/message/delete_message_forever/${id}/`, {
             method: "POST",
             headers: {
                 "content-type": "application/json",
@@ -198,7 +205,7 @@ export const EmailProvider = ({ children }) => {
         if (!page){
             page = 1
         }
-        const response = await fetch(`/api/user/get_sent_message_pagination/?page=${page}`,{
+        const response = await fetch(`/api/message/get_sent_message_pagination/?page=${page}`,{
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -217,7 +224,7 @@ export const EmailProvider = ({ children }) => {
     // DELETE SENT MESSAGES ----------------------------------------------------------------------------------
     const onDeleteSentMessages = async(index) => {
         const id = sentMessages[index].id
-        const response = await fetch(`/api/user/delete_sent_message/${id}/`, {
+        const response = await fetch(`/api/message/delete_sent_message/${id}/`, {
             method: "PATCH",
             headers: {
                 "content-type": "application/json",
@@ -240,7 +247,7 @@ export const EmailProvider = ({ children }) => {
         if (!page){
             page = 1
         }
-        const response = await fetch(`/api/user/get_deleted_message_pagination/?page=${page}`,{
+        const response = await fetch(`/api/message/get_deleted_message_pagination/?page=${page}`,{
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -258,7 +265,7 @@ export const EmailProvider = ({ children }) => {
     // REPLY MESSAGE -----------------------------------------------------------------------------------------
     const onSendReplyMessage = async(data) => {
         console.log("DATA",data);
-        const response = await fetch("/api/user/reply_email/", {
+        const response = await fetch("/api/message/reply_email/", {
           method: "POST",
           headers: {
             "content-type": "application/json",
