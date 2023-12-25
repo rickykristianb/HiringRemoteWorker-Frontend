@@ -14,6 +14,8 @@ const UsersList = (props) => {
   const [allUserData, setAllUserData] = useState([])
   const totalUser = useRef()
   const [isHover, setIsHover] = useState(false)
+  const [noUserStatus, setNoUserStatus] = useState()
+  const [resetPage, setResetPage] = useState(false)
 
   const onLoadAllUser = async(page) => {
     if (!page){
@@ -62,13 +64,27 @@ const UsersList = (props) => {
     }
   }
 
+  useEffect(() => {
+    if (props.searchData?.length === 0){
+      console.log("MASK");
+      setNoUserStatus(<p>No user at the moment.</p>)
+    } else {
+      setNoUserStatus()
+    }
+  }, [props.searchData])
+
+  useEffect(() => {
+    setResetPage(true)
+    setTimeout(() => {
+      setResetPage(false)
+    }, 1)
+  }, [props.paginationReset])
+
   return (
     <div className='container-user-list' style={{ width : props.filterClicked && "75vw" }}>
       <div className='user-list'>
         
-        {(props.searchData || allUserData ) 
-        ?
-        (props.searchData ? props.searchData.map((item, index) => {
+        {props.searchData ? props.searchData.map((item, index) => {
           return (
             <div className='user-card' key={index} >
               <div className='user-image-name'>
@@ -196,10 +212,9 @@ const UsersList = (props) => {
               </div>
             </div>
             )
-          }))
-          :
-          <p>Sorry, no user at the moment.</p>
+          })
           }
+          <p>{noUserStatus}</p>
       </div>
 
       <div className='container-pagination'>
@@ -208,6 +223,7 @@ const UsersList = (props) => {
             totalData={props.searchData ? props.totalUser : totalUser.current} 
             loadUserList ={onLoadAllUser}
             loadUserSearchList={props.loadUserSearch}
+            paginationReset={resetPage}
           />
       </div>
     </div>

@@ -17,12 +17,14 @@ const InboxPagination = (props) => {
     const [isCLicked, setIsClicked] = useState(false)
     const [isDisabled, setIsDisabled] = useState()
     const [totalPages, setTotalPages] = useState(0)
+    const [pageResetNumberOne, setPageResetNumberOne] = useState(false)
     const page = useRef(1)  // default page 1
     const maxNumber = 5;
 
 
     const onClickPageNumber = (item) => {
         // When user click the number on the pagination, load the message (call api) based on the type
+        setPageResetNumberOne(false) // DO NOT RESET PAGINATION NUMBER TO 1
         if (props.type === "inbox"){
             onLoadMessages(item)
         } else if (props.type === "sent"){
@@ -41,22 +43,34 @@ const InboxPagination = (props) => {
     }
 
     const getTotalPages = () => {
-        console.log("CEK TOTAL DATA", props.totalData);
-        let totalMessagePerPage = 0;
+        // console.log("CEK TOTAL DATA", props.totalData);
+        let totalDataPerPage = 0;
         if (props.type === "userList") {
-            totalMessagePerPage = 4     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
+            totalDataPerPage = 4     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
         } else {
-            totalMessagePerPage = 5     // need to match with the backend pagination setting, check your MessagesResultsSetPagination page size.
+            totalDataPerPage = 5     // need to match with the backend pagination setting, check your MessagesResultsSetPagination page size.
         }
         
         let totalPages = 0
-        totalPages = Math.ceil(props.totalData / totalMessagePerPage)
+        totalPages = Math.ceil(props.totalData / totalDataPerPage)
         setTotalPages(totalPages)
     }
 
     useEffect(() => {
         getTotalPages()
     }, [props.type, props.totalData, messages, sentMessages, deletedMessages])
+    
+    useEffect(() => {
+        page.current = 1
+        console.log("PAGE CURRENT", page.current);
+    }, [props.searchData])
+
+
+    useEffect(() => {
+        page.current = 1
+        onCheckPaginationConditional({type: props.type})
+        setPageResetNumberOne(true)
+    }, [props.paginationReset])
 
 
     const loadPreviousNextData = (buttonType, type) => {
@@ -64,6 +78,7 @@ const InboxPagination = (props) => {
         switch (buttonType){
             case "prev":
                 if (page.current > 1){
+                    setPageResetNumberOne(false) // DO NOT RESET PAGINATION NUMBER TO 1
                     if (type.type === "inbox"){
                         onLoadMessages(page.current - 1)
                     } else if (type.type === "sent"){
@@ -82,6 +97,7 @@ const InboxPagination = (props) => {
 
             case "next":
                 if (page.current < totalPages){
+                    setPageResetNumberOne(false) // DO NOT RESET PAGINATION NUMBER TO 1
                     if (type.type === "inbox"){
                         onLoadMessages(page.current + 1)
                     } else if (type.type === "sent"){
@@ -110,6 +126,12 @@ const InboxPagination = (props) => {
                     <ul className='pagination-number'>
                         {paginateNumber.map((item, index) => (
                             <li key={index} className={
+                                pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
+                                    item === 1 ?
+                                         "page-number-clicked"
+                                         :
+                                         "number-li"
+                                    :
                                 isCLicked === false ? 
                                     (item === 1 ? 
                                         "page-number-clicked" 

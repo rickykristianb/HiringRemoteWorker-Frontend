@@ -8,7 +8,6 @@ const RateGenerator = (props) => {
 
     const generateStars = (data) => {
         const stars = []
-        console.log("USERRAaaaaTE", data);
 
         for (let i=1; i< 6; i++){
             if ( i === data ){

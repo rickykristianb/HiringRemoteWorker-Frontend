@@ -17,7 +17,7 @@ export const EmailProvider = ({ children }) => {
     const [messages, setMessages] = useState([])
     const [sentMessages, setSentMessages] = useState([])
     const [deletedMessages, setDeletedMessages] = useState([])
-    const [isVisibile, setIsVisible] = useState(false)
+    const [isVisible, setIsVisible] = useState(false)
     const [messageData, setMessageData] = useState([])
     const [messageSentData, setMessageSentData] = useState([])
     const [isRead, setIsRead] = useState([])
@@ -60,7 +60,7 @@ export const EmailProvider = ({ children }) => {
     
     const unreadMessageCount = async() => {
         if (userToken.current){
-            console.log("MASUK SINI KAH????");
+            // console.log("MASUK SINI KAH????");
             const response = await fetch("/api/message/count_unread_messages/", {
                 method: "GET",
                 headers: {
@@ -144,7 +144,7 @@ export const EmailProvider = ({ children }) => {
                 setMessageUnreadCount((prevValue) => (prevValue - 1))             
             }
         }
-        setIsVisible(!isVisibile)
+        setIsVisible(!isVisible)
         setMessageData(messageDetailData)
         setMessageSentData(messageDetailData)
     }
@@ -283,7 +283,7 @@ export const EmailProvider = ({ children }) => {
       }
 
     const onMessageDetailCloseClicked = () => {
-        setIsVisible(!isVisibile)
+        setIsVisible(!isVisible)
     }
 
     // const getTotalInbox = async() => {
@@ -307,7 +307,7 @@ export const EmailProvider = ({ children }) => {
         messages:messages,
         sentMessages:sentMessages,
         deletedMessages:deletedMessages,
-        isVisibile:isVisibile,
+        isVisible:isVisible,
         messageData:messageData,
         onSendReplyMessage:onSendReplyMessage,
         isRead:isRead,

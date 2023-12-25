@@ -6,9 +6,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AlertNotification from '../AlertNotification';
 import { ReactComponent as Refresh } from "../../assets/images/Refresh.svg"
-import InboxPagination from '../Pagination';
+import Pagination from '../Pagination';
 
-const DeletedMesages = () => {
+const DeletedMessages = () => {
 
   const [hover, setHover] = useState()
     const [refreshIsClicked, setRefreshIsClicked] = useState(false)
@@ -21,7 +21,7 @@ const DeletedMesages = () => {
         messages,
         totalDeletedMessage,
         deletedMessages,
-        isVisibile,
+        isVisible,
         messageData,
         isRead,
         isReadDeletedMessage,
@@ -122,11 +122,11 @@ const DeletedMesages = () => {
         </div>
         }
         <br />
-        <InboxPagination type="deleted" totalData={totalDeletedMessage} />
-        {isVisibile && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
+        <Pagination type="deleted" totalData={totalDeletedMessage} />
+        {isVisible && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
         <AlertNotification alertData={alertDeleteForeverResponse}/>
     </div>
   )
 }
 
-export default DeletedMesages
+export default DeletedMessages

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState, useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
@@ -16,7 +16,7 @@ const FilterBar = (props) => {
     const [locations, setLocations] = useState([])
     const [locationsList, setLocationsList] = useState([])
     const [rates, setRates] = useState([])
-    const [userFilteredData, setUserFilteredData] = useState()
+    // const [userFilteredData, setUserFilteredData] = useState()
     const [totalUserFiltered, setTotalUserFiltered] = useState(0)
     const [loadingFilter, setLoadingFilter] = useState(false)
     const [skillSelected, setSkillSelected] = useState([])
@@ -24,6 +24,7 @@ const FilterBar = (props) => {
     const [rateSelected, setRateSelected] = useState([])
     const [locationSelected, setLocationSelected] = useState([])
     const [mouseEnterShowButton, setMouseEnterShowButton] = useState(false)
+    const resetPage = useRef(1)
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -107,7 +108,7 @@ const FilterBar = (props) => {
         const option = UserRate.map((rate, index) => {
             return rate.icon
         })
-        console.log(option)
+        // console.log(option)
         setRates(option)
     }
 
@@ -115,38 +116,29 @@ const FilterBar = (props) => {
         UserRateMap()
     }, [])
 
-    const advanceFilter = async (page) => {
-        console.log("MASUK TIDAK");
-        if (!page){
-            page = 1
-        }
-        const response = await fetch(`/api/user/advance_search_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&rate=${rateSelected}&location=${locationSelected}&page=${page}`, {
-            method: "GET",
-            headers: {
-                "content-type": "application/json"
-            },
-        })
-        const data = await response.json()
-        if (response.ok){
-            setUserFilteredData(data)
-        }
-    }
-
-    // TO SHOW THE TOTAL USER CAPTURED BASED ON FILTER
-    useEffect(() => {
-        if (userFilteredData?.total_user >= 0 ){
-            setLoadingFilter(true)
-            setTimeout(() => {
-                setLoadingFilter(false)
-                setTotalUserFiltered(userFilteredData["total_user"]);
-            }, 1500) 
-        }
-    }, [userFilteredData])
 
     // EVERY TIME VALUES IN THESE FIELDS CHANGE, CALL THE SERVER
     useEffect(() => {
-        advanceFilter()
-    }, [skillSelected, experienceSelected, rateSelected, rateSelected, locationSelected])
+        props.filteredData({
+            skill: skillSelected, 
+            experience: experienceSelected, 
+            rate: rateSelected, 
+            location: locationSelected
+        })
+    }, [skillSelected, experienceSelected, rateSelected, locationSelected])
+
+    
+    // TO SHOW THE TOTAL USER CAPTURED BASED ON FILTER
+    useEffect(() => {
+        if (props.totalUserCaptured?.total_user >= 0 ){
+            setLoadingFilter(true)
+            setTimeout(() => {
+                setLoadingFilter(false)
+                setTotalUserFiltered(props.totalUserCaptured["total_user"]);
+            }, 1000) 
+        }
+    }, [props.totalUserCaptured])
+
 
     // take all the selected skills
     const setSkill = (skills) => {
@@ -175,7 +167,6 @@ const FilterBar = (props) => {
             ...prevValue,
             icon["value"]
         ]})
-        console.log("RATE",rateSelected);
     }
 
     const handleRateChange = (event, selectedIcon) => {   
@@ -209,7 +200,8 @@ const FilterBar = (props) => {
     const onShowButtonClicked = () => {
         // SHow LIST OF USER FILTERED AFTER SHOW BUTTON CLICKED
         // SEND THIS DATA TO SEARCH PAGE
-        props.filteredData(userFilteredData)
+        props.buttonShowClicked()
+        props.resetPage(resetPage.current) // RESET PAGINATION NUMBER TO 1
     }
               
 

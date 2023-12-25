@@ -17,11 +17,20 @@ const Search = () => {
     const [searchBarEmpty, setSearchBarEmpty] = useState(false)
     const [searchValue, setSearchValue] = useState()
     const [searchResultData, setSearchResultData] = useState()
-    const [searchFilterData, setFilterResultData] = useState()
+    const [advancedFilterResultData, setAdvancedFilterResultData] = useState()
     const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
+    const [isShowButtonClicked, setIsShowButtonClicked] = useState(false)
     const loading = useRef(false)
     const totalUser = useRef()
     const searchInputRef = useRef(null);
+    const [skillSelected, setSkillSelected] = useState()
+    const [experienceSelected, setExperienceSelected] = useState()
+    const [rateSelected, setRateSelected] = useState()
+    const [locationSelected, setLocationSelected] = useState()
+    const showData = useRef()
+    const showDataPage = useRef()
+    const [pageClicked, setPageClicked] = useState(false)
+    const [isPaginationReset, setIsPaginationReset] = useState(false)
 
 
     const onFilterClick = () => {
@@ -63,6 +72,7 @@ const Search = () => {
         };
     
         document.addEventListener('click', handleClickOutside);
+        console.log("SHOW DATA", showData);
       }, []);
 
     const onLoadSearchUser = async({page}) => {
@@ -82,6 +92,7 @@ const Search = () => {
         totalUser.current = data["total_user"]
     }
 
+    // GET RESULT FROM THE SEARCH BAR FILTER
     const onClickedSearchItem = async({item: item, page: page}) => {
         setSearchValue(item)
         loading.current = true
@@ -95,7 +106,8 @@ const Search = () => {
         const data = await response.json()
         if (response.ok){
             setSearchResultData(data["data"])
-            setFilterResultData()   // If basic search applied, filteredUser is cleared so the basic search only will be applied
+            showData.current = null   // If basic search applied, filteredUser is cleared so the basic search only will be applied
+            resetPage()  // RESET PAGINATION NUMBER TO 1
         }
         totalUser.current = data["total_user"]
         loading.current = false
@@ -109,21 +121,97 @@ const Search = () => {
         }
     }
 
+    // GET RESULT FROM THE ADVANCED USER FILTER
+    const advanceFilter = async (page) => {
+        // console.log("MASUK TIDAK", page.page);
+        if (!page){
+            page = 1
+        } else{
+            setPageClicked(true)
+            page = page.page
+        }
+        const response = await fetch(`/api/user/advance_search_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&rate=${rateSelected}&location=${locationSelected}&page=${page}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json"
+            },
+        })
+        const data = await response.json()
+        if (response.ok){
+            setAdvancedFilterResultData(data)
+            setSearchResultData()
+            setIsShowButtonClicked(true)
+            setTimeout(() => {
+                setIsShowButtonClicked(false)
+            }, 1) 
+        }
+    }
+
+    const advanceFilterPageClicked = async (page) => {
+        console.log("MASUK TIDAK", page.page);
+        if (!page){
+            page = 1
+        } else{
+            setPageClicked(true)
+            page = page.page
+        }
+        const response = await fetch(`/api/user/advance_search_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&rate=${rateSelected}&location=${locationSelected}&page=${page}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json"
+            },
+        })
+        const data = await response.json()
+        console.log(data);
+        if (response.ok){
+            showData.current = data
+            setSearchResultData()
+            setIsShowButtonClicked(true)
+            setTimeout(() => {
+                setIsShowButtonClicked(false)
+            }, 1) 
+        }
+    }
+
     const filteredData = (data) => {
-        // CAPTURE DATA FROM THE FILTER
-        setFilterResultData(data["data"])
-        totalUser.current = data["total_user"]
+        setSkillSelected(data["skill"])
+        setExperienceSelected(data["experience"])
+        setRateSelected(data["rate"])
+        setLocationSelected(data["location"])
+        // console.log("INI CAPTURED DATA", skillSelected);
     }
 
-    const paginationFilteredData = () => {
+    useEffect(() => {   
+        advanceFilter();
+    }, [skillSelected, experienceSelected, rateSelected, locationSelected])
 
+    const onButtonShowFilterClicked = () => {
+        setIsShowButtonClicked(true)
+        showData.current = advancedFilterResultData
+
+        setTimeout(() => {
+            setIsShowButtonClicked(false)
+        }, 1)       
     }
-        
+       
+    const resetPage = () => {
+        // RESET PAGINATION NUMBER TO 1
+        setIsPaginationReset(true)
+        setTimeout(() => {
+            setIsPaginationReset(false)
+        }, 1)
+    }
 
   return (
         <div className='container-search'>
              { filterClicked && (
-                <FilterBar barClicked={ onFilterClick } filteredData={filteredData} paginationFilteredData={paginationFilteredData}/>
+                <FilterBar barClicked={ onFilterClick } 
+                    getAdvancedFilterData={advanceFilter} 
+                    filteredData={filteredData}
+                    buttonShowClicked={() => onButtonShowFilterClicked()}
+                    totalUserCaptured={advancedFilterResultData}
+                    resetPage={resetPage} // RESET PAGINATION NUMBER TO 1
+                />
             )}
             <div className='search-menu'>
                 <div className='search-input'>
@@ -188,22 +276,25 @@ const Search = () => {
                         </Tooltip>
                     </ul>
                 </div>
-                {searchFilterData 
-                    ? 
-                    <UsersList 
-                        filterClicked={filterClicked} 
-                        searchData={searchFilterData} 
-                        totalUser={totalUser.current}
-                        loadUserSearch={paginationFilteredData}
-                    /> 
+
+                    {showData.current
+                    ?
+                        <UsersList
+                            filterClicked={filterClicked}
+                            searchData={showData.current["data"]}
+                            totalUser={showData.current["total_user"]}
+                            loadUserSearch={advanceFilterPageClicked}
+                            paginationReset={isPaginationReset}
+                        />
                     :
-                    <UsersList 
-                        filterClicked={filterClicked} 
-                        searchData={searchResultData} 
-                        totalUser={totalUser.current}
-                        loadUserSearch={onLoadSearchUser}
-                    />
-                }
+                        <UsersList 
+                            filterClicked={filterClicked} 
+                            searchData={searchResultData} 
+                            totalUser={totalUser.current}
+                            loadUserSearch={onLoadSearchUser}
+                            paginationReset={isPaginationReset}
+                        />
+                    }
                 {loading.current === true && <Loading />}
             </div>
         </div>

@@ -19,7 +19,7 @@ const Inbox = () => {
     let {
         onLoadMessages,
         messages,
-        isVisibile,
+        isVisible,
         messageData,
         isRead,
         setIsRead,
@@ -131,7 +131,7 @@ const Inbox = () => {
         }
         <br />
         <Pagination type="inbox" totalData={totalInboxMessage} />
-        {isVisibile && (<MessageDetail data={{data: messageData, type: "inbox"}} clickedClosed={onMessageDetailCloseClicked} />) }
+        {isVisible && (<MessageDetail data={{data: messageData, type: "inbox"}} clickedClosed={onMessageDetailCloseClicked} />) }
         <AlertNotification alertData={alertDeleteResponse}/>
     </div>
   )

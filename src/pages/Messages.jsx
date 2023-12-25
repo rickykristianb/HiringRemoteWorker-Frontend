@@ -3,7 +3,7 @@ import MessageMenu from '../components/Message/MessageMenu'
 import SendMessage from '../components/Message/SendMessage'
 import Inbox from '../components/Message/Inbox'
 import SentMessages from '../components/Message/SentMessages'
-import DeletedMesages from '../components/Message/DeletedMesages'
+import DeletedMessages from '../components/Message/DeletedMessages'
 import { useLocation, useParams } from 'react-router-dom'
 
 const Messages = () => {
@@ -42,7 +42,7 @@ const Messages = () => {
             case "sent":
               return <SentMessages />;
             case "deleted":
-              return <DeletedMesages />;
+              return <DeletedMessages />;
             default:
               return email ? <SendMessage recipient={email} /> :<Inbox />
           }

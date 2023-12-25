@@ -43,7 +43,7 @@ const Headers = (props) => {
         {user && 
         <>
         <li>
-          <Link to={`/profile/?id=${loginUserId}`} >
+          <Link to={`/profile/?id=${localLoginUserId}`} >
             <li><a className="user-name">{ localDataUserName }</a></li>   {/*//  <--- name Auth context */}
           </Link>
           </li>

@@ -19,7 +19,7 @@ const SentMessages = () => {
       onLoadMessages,
       messages,
       sentMessages,
-      isVisibile,
+      isVisible,
       messageData,
       totalSentMessage,
       onLoadBody,
@@ -119,7 +119,7 @@ const onMouseLeave = () => {
         }
         <br />
         <Pagination type="sent" totalData={totalSentMessage} />
-        {isVisibile && (<MessageDetail data={{data: messageData, type: "sent"}} clickedClosed={onMessageDetailCloseClicked} />) }
+        {isVisible && (<MessageDetail data={{data: messageData, type: "sent"}} clickedClosed={onMessageDetailCloseClicked} />) }
         <AlertNotification alertData={alertDeleteSentMessage}/>
     </div>
   )

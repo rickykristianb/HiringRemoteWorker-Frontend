@@ -28,7 +28,7 @@ const ResetPassword = () => {
 
     const resetPassword = async (e) => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/auth/users/reset_password/", {
+        const response = await fetch("/auth/users/reset_password/", {
           method: "POST",
           headers: {
             "content-type": "application/json"
