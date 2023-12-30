@@ -58,9 +58,43 @@ li {
     /* font-weight: bold; */
 }
 
+.profile-menu-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.company-profile-menu {
+    width: 120px;
+    position: absolute;
+    top: 120%; /* Position the menu just below the avatar */
+    left: 0;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 100; /* Ensure the menu appears above other elements */
+}
+
+.company-profile-menu li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.company-profile-menu li:hover {
+    background-color: rgba(216, 230, 239, 1);
+}
+
+#post-job-menu {
+    display: flex;
+    gap: 5px;
+    background-color: rgba(216, 230, 239, 1);
+}
 
 .button,
-.input-button {
+.input-button,
+.company-bio-button {
     border: 1.5px solid #4e6e81;
     border-radius: 5px;
     padding: 10px 20px;
@@ -71,7 +105,8 @@ li {
 }
 
 .button:hover,
-.input-button:hover {
+.input-button:hover,
+.company-bio-button:hover {
     background-color: white;
     opacity: 0.9;
     color: #4e6e81;
@@ -1843,4 +1878,202 @@ input[type="radio"]:checked + .button-label {
 
 .searchResultList-item-many-more {
     cursor:auto;
+}
+
+/* NOT FOUND */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70lvh;
+}
+
+.not-found-container p {
+    font-size: 10em;
+    font-weight: bolder;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+/* COMPANY PROFILE */
+
+.company-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+.company-profile-header {
+    display: flex;
+    align-items: center;
+    background-color: rgba(216, 230, 239, 1);
+    width: 1000px;
+    height: 300px;
+    padding: 20px;
+    border: 0px solid #4e6e81;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+}
+
+.rate-name-company-profile {
+    margin-left: 10px;
+    align-self: flex-start;
+    width: 600px;
+    /* background-color: blue; */
+}
+
+.basic-company-info {
+    display: flex;
+    flex-direction: row;
+}
+
+.company-phone-email {
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.company-address {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+}
+
+.company-phone-email>div,
+.company-address>div {
+    display: flex;
+    gap: 10px;
+    /* background-color: red; */
+}
+
+.company-phone-email>div>span,
+.company-address>div>span {
+    /* background-color: red; */
+    align-self: center;
+}
+
+.company-bio-container {
+    margin-top: 50px;
+    width: 1000px;
+    padding: 20px;
+}
+
+.company-bio-button {
+    position: absolute;
+    left: 270px;
+    top: 110px;
+}
+
+.edit-company-profile-container {
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background:rgba(216, 230, 239, 0.6);
+    position: fixed; /* Use fixed position to cover the entire viewport */
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.company-profile-form-container {
+    display: flex;
+    flex-direction: column;
+    width: 60lvw;
+    height: 80lvh;
+    background-color: #ffff;
+    border: 0px solid #4e6e81;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+}
+
+#edit-company-profile-title {
+    display: flex;
+    flex-direction: column;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 40px;
+    padding-bottom: 10px;
+}
+
+#edit-company-profile-title>p{
+    /* background-color: red; */
+    align-self: center;
+    font-size: 17px;
+}
+
+#company-profile-form-container-in {
+    height: 100%;
+    overflow-y: auto;
+}
+
+#company-profile-form-container-in::-webkit-scrollbar{
+    width: 0 !important;
+}
+
+.company-profile-form {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+    gap: 10px;
+}
+
+.company-bio-input {
+    height: 35px;
+    border: 1px solid #4e6e81;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+}
+
+.company-bio-input-text-area,
+.company-bio-input-select {
+    border: 1px solid #4e6e81;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+}
+
+.company-bio-input-select {
+    height: 100%;
+}
+
+.company-profile-cancel-button {
+    border: 1.5px solid red;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    background-color: red;
+    color: white;
+}
+
+#company-profile-action-button {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.backdrop-background {
+    z-index: 99999999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:rgba(216, 230, 239, 0.6);
+    position: fixed; 
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.company-profile-circular-progress {
+    color: '#fff';
+    z-index: 9999;
+    background-color:;
 }

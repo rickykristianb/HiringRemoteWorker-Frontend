@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef, Fragment } from 'react'
-import Button from '../Button'
+import Button from '../../Button'
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
 import Accordion from '@mui/material/Accordion';
@@ -8,8 +8,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useForm } from 'react-hook-form';
-import AuthContext from '../../Context/AuthContext';
-import AlertNotification from '../AlertNotification';
+import AuthContext from '../../../Context/AuthContext';
+import AlertNotification from '../../AlertNotification';
 
 const Experience = (props) => {
   const [experience, setExperience] = useState([])

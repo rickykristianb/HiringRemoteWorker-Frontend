@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
-import Button from '../Button'
-import AuthContext from '../../Context/AuthContext'
-import AlertNotification from '../AlertNotification';
+import Button from '../../Button'
+import AuthContext from '../../../Context/AuthContext'
+import AlertNotification from '../../AlertNotification';
 import { Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -92,6 +92,8 @@ const ProfileIntroduction = (props) => {
             } else if (response.status === 401){
                 localStorage.removeItem("authToken")
                 navigate("/login")
+            } else if (response.status === 400){
+                setAlertResponse({"error": data.error})
             }
         } catch (errors){
             console.error(errors);

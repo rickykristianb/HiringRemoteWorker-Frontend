@@ -33,6 +33,7 @@ export const AuthProvider = ({children}) => {
     const [newRegisteredEmail, setNewRegisteredEmail] = useState(null)
     
     const onLoadUserHeader = async(userToken) => {
+      // TO CAPTURE PROFILE, IMAGE, AND USERNAME
       const response = await fetch("/api/user/profile_image_name/", {
         method: "GET",
         headers: {
@@ -91,12 +92,32 @@ export const AuthProvider = ({children}) => {
             setUser(jwtDecode(data.access))
             onLoadUserHeader(data.access)
             localStorage.setItem("authToken", JSON.stringify(data))
-            navigate("/")
+            redirectUserPage(data.access)
+            // navigate("/redirect/")
             setAlert(null)
-            console.log("DATA");
         } else {
             setAlert({"error": "Username or password not found"})
         }
+    }
+
+    // Redirect user to specific page after login based on the user type
+    const redirectUserPage = async (access) => {
+      const response = await fetch("/api/user/get_login_user_type/",{
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": `JWT ${access}`
+        }
+      })
+      const data = await response.json()
+      if (response.ok){
+        if (data === "personal"){
+          navigate("/companies/")
+        } else if (data === "company"){
+          navigate("/users/")
+        }
+        localStorage.setItem("userType", data)
+      }
     }
 
     const userRegistration = async (e) => {
@@ -181,7 +202,7 @@ export const AuthProvider = ({children}) => {
         setAuthToken(null)
         setUser(null)
         localStorage.clear()
-        navigate("/")
+        navigate("/users/")
     }
 
     let updateToken = async () => {

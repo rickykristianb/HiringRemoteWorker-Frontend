@@ -1,9 +1,9 @@
 import React, {useState, useContext, useEffect} from 'react'
 import Divider from '@mui/material/Divider';
-import AuthContext from '../../Context/AuthContext';
+import AuthContext from '../../../Context/AuthContext';
 import CloseIcon from '@mui/icons-material/Close';
-import Button from '../Button';
-import AlertNotification from '../AlertNotification';
+import Button from '../../Button';
+import AlertNotification from '../../AlertNotification';
 import Select from "react-select";
 
 const Skills = (props) => {

@@ -1,12 +1,12 @@
 import { type } from '@testing-library/user-event/dist/type';
 import React, { useEffect, useState } from 'react'
 import Select from "react-select";
-import Button from '../Button';
+import Button from '../../Button';
 import CloseIcon from '@mui/icons-material/Close';
 import Divider from '@mui/material/Divider';
-import AuthContext from '../../Context/AuthContext';
+import AuthContext from '../../../Context/AuthContext';
 import { useContext } from 'react';
-import AlertNotification from '../AlertNotification';
+import AlertNotification from '../../AlertNotification';
 
 
 const EmploymentType = (props) => {

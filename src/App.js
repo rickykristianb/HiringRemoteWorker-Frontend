@@ -12,6 +12,9 @@ import UserActivationConfirmation from "./pages/UserActivationConfirmation";
 import UserProfile from "./pages/UserProfile";
 import Messages from "./pages/Messages";
 import ReplyMessage from "./pages/ReplyMessage";
+import NotFound from "./pages/NotFound";
+import PersonalView from "./pages/PersonalView";
+import CompanyProfile from "./pages/CompanyProfile";
 import {
   BrowserRouter as Router,
   Routes,
@@ -36,12 +39,15 @@ function App() {
                     <Route path="/reply/message/" element={<ReplyMessage />} />
                   </Route>
                   <Route path="/profile/" element={<UserProfile />} />
-                  <Route path="/" element={<CompanyView />} exact />
+                  <Route path="/profile/company/" element={<CompanyProfile />} />
+                  <Route path="/users/" element={<CompanyView />} exact />
+                  <Route path="/companies/" element={<PersonalView />} exact />
                   <Route path="/login/" element={<LoginPage />} />
                   <Route path="/reset-password/" element={<ResetPassword />}/>
                   <Route path="/password/reset/confirm/:uid/:token" element={<NewPassword />}/>
                   <Route path="/register/" element={<SignUp />} />
                   <Route path="/activate/:uid/:token" element={<UserActivationConfirmation />} />
+                  <Route path='*' exact element={<NotFound />} />
               </Routes>
             <Footer />
           </EmailProvider>

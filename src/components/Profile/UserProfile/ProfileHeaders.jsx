@@ -1,9 +1,9 @@
 import React, {useState, useRef, useContext, useEffect} from 'react'
-import Button from '../Button'
-import AuthContext from '../../Context/AuthContext';
-import ProfileContext from '../../Context/ProfileContext';
+import Button from '../../Button'
+import AuthContext from '../../../Context/AuthContext';
+import ProfileContext from '../../../Context/ProfileContext';
 import ProfileIntroduction from './ProfileIntroduction';
-import RateGenerator from '../RateGenerator';
+import RateGenerator from '../../RateGenerator';
 import Location from './Location';
 import { useNavigate } from 'react-router-dom';
 
@@ -55,6 +55,7 @@ const ProfileHeaders = (props) => {
         const data = await response.json()
         if (response.status === 200){
             localStorage.setItem("profile_picture", data["profile_image"])
+            localStorage.setItem("login_user_profile_picture", data["profile_image"])
             setProfilePicture(data["profile_image"])
         }
       };

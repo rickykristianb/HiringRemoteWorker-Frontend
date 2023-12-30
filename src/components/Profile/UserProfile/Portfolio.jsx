@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Select from "react-select";
 import Divider from '@mui/material/Divider';
-import Button from '../Button';
+import Button from '../../Button';
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../../Context/AuthContext';
-import AlertNotification from '../AlertNotification';
+import AuthContext from '../../../Context/AuthContext';
+import AlertNotification from '../../AlertNotification';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 

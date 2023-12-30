@@ -1,17 +1,17 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react'
 import Button from '../components/Button'
 import Divider from '@mui/material/Divider';
-import ProfileHeaders from '../components/Profile/ProfileHeaders';
-import Education from '../components/Profile/Education';
-import Language from '../components/Profile/Language';
-import ProfileIntroduction from '../components/Profile/ProfileIntroduction';
-import Experience from '../components/Profile/Experience';
-import Skills from '../components/Profile/Skills';
+import ProfileHeaders from '../components/Profile/UserProfile/ProfileHeaders';
+import Education from '../components/Profile/UserProfile/Education';
+import Language from '../components/Profile/UserProfile/Language';
+import ProfileIntroduction from '../components/Profile/UserProfile/ProfileIntroduction';
+import Experience from '../components/Profile/UserProfile/Experience';
+import Skills from '../components/Profile/UserProfile/Skills';
 import AuthContext from '../Context/AuthContext';
-import EmploymentType from '../components/Profile/EmploymentType';
-import Portfolio from '../components/Profile/Portfolio';
-import Rate from '../components/Profile/Rate';
-import WorkingHistory from '../components/Profile/WorkingHistory';
+import EmploymentType from '../components/Profile/UserProfile/EmploymentType';
+import Portfolio from '../components/Profile/UserProfile/Portfolio';
+import Rate from '../components/Profile/UserProfile/Rate';
+import WorkingHistory from '../components/Profile/UserProfile/WorkingHistory';
 import EmailContext from '../Context/EmailContext';
 import { useLocation } from 'react-router-dom';
 
@@ -60,14 +60,6 @@ const UserProfile = (props) => {
                 email: data.email,
                 phoneNumber: data.phone_number
             });
-          //   localStorage.setItem("profile", JSON.stringify({
-          //     name: data.name,
-          //     shortIntro: data.short_intro,
-          //     bio: data.bio,
-          //     username: data.username,
-          //     email: data.email,
-          //     phoneNumber: data.phone_number
-          // }))
 
             setHeaderUserData({
               userRate: data.rate_ratio,
@@ -84,16 +76,12 @@ const UserProfile = (props) => {
             setEmploymentTypeData(data.useremploymenttype)
             setPortfolioUserData(data.portfolios)
             setSkillsUserData(data.skills)
-            // localStorage.setItem("userRate", JSON.stringify({userRate: data.rate_ratio}))
             setLanguageUserData(data.languages);
-            // localStorage.setItem("language", JSON.stringify(data.languages))
             setExperienceUserData([{
               "experience": data.experiences.data,
               "total_exp": data.experiences.total_exp
             }]);
-            // localStorage.setItem("experience", JSON.stringify(data.experiences))
             setEducationUserData(data.educations);
-            // localStorage.setItem("education", JSON.stringify(data.educations))
             setExpectedRateUserData(data.expectedsalary)
             setLoading(false);
         } else {

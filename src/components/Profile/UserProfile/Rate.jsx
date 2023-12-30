@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Divider } from '@mui/material'
-import Button from '../Button';
+import Button from '../../Button';
 import Select from "react-select";
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../../Context/AuthContext';
-import AlertNotification from '../AlertNotification';
+import AuthContext from '../../../Context/AuthContext';
+import AlertNotification from '../../AlertNotification';
 
 const Rate = (props) => {
 

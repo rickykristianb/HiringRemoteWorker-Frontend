@@ -5,7 +5,7 @@ import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
 import AuthContext from '../Context/AuthContext';
-import UserType from '../components/Profile/UserType';
+import UserType from '../components/Profile/UserProfile/UserType';
 
 const SignUp = () => {
   const [passwordHide, setPasswordHide] = useState(true);

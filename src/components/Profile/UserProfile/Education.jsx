@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
-import Button from '../Button';
+import Button from '../../Button';
 import Divider from '@mui/material/Divider';
-import AuthContext from '../../Context/AuthContext';
+import AuthContext from '../../../Context/AuthContext';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import AlertNotification from '../AlertNotification';
+import AlertNotification from '../../AlertNotification';
 
 const Education = (props) => {
     const [ education, setEducation ] = useState([])

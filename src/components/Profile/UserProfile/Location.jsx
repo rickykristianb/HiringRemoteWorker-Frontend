@@ -4,8 +4,8 @@ import PlaceIcon from '@mui/icons-material/Place';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
-import AuthContext from '../../Context/AuthContext';
-import AlertNotification from '../AlertNotification';
+import AuthContext from '../../../Context/AuthContext';
+import AlertNotification from '../../AlertNotification';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Location = (props) => {

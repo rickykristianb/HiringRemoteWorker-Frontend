@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react'
 import Divider from '@mui/material/Divider';
-import Button from '../Button';
+import Button from '../../Button';
 import CloseIcon from '@mui/icons-material/Close';
-import AuthContext from '../../Context/AuthContext';
-import AlertNotification from '../AlertNotification';
+import AuthContext from '../../../Context/AuthContext';
+import AlertNotification from '../../AlertNotification';
 import Select from "react-select";
 
 const Language = (props) => {
