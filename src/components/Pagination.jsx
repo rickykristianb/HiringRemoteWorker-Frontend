@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import EmailContext from '../Context/EmailContext'
 import AuthContext from '../Context/AuthContext'
 
-const InboxPagination = (props) => {
+const Pagination = (props) => {
 
     const DOTS = "..."
 
@@ -36,6 +36,8 @@ const InboxPagination = (props) => {
             props.loadUserList(item)
         } else if (props.type === "userSearchList"){
             props.loadUserSearchList({page: item})
+        } else if (props.type === "jobPosted"){
+            props.onLoadJobPostedPaginate({page: item})
         }
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
@@ -62,7 +64,6 @@ const InboxPagination = (props) => {
     
     useEffect(() => {
         page.current = 1
-        console.log("PAGE CURRENT", page.current);
     }, [props.searchData])
 
 
@@ -89,6 +90,8 @@ const InboxPagination = (props) => {
                         props.loadUserList(page.current - 1)
                     } else if (type.type === "userSearchList"){
                         props.loadUserSearchList({page: page.current - 1})
+                    } else if (type.type === "jobPosted"){
+                        props.onLoadJobPostedPaginate({page: page.current - 1})
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
@@ -106,8 +109,8 @@ const InboxPagination = (props) => {
                         onCheckDeletedMessages(page.current + 1)
                     } else if (type.type === "userList"){
                         props.loadUserList(page.current + 1)
-                    } else if (type.type === "userSearchList"){
-                        props.loadUserSearchList({page: page.current + 1})
+                    } else if (type.type === "jobPosted"){
+                        props.onLoadJobPostedPaginate({page: page.current + 1})
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)
@@ -166,7 +169,7 @@ const InboxPagination = (props) => {
             // console.log("MASUK 2");
             for(let i=1; i <= maxNumber; i++){
                 paginateNumber.push(i)
-                if (i == 5){
+                if (i === 5){
                     paginateNumber.push(DOTS)
                     paginateNumber.push(totalPages)
                 }
@@ -220,4 +223,4 @@ const InboxPagination = (props) => {
   )
 }
 
-export default InboxPagination
+export default Pagination

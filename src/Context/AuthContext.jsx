@@ -93,7 +93,6 @@ export const AuthProvider = ({children}) => {
             onLoadUserHeader(data.access)
             localStorage.setItem("authToken", JSON.stringify(data))
             redirectUserPage(data.access)
-            // navigate("/redirect/")
             setAlert(null)
         } else {
             setAlert({"error": "Username or password not found"})
@@ -112,7 +111,7 @@ export const AuthProvider = ({children}) => {
       const data = await response.json()
       if (response.ok){
         if (data === "personal"){
-          navigate("/companies/")
+          navigate("/jobs/")
         } else if (data === "company"){
           navigate("/users/")
         }

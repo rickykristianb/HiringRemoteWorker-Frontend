@@ -192,9 +192,13 @@ const ProfileIntroduction = (props) => {
                             value={profileChange.phoneNumber}
                         ></input>
                     </div>
-                    <Button buttonType="input" label="Save" customClassName="profile-introduction-save-button" />
+                    <br />
+                    <div id='profile-introduction-save-cancel-button'>
+                        <Button buttonType="input" label="Save" customClassName="profile-introduction-save-button" />
+                        <Button buttonType="button" label="Cancel" customClassName="profile-introduction-cancel-button" clickedButton={onClickCancel} />
+                    </div>
                 </form>
-                <Button buttonType="input" label="Cancel" customClassName="profile-introduction-cancel-button" clickedButton={onClickCancel} />
+                
             </div>
         }  
         <AlertNotification alertData={alertResponse}/>     

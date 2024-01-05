@@ -74,7 +74,7 @@ const Headers = (props) => {
           </>
         }
           <li>
-            <Link to={"/users/"}>
+            <Link to={loginUserType === "personal" ? "/jobs/" : "/users/"}>
               <HomeRoundedIcon sx={{ width: 30, height: 30, color: "#4e6e81" }} />
             </Link>
           </li>
@@ -95,9 +95,13 @@ const Headers = (props) => {
                     <Link to={`/profile/company/?id=${localLoginUserId}`} >
                       <li>Profile</li>
                     </Link>
-                    <li>Jobs Posted</li>
+                    <Link to="/company-panel/" >
+                      <li>Manage</li>
+                    </Link>
                     <Divider />
-                    <li id="post-job-menu"><AddIcon sx={{fontSize: "20px"}} /><>Post Job</></li>
+                    <Link to={"/add-job/"} >
+                      <li id="post-job-menu"><AddIcon sx={{fontSize: "20px"}} /><>Post Job</></li>
+                    </Link>
                   </ul>
                 }
               </div>              

@@ -13,9 +13,11 @@ import Portfolio from '../components/Profile/UserProfile/Portfolio';
 import Rate from '../components/Profile/UserProfile/Rate';
 import WorkingHistory from '../components/Profile/UserProfile/WorkingHistory';
 import EmailContext from '../Context/EmailContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const UserProfile = (props) => {
+
+  const navigate = useNavigate()
 
   const {onLoadMessages} = useContext(EmailContext)
 
@@ -41,54 +43,63 @@ const UserProfile = (props) => {
 
   const onGetProfile = async () => {
     const id = clickedUserId
+    console.log("ID");
     try {
+      if (id !== null){
         const response = await fetch(`/api/user/profile/${id.toString()}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          }
         });
+        try{
+          const data = await response.json();
+          if (response.ok) {
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log("INI DATA",data);
-            setProfileUserData({
+              setProfileUserData({
                 name: data.name,
                 shortIntro: data.short_intro,
                 bio: data.bio,
                 username: data.username,
                 email: data.email,
                 phoneNumber: data.phone_number
-            });
+              });
 
-            setHeaderUserData({
-              userRate: data.rate_ratio,
-              name: data.name,
-              shortIntro: data.short_intro,
-              bio: data.bio,
-              username: data.username,
-              email: data.email,
-              phoneNumber: data.phone_number,
-              profilePicture: data.profile_picture,  // Use the correct method name
-              location: data.userlocation ? data.userlocation["location"]["location"] : null
-            });
-            setLanguageUserData("profile_picture", data.profile_picture);
-            setEmploymentTypeData(data.useremploymenttype)
-            setPortfolioUserData(data.portfolios)
-            setSkillsUserData(data.skills)
-            setLanguageUserData(data.languages);
-            setExperienceUserData([{
-              "experience": data.experiences.data,
-              "total_exp": data.experiences.total_exp
-            }]);
-            setEducationUserData(data.educations);
-            setExpectedRateUserData(data.expectedsalary)
-            setLoading(false);
-        } else {
-            console.error('Failed to fetch profile:', response.status);
+              setHeaderUserData({
+                userRate: data.rate_ratio,
+                name: data.name,
+                shortIntro: data.short_intro,
+                bio: data.bio,
+                username: data.username,
+                email: data.email,
+                phoneNumber: data.phone_number,
+                profilePicture: data.profile_picture,  // Use the correct method name
+                location: data.userlocation ? data.userlocation["location"]["location"] : null
+              });
+              setLanguageUserData("profile_picture", data.profile_picture);
+              setEmploymentTypeData(data.useremploymenttype)
+              setPortfolioUserData(data.portfolios)
+              setSkillsUserData(data.skills)
+              setLanguageUserData(data.languages);
+              setExperienceUserData([{
+                "experience": data.experiences.data,
+                "total_exp": data.experiences.total_exp
+              }]);
+              setEducationUserData(data.educations);
+              setExpectedRateUserData(data.expectedsalary)
+              setLoading(false);
+            } else if (response.status === 404){
+              navigate("/user-not-found/")
+            }
+          } catch (error){
+            navigate("/user-not-found/")
+          }
+        } 
+        else {
+          navigate("/user-not-found/")
         }
-    } catch (error) {
-        console.error('Error fetching profile:', error);
+      }catch {
+        
     }
 };
 

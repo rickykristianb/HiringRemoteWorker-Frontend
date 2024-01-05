@@ -112,16 +112,6 @@ const ProfileHeaders = (props) => {
             }
         </div>
         <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} />
-        
-        
-        {/* <div className='total_payment_summary_container'>
-            <div className='total_payment'>
-                <p>Total Payment Received</p>
-                <Divider />
-                <p>$100.000</p>
-                <Button buttonType="button" label="download total payment"/>
-            </div>
-        </div> */}
     </div>
   )
 }

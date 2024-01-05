@@ -36,6 +36,27 @@ export const ProfileProvider = ({ children }) => {
         setUserData(newUpdateUser)
     };
 
+    const onGetProfile = async () => {
+        try {
+            const response = await fetch(`/api/user/profile/`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `JWT ${userToken}`
+            }});
+            try {
+                const data = await response.json()
+                if (response.status === 200){
+                    setUserData(data)
+                }
+            } catch (error){
+                console.error(error);
+            }
+        } catch (error){
+            console.error(error);
+        }
+    }
+
 
     const onSaveProfile = async (e) => {
         e.preventDefault()
@@ -90,7 +111,8 @@ export const ProfileProvider = ({ children }) => {
     onChangeProfileInput:onChangeProfileInput,
     isSaved:isSaved, 
     setIsSaved:setIsSaved,
-    onClickCancel:onClickCancel
+    onClickCancel:onClickCancel,
+    onGetProfile:onGetProfile
   };
 
   return (

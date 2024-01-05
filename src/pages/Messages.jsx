@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import MessageMenu from '../components/Message/MessageMenu'
 import SendMessage from '../components/Message/SendMessage'
-import Inbox from '../components/Message/Inbox'
+import Inbox from 'components/Message/Inbox'
 import SentMessages from '../components/Message/SentMessages'
 import DeletedMessages from '../components/Message/DeletedMessages'
 import { useLocation, useParams } from 'react-router-dom'

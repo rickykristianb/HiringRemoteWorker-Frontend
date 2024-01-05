@@ -3,10 +3,12 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import PsychologyIcon from '@mui/icons-material/Psychology';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import RateGenerator from './RateGenerator';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
-import Pagination from './Pagination'
+import Pagination from './Pagination';
+import Backdrop from './Backdrop';
 
 const UsersList = (props) => {
 
@@ -16,6 +18,7 @@ const UsersList = (props) => {
   const [isHover, setIsHover] = useState(false)
   const [noUserStatus, setNoUserStatus] = useState()
   const [resetPage, setResetPage] = useState(false)
+  const [backdropActive, setBackdropActive] = useState(false)
 
   const onLoadAllUser = async(page) => {
     if (!page){
@@ -34,7 +37,12 @@ const UsersList = (props) => {
   }
 
   useEffect(() => {
-    onLoadAllUser()
+    const fetchData = async() => {
+      setBackdropActive(true)
+      await onLoadAllUser()
+      setBackdropActive(false)
+    }
+    fetchData()
   }, [])
 
   const onMouseHover = (index) => {
@@ -113,7 +121,7 @@ const UsersList = (props) => {
                         <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
                     </li>
                     <li className='emp-type-user-list'>
-                      <LocalMallIcon /> 
+                      <AccessTimeIcon />
                         {item.useremploymenttype.slice(0, 2).map((type, index) => {
                           return (
                             <React.Fragment key={index}>
@@ -178,7 +186,7 @@ const UsersList = (props) => {
                         <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
                     </li>
                     <li className='emp-type-user-list'>
-                      <LocalMallIcon /> 
+                    <AccessTimeIcon /> 
                         {item.useremploymenttype.slice(0, 2).map((type, index) => {
                           return (
                             <React.Fragment key={index}>
@@ -226,6 +234,7 @@ const UsersList = (props) => {
             paginationReset={resetPage}
           />
       </div>
+      {backdropActive && <Backdrop />}
     </div>
   )
 }

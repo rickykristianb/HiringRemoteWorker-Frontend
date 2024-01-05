@@ -35,11 +35,10 @@ const EditBioForm = (props) => {
 
   useEffect(() => {
     onLoadLocation()
-    console.log("LOCATION", props.userData?.locationData);
   }, [])
         
   return (
-    <div className='edit-company-profile-container' onClick={props.onClickCancel}>
+    <div className='edit-company-profile-container'>
       <div className='company-profile-form-container' >
         <div id='edit-company-profile-title'>
           <p>EDIT COMPANY PROFILE</p>
@@ -93,9 +92,13 @@ const EditBioForm = (props) => {
                 name="location"
                 options={loadedLocation.map((item) => ({id:item.id, value: item.location, label: item.location}))}
                 className='company-bio-input-select'
-                value={{value: props.userData?.locationData.location, label: props.userData?.locationData.location}}
+                value={{
+                  value: props.userData.locationData?.location ? props.userData.locationData?.location : "Select Location..", 
+                  label: props.userData.locationData?.location ? props.userData.locationData?.location : "Select Location.."
+                }}
                 onChange={(options) => props.onChangeLocationForm(options)}
             />
+            {props.locationFieldError && <span className='error-field'>{props.locationFieldError["error"]}</span>}
             <label for="address" >Address</label>
             <input {...register("address")} 
               id="address"

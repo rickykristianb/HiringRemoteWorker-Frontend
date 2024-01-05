@@ -21,10 +21,10 @@ const CompanyProfileHeader = (props) => {
   }, [])
 
   let  userAuthToken
-    let { authToken } = useContext(AuthContext)
-    if (authToken){
-        userAuthToken = authToken.access
-    } 
+  let { authToken } = useContext(AuthContext)
+  if (authToken){
+      userAuthToken = authToken.access
+  } 
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef();
@@ -64,10 +64,6 @@ const handleChangeUploadImage = async (e) => {
 
   const handleClickChange = () => {
       fileInputRef.current.click();
-  }
-
-  const onButtonEditClicked = () => {
-
   }
 
   return (
@@ -114,7 +110,7 @@ const handleChangeUploadImage = async (e) => {
                   </div>
                   <div className='company-address'>
                     <div>
-                      <LocationOnIcon /><span>{props.userData?.locationData.location}</span>
+                      <LocationOnIcon /><span>{props.userData.locationData?.location}</span>
                     </div>
                     <br />
                     {props.userData?.headerData.address}

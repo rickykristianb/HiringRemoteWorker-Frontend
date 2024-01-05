@@ -69,9 +69,30 @@ const Footer = () => {
                 <div>
                     <h2>Interested with this project?</h2>
                     <ul>
-                        <li><a href="tel:6282168897862" target='blank'><PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} /> +6282168897862</a></li>
-                        <li><a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'><WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} /> +6282168897862</a></li>
-                        <li><a href="mailto:contact@rickykristianbutarbutar.com" target='blank'><MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} /> contact@rickykristianbutarbutar.com</a></li>
+                        <li className='footer-info'>
+                            <a href="tel:6282168897862" target='blank'>
+                                <div className='footer-info'>
+                                    <PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                    <span> +6282168897862</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li className='footer-info'>
+                            <a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'>
+                                <div className='footer-info'>
+                                    <WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                    <span> +6282168897862</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:contact@rickykristianbutarbutar.com" target='blank'>
+                                <div className='footer-info'>
+                                    <MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                    <span>contact@rickykristianbutarbutar.com</span>
+                                </div>
+                            </a>
+                        </li>
                         <li>
                             <ul className='social-media'>
                                 <li><a href="https://github.com/rickykristianb" target='blank'><GitHubIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
