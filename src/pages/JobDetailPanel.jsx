@@ -5,6 +5,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import InterestedUsers from 'components/CompanyPanel/InterestedUsers'
+import { format } from 'date-fns';
 
 const JobDetailPanel = () => {
 
@@ -25,8 +26,12 @@ const JobDetailPanel = () => {
             }
         });
         const data = await response.json()
-        if (response.ok){
-            setJobData(data)
+        if (data.error){
+            navigate("/job-not-found/")
+        } else {
+            if (response.ok){
+                setJobData(data)
+            }
         }
     }
 
@@ -43,13 +48,16 @@ const JobDetailPanel = () => {
     }
 
     const onClickEditJobButton = (data) => {
-        console.log("DATA", data);
         setIsEditJob(true)
         setEditJobData(data)
+
+        document.body.classList.add("disable-scroll")
     }
 
     const onClickCancelEditButton = () => {
         setIsEditJob(false)
+
+        document.body.classList.remove('disable-scroll');
     }
     
     const onClickSeeAllJobs = () => {
@@ -60,9 +68,28 @@ const JobDetailPanel = () => {
     <div id='job-detail-panel-container'>
         <div id="job-detail-panel-layout">
             <div id="job-detail-panel-content">
-                <div id='job-detail-panel-back-button' onClick={() => onClickSeeAllJobs()}>
-                    <ArrowBackIcon  />
-                    <p>See all posted jobs</p>
+                <div id='job-detail-panel-back-button' >
+                    <div onClick={() => onClickSeeAllJobs()}>
+                        <ArrowBackIcon  />
+                        <p>See all posted jobs</p>
+                    </div>
+                    <div id='job-detail-panel-edit'>
+                        <Button buttonType="button" label="Edit" 
+                            clickedButton={() => onClickEditJobButton({
+                                data: {
+                                    id: jobData.id, 
+                                    jobTitle: jobData.job_title,
+                                    jobDetail: jobData.job_detail,
+                                    skills: jobData.jobskills,
+                                    jobLocation: jobData.joblocation,
+                                    jobEmploymentType: jobData.jobemploymenttype,
+                                    jobSalary: jobData.jobsalaryrates,
+                                    jobExperienceLevel: jobData.experience_level,
+                                    jobStatus: jobData.status,
+                                    jobDeadline: jobData.deadline
+                                }
+                            })} />
+                    </div>
                 </div>
                 <br />
                 <br />
@@ -130,10 +157,15 @@ const JobDetailPanel = () => {
                 </div>
                 <br />
                 <div id="job-label-data-container">
+                    <span className='job-detail-label'>Deadline</span>
+                    <span>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</span>
+                </div>
+                <br />
+                <div id="job-label-data-container">
                     <span className='job-detail-label'>Job Detail</span>
                     {!isSeeMoreClicked 
                     ?
-                        <span>{jobData?.job_detail.slice(0, 300)}...{jobData?.job_detail.length > 300 && <span onClick={onClickSeeMore} style={{cursor: "pointer"}}><b>See more</b></span>}</span>
+                        <span>{jobData?.job_detail.slice(0, 300)}{jobData?.job_detail.length > 300 && <span onClick={onClickSeeMore} style={{cursor: "pointer"}}><b>... See more</b></span>}</span>
                     :
                         <span>{jobData.job_detail?.split("\n").map((line, i) => (
                             <Fragment key={i}>
@@ -149,24 +181,8 @@ const JobDetailPanel = () => {
                 <br />
                 <br />
                 <div>
-                    <InterestedUsers />
+                    <InterestedUsers jobId={jobId} />
                 </div>
-            </div>
-            <div id='job-detail-panel-edit'>
-                <Button buttonType="button" label="Edit" 
-                    clickedButton={() => onClickEditJobButton({
-                          data: {
-                            id: jobData.id, 
-                            jobTitle: jobData.job_title,
-                            jobDetail: jobData.job_detail,
-                            skills: jobData.jobskills,
-                            jobLocation: jobData.joblocation,
-                            jobEmploymentType: jobData.jobemploymenttype,
-                            jobSalary: jobData.jobsalaryrates,
-                            jobExperienceLevel: jobData.experience_level,
-                            jobStatus: jobData.status
-                          }
-                        })} />
             </div>
         </div>
         {isEditJob && 

@@ -1,10 +1,10 @@
 import React from 'react'
 
-const NotFound = () => {
+const NotFound = (props) => {
   return (
     <div className='not-found-container'>
         <p>404</p>
-        <h1>Page Not Found</h1>
+        <h1>{props.label}</h1>
     </div>
   )
 }

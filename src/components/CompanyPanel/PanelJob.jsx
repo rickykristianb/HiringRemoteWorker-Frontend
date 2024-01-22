@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
-import Popover from '@mui/material/Popover';
-import ProfileContext from 'Context/ProfileContext';
 import AlertNotification from 'components/AlertNotification';
 import Backdrop from 'components/Backdrop';
 import AuthContext from 'Context/AuthContext';
@@ -9,6 +7,7 @@ import Button from 'components/Button';
 import { Divider } from '@mui/material';
 import AddJob from 'components/AddJob';
 import EditJob from 'components/EditJob';
+import DeleteConfirmation from 'components/DeleteConfirmation';
 import { useNavigate } from 'react-router-dom';
 const PanelJob = () => {
 
@@ -20,9 +19,11 @@ const PanelJob = () => {
   const [isAddJob, setIsAddJob] = useState(false)
   const [isEditJob, setIsEditJob] = useState(false)
   const [editData, setEditData] = useState()
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+  const [deleteConfirmationBoxOpen, setDeleteConfirmationBoxOpen] = useState(false)
+  const [itemNeedToDelete, setItemNeedToDelete] = useState()
   const [alertResponse, setAlertResponse] = useState()
   const wrapperRef = useRef(null);
-
 
   let userToken;
   if (authToken){
@@ -39,7 +40,7 @@ const PanelJob = () => {
   };
   
   const onLoadCompanyJobs = async() => {
-    const response = await fetch("/api/job/all-jobs-auth/", {
+    const response = await fetch("/api/job/all_user_jobs-auth/", {
       method: "GET",
       headers: {
         "content-type": "application/json",
@@ -54,12 +55,13 @@ const PanelJob = () => {
 
   useEffect(() => {
     onLoadCompanyJobs()
-
+    
     // HANDLE CLOSE POP UP MENU IF CLICK OTHER PART OF THE PAGE
     document.addEventListener("click", handleClickOutside, false);
     return () => {
       document.removeEventListener("click", handleClickOutside, false);
     };
+    
   }, [])
 
   const handleClickOutside = (event) => {
@@ -83,56 +85,57 @@ const PanelJob = () => {
     window.open(`/job-detail-panel/${id}/`, "_blank")
   }
 
-  const onClickEdit = (row) => {
-    const id = row["id"]
-    const editData = jobData.find((item) => item.id === id)
-    setEditData({
-      data: {
-        id: editData.id, 
-        jobTitle: editData.job_title,
-        jobDetail: editData.job_detail,
-        skills: editData.jobskills,
-        jobLocation: editData.joblocation,
-        jobEmploymentType: editData.jobemploymenttype,
-        jobSalary: editData.jobsalaryrates,
-        jobExperienceLevel: editData.experience_level,
-        jobStatus: editData.status
+  const onDeleteJob = async(item) => {
+    try{
+      const id = item["id"]
+      const response = await fetch(`/api/job/delete_job/${id}/`, {
+        method: "DELETE",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": `JWT ${userToken}`
+        }
+      });
+      const data = await response.json()
+      if (response.ok){
+        setIsBackdropActive(true)
+        await onLoadCompanyJobs()
+        setIsBackdropActive(false)
+        setAlertResponse({"success": data["success"]})
+      } else {
+        setAlertResponse({"error": data["error"]})
       }
-    })
-    console.log(editData);
-    setIsEditJob(true)
+    } catch (error){
+      setAlertResponse({"error": error.toString()})
+    } finally{
+      setDeleteConfirmationBoxOpen(false)
+    }
   }
 
   const onClickDelete = async(row) => {
-    const id = row["id"]
-    
-    const response = await fetch(`/api/job/delete_job/${id}/`, {
-      method: "DELETE",
-      headers: {
-        "content-type": "application/json",
-        "Authorization": `JWT ${userToken}`
-      }
-    });
-    const data = await response.json()
-    if (response.ok){
-      setIsBackdropActive(true)
-      await onLoadCompanyJobs()
-      setIsBackdropActive(false)
-    }
+    setDeleteConfirmationBoxOpen(true)
+    setItemNeedToDelete(row)
+    document.body.classList.add("disable-scroll")
   }
+
+  useEffect(() => {
+    if(deleteConfirmation){
+      onDeleteJob(itemNeedToDelete)
+    }
+  }, [deleteConfirmation])
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'jobTitle', headerName: 'Job Title', width: 350 },
     { field: 'createdAt', headerName: 'Created At', width: 130 },
     { field: 'updatedAt', headerName: 'Updated At', width: 130 },
+    { field: 'deadline', headerName: 'Deadline', width: 130 },
     {
       field: 'applicants',
       headerName: 'Applicants',
       type: 'number',
       width: 90,
     },
-    { field: 'status', headerName: 'Status', width: 90 },
+    { field: 'status', headerName: 'Status', width: 100 },
     { field: 'action', headerName: 'Action', sortable: false, width: 90, 
     renderCell: (params) => (
       <>
@@ -163,6 +166,7 @@ const PanelJob = () => {
         jobTitle: jobItem.job_title,
         createdAt: jobItem.created_at,
         updatedAt: jobItem.updated_at,
+        deadline: jobItem.deadline,
         applicants: jobItem.interesteduser?.length > 0 ? jobItem.interesteduser?.length : 0 ,
         status: jobItem.status,
         action: "",
@@ -173,14 +177,51 @@ const PanelJob = () => {
 
   const onClickAddButton = () => {
     setIsAddJob(true)
+
+    document.body.classList.add('disable-scroll');
   }
 
   const onClickCancelButtonAddForm = () => {
     setIsAddJob(false)
+
+    document.body.classList.remove('disable-scroll');
+  }
+
+  const onClickEdit = (row) => {
+    const id = row["id"]
+    const editData = jobData.find((item) => item.id === id)
+
+    setEditData({
+      data: {
+        id: editData.id, 
+        jobTitle: editData.job_title,
+        jobDetail: editData.job_detail,
+        skills: editData.jobskills,
+        jobLocation: editData.joblocation,
+        jobEmploymentType: editData.jobemploymenttype,
+        jobSalary: editData.jobsalaryrates,
+        jobExperienceLevel: editData.experience_level,
+        jobStatus: editData.status,
+        jobDeadline: editData.deadline
+      }
+    })
+    setIsEditJob(true)
+    document.body.classList.add('disable-scroll');
   }
 
   const onClickCancelButtonEditForm = () => {
     setIsEditJob(false)
+  }
+
+  const onClickYesDeletion = () => {
+    setDeleteConfirmation(true)
+    document.body.classList.remove("disable-scroll")
+  }
+
+  const onClickNoDeletion = () => {
+    setDeleteConfirmation(false)
+    setDeleteConfirmationBoxOpen(false)
+    document.body.classList.remove("disable-scroll")
   }
 
   return (
@@ -190,7 +231,7 @@ const PanelJob = () => {
         <Button buttonType="button" label="Add" clickedButton={onClickAddButton} />
       </div>
       <br />
-      <div style={{ height: 630, width: '100%' }}>
+      <div style={{ height: 630}}>
         {mappedData && mappedData.length > 0 
           ?
           <DataGrid
@@ -202,7 +243,6 @@ const PanelJob = () => {
               },
             }}
             pageSizeOptions={[5, 10]}
-            checkboxSelection
             disableRowSelectionOnClick
             loading={mappedData.length === 0}
           />
@@ -236,6 +276,7 @@ const PanelJob = () => {
         }
       {isBackdropActive && <Backdrop />}
       <AlertNotification alertData={alertResponse}/>
+      { deleteConfirmationBoxOpen && <DeleteConfirmation deleteLabel={"Are you sure you want to delete this job?"} onClickYes={onClickYesDeletion} onClickNo={onClickNoDeletion} /> }
     </div>
   )
 }

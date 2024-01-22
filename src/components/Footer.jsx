@@ -5,6 +5,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import CompanyLoginAction from './CompanyLoginAction';
 import { useForm } from "react-hook-form";
 
 import AlertNotification from './AlertNotification';
@@ -135,6 +136,7 @@ const Footer = () => {
                 <p>© Ricky Kristian Butar Butar</p>
             </div>
         </div>
+        <CompanyLoginAction />
     </div>
   )
 }

@@ -1,8 +1,10 @@
 import EmailContext from 'Context/EmailContext'
 import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const PanelMenu = (props) => {
 
+    const navigate = useNavigate()
     const [isClicked, setIsClicked] = useState()
 
     useEffect(() => {
@@ -13,7 +15,7 @@ const PanelMenu = (props) => {
 
     const onMenuClicked = (item) => {
         setIsClicked(item)
-        return props.menuClicked(item)
+        navigate(`/company-panel/?tab=${item}`)
     }
 
   return (

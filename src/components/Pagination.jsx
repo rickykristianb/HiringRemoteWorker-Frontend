@@ -38,6 +38,10 @@ const Pagination = (props) => {
             props.loadUserSearchList({page: item})
         } else if (props.type === "jobPosted"){
             props.onLoadJobPostedPaginate({page: item})
+        } else if (props.type === "jobSearchList"){
+            props.loadJobSearchList(item)
+        } else if (props.type === "allJobList"){
+            props.loadJobList({page: item})
         }
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
@@ -47,9 +51,14 @@ const Pagination = (props) => {
     const getTotalPages = () => {
         // console.log("CEK TOTAL DATA", props.totalData);
         let totalDataPerPage = 0;
+        console.log("TYPE: ", props.type);
         if (props.type === "userList") {
             totalDataPerPage = 4     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
-        } else {
+        } 
+        if (props.type === "allJobList"){
+            totalDataPerPage = 4
+        }
+        else {
             totalDataPerPage = 5     // need to match with the backend pagination setting, check your MessagesResultsSetPagination page size.
         }
         
@@ -92,6 +101,10 @@ const Pagination = (props) => {
                         props.loadUserSearchList({page: page.current - 1})
                     } else if (type.type === "jobPosted"){
                         props.onLoadJobPostedPaginate({page: page.current - 1})
+                    } else if (type.type === "allJobList"){
+                        props.loadJobList({page: page.current - 1})
+                    } else if (type.type === "jobSearchList"){
+                        props.loadJobSearchList(page.current - 1)
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
@@ -109,8 +122,14 @@ const Pagination = (props) => {
                         onCheckDeletedMessages(page.current + 1)
                     } else if (type.type === "userList"){
                         props.loadUserList(page.current + 1)
+                    } else if (type.type === "userSearchList"){
+                        props.loadUserSearchList({page: page.current + 1})
                     } else if (type.type === "jobPosted"){
                         props.onLoadJobPostedPaginate({page: page.current + 1})
+                    } else if (type.type === "allJobList"){
+                        props.loadJobList({page: page.current + 1})
+                    }else if (type.type === "jobSearchList"){
+                        props.loadJobSearchList(page.current + 1)
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)

@@ -107,7 +107,6 @@ const ProfileHeaders = (props) => {
             {loginUserId !== props.clickedUserId && 
                 <div className='profile_action'>
                     <Button clickedButton={() => sendMessage(props.userData.email)} label="Send Message" buttonType="button" />
-                    <Button label="Eliminate" buttonType="button" customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
                 </div>
             }
         </div>

@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Divider } from '@mui/material'
+import DatePicker from 'react-date-picker';
 import Select from "react-select";
 import Button from './Button';
 import AuthContext from 'Context/AuthContext';
 import Backdrop from 'components/Backdrop';
+
 
 const AddJob = (props) => {
 
@@ -32,6 +34,7 @@ const AddJob = (props) => {
   const [jobEmploymentTypeAlertField, setJobEmploymentTypeAlertField] = useState()
   const [jobSalaryAlertField, setJobSalaryAlertField] = useState()
   const [jobExperienceLevelAlertField, setJobExperienceLevelAlertField] = useState()
+  const [deadlineAlertField, setDeadlineAlertField] = useState()
   const [inputValue, setInputValue] = useState({
     jobTitle: "",
     jobDetail: "",
@@ -40,7 +43,8 @@ const AddJob = (props) => {
     jobEmploymentType: [],
     jobSalary: "",
     jobSalaryPaidPeriod: "",
-    experienceLevel: ""
+    experienceLevel: "",
+    deadline: ""
   });
 
   const onLoadLocation = async() => {
@@ -86,12 +90,28 @@ const AddJob = (props) => {
         setSkillList(data)
     }
     console.log("DATA", data);
-}
+  }
+
+  const settingMinimumDateDatelineSelection = () => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const deadlineInput = document.getElementById('deadlineInput');
+    
+    if (deadlineInput) {
+      deadlineInput.min = currentDate;
+    }
+  };
+
+  const minimumDateDatelineSelection = () => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    document.getElementById('deadlineInput').min = currentDate;
+  }
 
   useEffect(() => {
     onLoadLocation()
     onLoadListEmploymentType()
     onLoadSkills()
+    
+    minimumDateDatelineSelection()
   }, [])
 
   const onCheckChangeInput = (name) => {
@@ -121,6 +141,9 @@ const AddJob = (props) => {
       case "experienceLevel":
         setJobExperienceLevelAlertField();
         break;
+      case "deadline":
+        setDeadlineAlertField();
+        break;
     }
     return true
   }
@@ -135,10 +158,10 @@ const AddJob = (props) => {
         [name]: value
       }
      })
-    console.log(inputValue);
   }
 
   const onChangeSelectField = (name, value) => {
+    console.log();
     onCheckChangeInput(name)
     setInputValue((prevValue) => {
       return {
@@ -146,14 +169,14 @@ const AddJob = (props) => {
         [name]: value
       }
      })
-    console.log(inputValue);
   }
 
   const fieldChecking = async() => {
 
     const regex = /\S/;
     let status = "success"
-
+    const date = new Date()
+    console.log(date);
     if (!regex.test(inputValue.jobTitle)){
       setJobTitleAlertField("Job title is required")
       status = "failed"
@@ -187,6 +210,10 @@ const AddJob = (props) => {
       setJobExperienceLevelAlertField("Please select 1 experience level.")
       status = "failed"
     } 
+    if (!inputValue.deadline){
+      setDeadlineAlertField("Please select deadline.")
+      status = "failed"
+    }
     
     if (status === "success") {
       return true
@@ -213,13 +240,11 @@ const AddJob = (props) => {
           props.notification(data)
           props.closeForm()
           await props.onLoadJobPosted()
-          
-        } else {
+        } else if(props.type === "add-job-page"){
+          navigate("/company-panel/?tab=jobs")
+        } 
+        else {
           navigate("/jobs/")
-          // const timeoutId = setTimeout(() => {
-          //   navigate("/jobs/")
-          // }, 20000)
-          // return () => clearTimeout(timeoutId);
         }
       }
     }    
@@ -384,6 +409,26 @@ const AddJob = (props) => {
                   disabled={isSubmitting}
                 />
                 {jobExperienceLevelAlertField && <p className='error-field'>{jobExperienceLevelAlertField}</p>}
+              </div>
+            </div>
+            <Divider />
+            <div className='input-title-container'>
+              <div className='add-job-form-title'>
+                <div>
+                  <p>Deadline</p>
+                  <span>The date for this job is no longer available.</span>
+                </div>
+              </div>
+              <div className='add-job-input-field-container'>
+                <input 
+                  type='date' 
+                  className='add-job-input-field'
+                  id="deadlineInput"
+                  name="deadline"
+                  onChange={(e) => onChangeInputField(e)} 
+                  disabled={isSubmitting ? true : false}
+                />
+                {deadlineAlertField && <p className='error-field'>{deadlineAlertField}</p>}
               </div>
             </div>
             <br />

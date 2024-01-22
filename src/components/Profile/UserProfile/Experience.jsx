@@ -10,6 +10,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useForm } from 'react-hook-form';
 import AuthContext from '../../../Context/AuthContext';
 import AlertNotification from '../../AlertNotification';
+import AddExperience from './AddExperience';
+import DeleteConfirmation from 'components/DeleteConfirmation';
 
 const Experience = (props) => {
   const [experience, setExperience] = useState([])
@@ -20,6 +22,7 @@ const Experience = (props) => {
   const [isEdit, setIsEdit] = useState(null)
   const [alertResponse, setAlertResponse] = useState()
   const [totalExp, setTotalExp] = useState()
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
 
   const [loginUserId, setLoginUserId] = useState()
 
@@ -46,6 +49,7 @@ const Experience = (props) => {
         "jobDescription": "",
       }
     })
+
     const onLoadExperience = async () => {
       try {
         console.log("APE NIH",props.userData[0]["experience"]);
@@ -73,74 +77,9 @@ const Experience = (props) => {
         
     const onAddMoreExperienceSection = () => {
       setIsAdded(true)
-      return(
-        setExperience([{
-          "id": "",
-          "companyName": "",
-          "jobTitle": "",
-          "jobStartDate": null,
-          "jobEndDate": null,
-          "jobDescription": "",
-        }]))
+      document.body.classList.add("disable-scroll");
     }
 
-    const onAddExperience = async (index) => {
-      console.log(experience[index]);
-      try{
-        const response = await fetch("/api/user/add_experience/",{
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "Authorization": `JWT ${userAuthToken}`
-          },
-          body: JSON.stringify(experience[index])
-        })
-        let data = await response.json()
-
-        if (response.status === 201) {
-          const newExperience = {
-            ...experience[index],
-            id: data.id
-          }
-          setExperienceList((prevExperienceList) => ([
-            ...prevExperienceList,
-            newExperience
-          ]));
-          setAlertResponse({"success": data.success})
-          setDisableEndData(true)
-          setIsAdded(false)
-          reset()
-        } else {
-          setAlertResponse({"error": data.error})
-        }
-      }catch(errors){
-        setAlertResponse({"error": errors})
-      }
-    }
-
-    const onChangeExperience = (e, index) => {
-      const {name, value} = e.target
-
-      setExperience((prevExperience) => {
-          const updateExperience = [...prevExperience]
-          updateExperience[index][name] = value
-          return updateExperience
-      })
-    }
-
-    const onDisableEndDate = (index) => {
-      setDisableEndData(!disableEndDate)
-
-      if (disableEndDate){
-        setExperience([{
-          "id": "",
-          "companyName": experience[index].companyName,
-          "jobTitle": experience[index].jobTitle,
-          "jobStartDate": experience[index].jobStartDate,
-          "jobDescription": experience[index].jobDescription
-        }])
-      }
-    }
 
     const onDisableEndDateEdit = (index) => {
       setDisableEndDataEdit(!disableEndDateEdit)
@@ -162,12 +101,22 @@ const Experience = (props) => {
 
     const onChangeEditExperience = (e, index) => {
       const {name, value} = e.target
-
+      console.log(name, value);
       setExperienceList((prevExperience) => {
         const updatedExperienceList = [...prevExperience];
         updatedExperienceList[index][name]= value
         return updatedExperienceList
       })
+    }
+
+    const onOpenDeleteConfirmation = () => {
+      setOpenDeleteConfirmation(true)
+      document.body.classList.add("disable-scroll");
+    }
+
+    const onCloseDeleteConfirmation = () => {
+      setOpenDeleteConfirmation(false)
+      document.body.classList.remove("disable-scroll");
     }
 
   const onDeleteExperience = async (index) => {
@@ -186,6 +135,8 @@ const Experience = (props) => {
       if (response.status === 200) {
         allExperience.splice(index, 1)
         setExperienceList(allExperience)
+        setOpenDeleteConfirmation(false)
+        document.body.classList.remove("disable-scroll");
         setAlertResponse({"success": data.success})
       } else {
         setAlertResponse({"error": data.error})
@@ -220,9 +171,8 @@ const Experience = (props) => {
   }
   
   const onClickCloseForm = (index) => {
-    console.log("masuk");
     setIsAdded(false)
-    // reset()
+    document.body.classList.remove("disable-scroll")
   }
 
   const onClickCloseEditForm = () => {
@@ -239,16 +189,12 @@ const Experience = (props) => {
 
   return (
     <div className='profile_experience'>
-      <br />
-      <br />
-      <Divider />
       <h1>Experience</h1>
-      
       <p>Total Experience:  {totalExp < 365 && totalExp > 0 ? <span>&nbsp;&nbsp;&lt; 1 year</span> : (totalExp === 0 ? `${totalExp} year` : <span>{onLoadTotalExp()}</span>)}  </p>
 
       {/* LIST OF EXPERIENCE */}
       {experienceList.map((experience, index) => (        
-          <d key={index} className='experience-container'>
+          <div key={index} className='experience-container'>
           {isEdit === index ?
             <div className='experience-edit-form'>
               <CloseIcon className='addExperience-close-button' onClick={() => onClickCloseEditForm(index)} />
@@ -287,7 +233,7 @@ const Experience = (props) => {
               </div>
               <textarea
                 value={experienceList[index].jobDescription}
-                name="jobDescriptionEdit"
+                name="jobDescription"
                 onChange={(e) => onChangeEditExperience(e, index)}
                 className='experience-textArea' 
                 rows="10" 
@@ -328,83 +274,31 @@ const Experience = (props) => {
                 {loginUserId === props.clickedUserId &&
                 <div className='edit-delete-exp-button'>
                   <Button buttonType="button" label="Edit" clickedButton={() => onEditExperience(index)} />
-                  <Button buttonType="button" label="Delete" clickedButton={() => onDeleteExperience(index) } customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
+                  <Button buttonType="button" label="Delete" clickedButton={() => onOpenDeleteConfirmation()} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
                 </div>
                 }
               </AccordionDetails>
             </Accordion>
           }  
-          </d>
+          {openDeleteConfirmation && 
+            <DeleteConfirmation deleteLabel="Do you want to delete this experience." onClickYes={() => onDeleteExperience(index)} onClickNo={onCloseDeleteConfirmation} />
+          }
+          </div>
       ))
+
     }
       
       {/* FORM ADD EXPERIENCE */}
-      {isAdded && experience.map((experienceItem, index) => {
-        return (
-          <form key={index} onSubmit={handleSubmit(() => onAddExperience(index))} className='experience-form'>
-            <CloseIcon className='addExperience-close-button' onClick={() => onClickCloseForm(index)} />
-            <input {...register ("companyName", {"required": "Company Name is required"})}
-              value={experienceItem.companyName}
-              onChange={(e) => onChangeExperience(e, index)}
-              className='input-field' 
-              placeholder='Company'
-            ></input>
-            {errors.companyName && <span className='error-field'>{errors.companyName.message}</span>}
-            <input {...register ("jobTitle", {"required": "Job Title is required"})}
-              value={experienceItem.jobTitle}
-              onChange={(e) => onChangeExperience(e, index)}
-              className='input-field' 
-              placeholder='Job Title'
-            ></input>
-            {errors.jobTitle && <span className='error-field'>{errors.jobTitle.message}</span>}
-            <div className='experience-date'>
-              <div className='experience-startend-date'>
-                <label>Start</label>
-                <input {...register("jobStartDate", {"required": "Start date is required"})}
-                  value={experienceItem.jobStartDate}
-                  onChange={(e) => onChangeExperience(e, index)}
-                  type="date" 
-                  id="since-date" 
-                  name="jobStartDate" 
-                  className='input-field-experience-startend-date'
-                ></input>
-                {errors.jobStartDate && <span className='error-field'>{errors.jobStartDate.message}</span>}
-              </div>
-              {disableEndDate && 
-                <div className='experience-startend-date'>
-                  <label>End</label>  
-                  <input {...register("jobEndDate", !disableEndDate ? "" : {"required": "End date is required"})}
-                    value={!disableEndDate ? "9999-12-31" : experienceItem.jobEndDate}
-                    onChange={(e) => onChangeExperience(e, index)}
-                    type="date"
-                    id="end-date"
-                    name="jobEndDate"
-                    className='input-field-experience-startend-date'
-                  ></input>
-                  {errors.jobEndDate && <span className='error-field'>{errors.jobEndDate.message}</span>}
-                </div>
-              }
-              <div className='checkbox-input'>
-                <input type="checkbox" name="task1" onClick={() => onDisableEndDate(index)}></input><label>Still Working</label>
-              </div>
-            </div>
-            <textarea {...register ("jobDescription")}
-              value={experienceItem.jobDescription}
-              onChange={(e) => onChangeExperience(e, index)}
-              className='experience-textArea' 
-              rows="10" 
-              placeholder='Job Description'
-            ></textarea>
-            <Button buttonType="input" label="Add" />
-          </form>
-        )
-      })}
+      
+      {isAdded &&
+        <div id='add-experience-container'>
+          <AddExperience experience={experience} close={onClickCloseForm} setExperienceList={setExperienceList} setAlertResponse={setAlertResponse}/>
+        </div>
+      }
       <br />
       {loginUserId === props.clickedUserId && 
         <>
           <Button buttonType="button" label="Add Experience" clickedButton={() => onAddMoreExperienceSection()} />
-          <br />
-          <br />
         </>
        }
       <AlertNotification alertData={alertResponse}/>

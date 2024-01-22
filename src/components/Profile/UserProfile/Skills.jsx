@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Button from '../../Button';
 import AlertNotification from '../../AlertNotification';
 import Select from "react-select";
+import DeleteConfirmation from 'components/DeleteConfirmation';
 
 const Skills = (props) => {
     const [skill, setSkill] = useState([])
@@ -19,6 +20,9 @@ const Skills = (props) => {
     const [isAdd, setIsAdd] = useState(false)
     const [alertField, setAlertField] = useState()
     const [alertResponse, setAlertResponse] = useState()
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
+    const [deleteLabel, setDeleteLabel] = useState("")
+    const [tempDeleteDataIndex, setTempDeleteDataIndex] = useState()
     
     let userAuthToken
     let { authToken } = useContext(AuthContext)
@@ -118,7 +122,6 @@ const Skills = (props) => {
                     skill_name: selectedSkill,
                     skill_level: selectedSkillLevel
                 }
-                console.log("selected",selectedSkill);
                 setSkillAndLevelList((prevSkillLevel) => [...prevSkillLevel, newSelectedSkill])
                 setSelectedSkill('Select Skill')
                 setSelectedSkillLevel('Select Skill Level')
@@ -130,27 +133,48 @@ const Skills = (props) => {
         }        
     }
 
-    const onRemoveSkill = async (index) => {
-        const id = skillAndLevelList[index].id
-        const response = await fetch(`/api/user/delete_skills/${id}/`, {
-            method: "DELETE",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `JWT ${userAuthToken}`
-            }
-        })
-        const data = await response.json()
-        console.log("STATUS", data);
-        if (response.status === 200) {
-            setSkillAndLevelList((prevSkillAndLevelList) => {
-                const SkillAndLevelList = [...prevSkillAndLevelList]
-                SkillAndLevelList.splice(index, 1)
-                return SkillAndLevelList
+    const onClickDelete = (index) => {
+        setOpenDeleteConfirmation(true)
+        setTempDeleteDataIndex(index)
+        setDeleteLabel(`Do you want to delete ${skillAndLevelList[index]["skill_name"]}?`)
+        document.body.classList.add("disable-scroll")
+    }
+
+    const onClickCloseDeleteConfirmation = () => {
+        setOpenDeleteConfirmation(false)
+        document.body.classList.remove("disable-scroll")
+    }
+
+    const onRemoveSkill = async () => {
+        try{
+            const id = skillAndLevelList[tempDeleteDataIndex].id
+            const response = await fetch(`/api/user/delete_skills/${id}/`, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `JWT ${userAuthToken}`
+                }
             })
-            setAlertResponse({"success": data.success})
-        } else {
-            setAlertResponse({"error": data.error})
+            const data = await response.json()
+            console.log("STATUS", data);
+            if (response.status === 200) {
+                setSkillAndLevelList((prevSkillAndLevelList) => {
+                    const SkillAndLevelList = [...prevSkillAndLevelList]
+                    SkillAndLevelList.splice(tempDeleteDataIndex, 1)
+                    return SkillAndLevelList
+                })
+                setOpenDeleteConfirmation(false)
+                document.body.classList.remove("disable-scroll")
+                setAlertResponse({"success": data.success})
+            } else {
+                setAlertResponse({"error": data.error})
+            }
+        } catch (error){
+            console.error(error);
+        } finally {
+            setOpenDeleteConfirmation(false)
         }
+        
     }
 
     const onChangeSelectSkill = (option) => {
@@ -173,20 +197,19 @@ const Skills = (props) => {
 
   return (
     <div className='skills-container'>
-    {/* <Divider /> */}
         <h1>Skills</h1>
         <br />
         <div className='skill-level-list'>
-        {skillAndLevelList.map((item, index) => (
-            <div key={index} className='skill-level-container'>
-                <div className='skill-item'><b>{item.skill_name}</b></div>
-                  <Divider />
-                <div className='skill-level-item'>{item.skill_level}</div>
-                {props.clickedUserId === loginUserId && <CloseIcon onClick={() => onRemoveSkill(index)}  className='skill-list-close-button'/> }
-              </div>
-        ))}
+            {skillAndLevelList.map((item, index) => (
+                <div key={index} className='skill-level-container'>
+                    <div className='skill-item'><b>{item.skill_name}</b></div>
+                    <Divider />
+                    <div className='skill-level-item'>{item.skill_level}</div>
+                    {props.clickedUserId === loginUserId && <CloseIcon onClick={() => onClickDelete(index)}  className='skill-list-close-button'/> }
+                    {openDeleteConfirmation && <DeleteConfirmation deleteLabel={deleteLabel} onClickYes={() => onRemoveSkill()} onClickNo={onClickCloseDeleteConfirmation} />}
+                </div>
+            ))}
         </div>
-        
 
         {isAdd && 
             <div className='add-skill-section'>
@@ -216,15 +239,13 @@ const Skills = (props) => {
         </div>
         }
         {alertField && <p className='error-field'>{alertField.message}</p>}
+        <br />
         {props.clickedUserId === loginUserId && 
             <>
                 <Button buttonType="button" label="Add Skills" clickedButton={onAddMoreSkillsSection} />
-                <br />
-                <br />
             </>
         }
-        
-        <AlertNotification alertData={alertResponse}/>
+        <AlertNotification alertData={alertResponse} />
     </div>
   )
 }

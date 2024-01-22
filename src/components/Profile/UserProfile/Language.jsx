@@ -4,7 +4,7 @@ import Button from '../../Button';
 import CloseIcon from '@mui/icons-material/Close';
 import AuthContext from '../../../Context/AuthContext';
 import AlertNotification from '../../AlertNotification';
-import Select from "react-select";
+import DeleteConfirmation from 'components/DeleteConfirmation';
 
 const Language = (props) => {
 
@@ -14,8 +14,10 @@ const Language = (props) => {
     const [alertField, setAlertField] = useState(null)
     const [alert, setAlert] = useState(null)
     const [alertResponse, setAlertResponse] = useState(null)
-
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
     const [loginUserId, setLoginUserId] = useState()
+    const [tempDeleteDataIndex, setTempDeleteDataIndex] = useState()
+    const [deleteLabel, setDeleteLabel] = useState("")
 
     useEffect(() => {
         setLoginUserId(localStorage.getItem("userId"))
@@ -118,8 +120,8 @@ const Language = (props) => {
       }
     }
 
-    const onRemoveLanguage = async (index) => {
-      const id = languageList[index].id
+    const onRemoveLanguage = async () => {
+      const id = languageList[tempDeleteDataIndex].id
 
       try{
         const response = await fetch(`/api/user/remove_language/${id}`, {
@@ -133,7 +135,7 @@ const Language = (props) => {
         if (response.status === 200){
           setLanguageList((prevLanguages) => {
             const languages = [...prevLanguages]
-            languages.splice(index, 1)
+            languages.splice(tempDeleteDataIndex, 1)
             return languages
           })
           setAlertResponse({"success": data.success})
@@ -142,24 +144,38 @@ const Language = (props) => {
         } 
       } catch (errors){
         setAlertResponse({"error": errors})
+      } finally {
+        setOpenDeleteConfirmation(false)
+        document.body.classList.remove("disable-scroll")
       }
     }
+
+  const onOpenDeleteConfirmation = (index) => {
+    setTempDeleteDataIndex(index)
+    setDeleteLabel(`Do you want to delete ${languageList[index].language}?`)
+    setOpenDeleteConfirmation(true)
+    document.body.classList.add("disable-scroll")
+  }
+
+  const onCloseDeleteConfirmation = () => {
+    setOpenDeleteConfirmation(false)
+    document.body.classList.remove("disable-scroll")
+  }
 
 
   return (
     <div className='profile_language'>
-      <br />
-      <Divider />
       <h1>Language</h1>
+      <br />
         <div className='language-list'>
         {languageList.map((languageItem, index) => {
           return ( 
-              <div key={index} className='language-container'>
-                <div className='language-item'><b>{languageItem.language}</b></div>
-                  <Divider />
-                <div className='language-proficiency-item'>{languageItem.proficiency}</div>
-                {loginUserId === props.clickedUserId && <CloseIcon onClick={() => onRemoveLanguage(index)} className='language-list-close-button'/> }
-              </div>
+            <div key={index} className='language-container'>
+              <div className='language-item'><b>{languageItem.language}</b></div>
+                <Divider />
+              <div className='language-proficiency-item'>{languageItem.proficiency}</div>
+              {loginUserId === props.clickedUserId && <CloseIcon onClick={() => onOpenDeleteConfirmation(index)} className='language-list-close-button'/> }
+            </div>
           )
           })}
         </div>
@@ -185,7 +201,11 @@ const Language = (props) => {
           ))
         }
         {alertField && <p className='error-field'>{alertField.message}</p>}
+        <br />
         { loginUserId === props.clickedUserId && <Button buttonType="button" label="Add Language" clickedButton={onAddMoreLanguageSection} /> }
+        {openDeleteConfirmation && 
+          <DeleteConfirmation deleteLabel={deleteLabel} onClickYes={() => onRemoveLanguage()} onClickNo={() => onCloseDeleteConfirmation()} />
+        }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

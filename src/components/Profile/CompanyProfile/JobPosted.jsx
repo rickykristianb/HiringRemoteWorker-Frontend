@@ -1,12 +1,14 @@
 import { Divider } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Button from 'components/Button'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import AddJob from 'components/AddJob';
 import EditJob from 'components/EditJob';
 import AlertNotification from 'components/AlertNotification';
 import Pagination from 'components/Pagination';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import AuthContext from 'Context/AuthContext';
+import NotLoginAction from 'components/NotLoginAction';
 
 const JobPosted = (props) => {
 
@@ -18,8 +20,16 @@ const JobPosted = (props) => {
   const [isMouseEnter, setIsMouseEnter] = useState()
   const [isEditJob, setIsEditJob] = useState(false)
   const [editJobData, setEditJobData] = useState()
+  const [isNotLogin, setIsNotLogin] = useState(false)
   const [isPaginationReset, setIsPaginationReset] = useState(false)
+  const [isSendingInterest, setIsSendingInterest] = useState(false)
   const pageNumber = useRef(1)
+
+  const { user, authToken } = useContext(AuthContext)
+  let userToken = null
+  if (authToken){
+    userToken = authToken.access
+  }
   
   useEffect(() => {
     setLoginUserId(localStorage.getItem("userId"))
@@ -38,7 +48,7 @@ const JobPosted = (props) => {
     } else {
       page = page["page"]
     }
-    const response = await fetch(`/api/job/all-jobs/${id}/?page=${page}`,{
+    const response = await fetch(`/api/job/all_user_jobs/${id}/?page=${page}`,{
       method: "GET",
       headers: {
         "content-type": "application/json"
@@ -53,10 +63,14 @@ const JobPosted = (props) => {
 
   const onClickAddButton = () => {
     setIsFormOpen(true)
+
+    document.body.classList.add('disable-scroll');
   }
 
   const onClickCancelButtonAddForm = () => {
     setIsFormOpen(false)
+
+    document.body.classList.remove('disable-scroll');
   }
 
   const test = (id) => {
@@ -64,9 +78,9 @@ const JobPosted = (props) => {
   }
 
   const onClickEditJobButton = (data) => {
-    console.log("DATA", data);
     setIsEditJob(true)
     setEditJobData(data)
+    document.body.classList.add('disable-scroll');
   }
 
   const onMouseEnterJob = (id) => {
@@ -83,6 +97,8 @@ const JobPosted = (props) => {
 
   const onClickCancelButton = () => {
     setIsEditJob(false)
+
+    document.body.classList.remove('disable-scroll');
   }
 
   const resetPage = () => {
@@ -91,6 +107,44 @@ const JobPosted = (props) => {
     setTimeout(() => {
         setIsPaginationReset(false)
     }, 1)
+  }
+
+  const onOpenIsNotLogin = () => {
+    document.body.classList.add('disable-scroll');
+    setIsNotLogin(true)
+  }
+
+  const onCloseIsNotLogin = () => {
+      document.body.classList.remove('disable-scroll');
+      setIsNotLogin(false)
+  }
+
+  const onProcessInterestedClick = async (jobId) => {
+    console.log("ID: ", jobId);
+    try{
+        setIsSendingInterest(true)
+        const response = await fetch(`/api/job/interest_job/${jobId}/`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": `JWT ${userToken}`
+            }
+        });
+        const data = await response.json()
+        if (response.ok){
+            setAlertResponse({"success": data["success"]})
+        } else {
+            setAlertResponse({"error": data["error"]})
+        }
+    }catch (error){
+        console.error("Encounter an error: ", error);
+    } finally {
+        setIsSendingInterest(false)
+    }
+  }
+
+  const onInterestedClicked = (jobId) => {
+    {user ? onProcessInterestedClick(jobId) : onOpenIsNotLogin()}
   }
 
   return (
@@ -126,7 +180,7 @@ const JobPosted = (props) => {
             return (
               <div key={item.id} id="job-container" onMouseEnter={() => onMouseEnterJob(item.id)} onMouseLeave={() => onMouseLeaveJob()}>
                 <div id="job-basic-info">
-                  <Link to={`/jobs/${item.id}/`}>
+                  <Link to={`/jobs/${item.id}/?id=${props.clickedUserId}`}>
                     <h2>{item.job_title}</h2>
                   </Link>
                   <p>{item.user_posted?.name}</p>
@@ -157,7 +211,10 @@ const JobPosted = (props) => {
                   ?
                   <div id='job-posted-list-action-button'>
                     {loginUserId !== props.clickedUserId ?
-                      <Button buttonType="button" label="Interested" clickedButton={() => test(item.id)} />
+                      item.status !== "Finished" ? 
+                        <Button buttonType="button" label={isSendingInterest ? "Sending..." : "Interested"} clickedButton={() => onInterestedClicked(item.id)} />
+                      :
+                      setIsMouseEnter("")
                     :
                       <Button buttonType="button" label="Edit" 
                         clickedButton={() => onClickEditJobButton({
@@ -170,7 +227,8 @@ const JobPosted = (props) => {
                             jobEmploymentType: item.jobemploymenttype,
                             jobSalary: item.jobsalaryrates,
                             jobExperienceLevel: item.experience_level,
-                            jobStatus: item.status
+                            jobStatus: item.status,
+                            jobDeadline: item.deadline
                           }
                         })} />
                     }
@@ -190,6 +248,8 @@ const JobPosted = (props) => {
                           return "job-status-open"
                         case "Closed":
                           return "job-status-closed"
+                        case "Finished":
+                          return "job-status-finished"
                       }
                     })()}>{capitalizeFirstLetter(item.status)}</span></p>
                   </>
@@ -223,6 +283,7 @@ const JobPosted = (props) => {
             />
           </div>
         }
+        {isNotLogin && <NotLoginAction close={onCloseIsNotLogin} />}
         {alertResponse && <AlertNotification alertData={alertResponse} />}
     </div>
   )

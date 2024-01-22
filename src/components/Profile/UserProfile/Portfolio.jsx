@@ -7,6 +7,7 @@ import AuthContext from '../../../Context/AuthContext';
 import AlertNotification from '../../AlertNotification';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import DeleteConfirmation from 'components/DeleteConfirmation';
 
 const Portfolio = (props) => {
 
@@ -34,6 +35,7 @@ const Portfolio = (props) => {
     const [isAdded, setIsAdded] = useState(false)
     const [isHover, setIsHover] = useState()
     const [isEdit, setIsEdit] = useState()
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
 
     const onLoadPortfolio = () => {
 
@@ -122,25 +124,32 @@ const Portfolio = (props) => {
     }
 
     const onRemovePortfolio = async (index) => {
-        const id = portfolioList[index]["id"]
+        try{
+            const id = portfolioList[index]["id"]
 
-        const response = await fetch(`/api/user/remove_portfolio/${id}/`, {
-            method: "DELETE",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `JWT ${userAuthToken}`
-            }
-        })
-        const data = await response.json()
-        if (response.status === 200) {
-            setAlertResponse({"success": data.success})
-            setPortfolioList((prevValue) => {
-                const list = [...prevValue]
-                list.splice(index, 1)
-                return list
+            const response = await fetch(`/api/user/remove_portfolio/${id}/`, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `JWT ${userAuthToken}`
+                }
             })
-        } else {
-            setAlertResponse({"error": data.error})
+            const data = await response.json()
+            if (response.status === 200) {
+                setAlertResponse({"success": data.success})
+                setPortfolioList((prevValue) => {
+                    const list = [...prevValue]
+                    list.splice(index, 1)
+                    return list
+                })
+                setOpenDeleteConfirmation(false)
+            } else {
+                setAlertResponse({"error": data.error})
+            }
+        } catch (error){
+            console.error(error);
+        } finally{
+            document.body.classList.remove("disable-scroll")
         }
     }
 
@@ -204,15 +213,20 @@ const Portfolio = (props) => {
         setAlertFieldEdit(null)
     }
 
+    const onOpenDeleteConfirmation = () => {
+        setOpenDeleteConfirmation(true)
+        document.body.classList.add("disable-scroll")
+    }
+
+    const onCloseDeleteConfirmation = () => {
+        setOpenDeleteConfirmation(false)
+        document.body.classList.remove("disable-scroll")
+    }
+
   return (
     <div className='portfolio-container'> 
-        <br />
-        <br />
-        <Divider />
         <h1>Portfolio</h1> 
-        
-        <div className='portfolio-list'>
-
+        <br />
         <div className='portfolio-list'>
         {portfolioList.map((item, index) => {
             return (
@@ -241,19 +255,23 @@ const Portfolio = (props) => {
                         </div>
                         {loginUserId === props.clickedUserId &&
                             isHover === index &&
+                            <>
                                 <div className='portfolio-edit-delete-button'>
                                     <Button buttonType="button" label="Edit" clickedButton={() => onClickedEdit(index)} />
-                                    <Button buttonType="button" label="Delete" clickedButton={() => onRemovePortfolio(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
+                                    <Button buttonType="button" label="Delete" clickedButton={() => onOpenDeleteConfirmation()} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
                                 </div>
+
+                                {openDeleteConfirmation && 
+                                    <DeleteConfirmation deleteLabel={`Do you want to delete ${item.type}?`} onClickYes={() => onRemovePortfolio(index)} onClickNo={() => onCloseDeleteConfirmation()} />
+                                }
+                            </>                                
                         }
+                        {/* () => onRemovePortfolio(index) */}
                     </div>
                     }
                 </>
             )
         })}
-        </div>
-        
-        
         </div>
         {isAdded && newPortfolioField.map((item, index) => {
             return (
@@ -276,8 +294,6 @@ const Portfolio = (props) => {
         {loginUserId === props.clickedUserId && 
             <>
                 <Button buttonType="button" label="Add Portfolio" clickedButton={() => onAddMorePortfolio()} />
-                <br />
-                <br />
             </>
         }
         <AlertNotification alertData={alertResponse}/>

@@ -8,8 +8,15 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import AlertNotification from '../AlertNotification'
+import AuthContext from 'Context/AuthContext';
 
 const MessageDetail = (props) => {
+
+    const {authToken} = useContext(AuthContext)
+    let userToken = null;
+    if (authToken){
+        userToken = authToken.access
+    }
 
     const { 
         onDeleteMessage,
@@ -64,6 +71,24 @@ const MessageDetail = (props) => {
         onSendReplyMessage(data)
     }
 
+    const onClickFromSender =async(senderId) => {
+        const response = await fetch(`/api/user/check_user_type/?id=${senderId}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": `JWT ${userToken}`
+            }
+        });
+        const data = await response.json()
+        if (response.ok){
+            if (data === "company"){
+                window.open(`/profile/company/?id=${senderId}`)
+            } else if (data === "personal"){
+                window.open(`/profile/?id=${senderId}`)
+            }
+        }
+    }
+
   return (
     <div className={isReply ? 'message-detail-container-reply' : 'message-detail-container' } >
         <div className={isReply ? (isExpanded ? "message-detail-reply-expanded" : "message-detail-reply") : prevEmailExpanded ? "message-detail-prevEmailExpanded" : 'message-detail'} >
@@ -72,7 +97,7 @@ const MessageDetail = (props) => {
             <h1>{props.data.data.data.subject}</h1>
             <div className='sender-date-message'>
                 <div className='sender-message'>
-                    <p id="sender-name" onClick={() => console.log(props.data.data.data.id)}>From: <u>{props.data.data.data.sender.name}</u></p>
+                    <p id="sender-name" onClick={() => console.log(props.data.data.data.id)}>From: <u onClick={() => onClickFromSender(props.data.data.data.sender.id)}>{props.data.data.data.sender.name}</u></p>
                 </div>
                 <div className='date-message'>
                     <p>{props.data.data.data.created.date}</p>

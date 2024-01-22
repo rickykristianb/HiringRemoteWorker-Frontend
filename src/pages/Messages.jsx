@@ -9,8 +9,14 @@ import { useLocation, useParams } from 'react-router-dom'
 const Messages = () => {
 
   const [email, setEmail] = useState()
-
   const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const selectedTab = params.get('tab');
+
+    setMenuClicked(selectedTab);
+  }, [location.search]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);

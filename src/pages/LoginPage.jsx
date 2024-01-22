@@ -5,6 +5,7 @@ import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
 import AuthContext from '../Context/AuthContext';
+import DemoAccountInfo from 'components/DemoAccountInfo';
 
 const LoginPage = () => {
 
@@ -70,6 +71,7 @@ const LoginPage = () => {
           </Link>
         </div>
       </div>
+      <DemoAccountInfo />
     </div>
   )
 }

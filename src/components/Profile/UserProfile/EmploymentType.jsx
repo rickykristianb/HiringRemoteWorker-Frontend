@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Select from "react-select";
 import Button from '../../Button';
 import CloseIcon from '@mui/icons-material/Close';
-import Divider from '@mui/material/Divider';
+import DeleteConfirmation from 'components/DeleteConfirmation';
 import AuthContext from '../../../Context/AuthContext';
 import { useContext } from 'react';
 import AlertNotification from '../../AlertNotification';
@@ -34,6 +34,9 @@ const EmploymentType = (props) => {
     const [alertField, setAlertField] = useState()
     const [alertResponse, setAlertResponse] = useState()
     const [isAdded, setIsAdded] = useState(false)
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
+    const [tempDeleteDataIndex, setTempDeleteDataIndex] = useState()
+    const [deleteLabel, setDeleteLabel] = useState("")
 
     const onLoadEmpType = () => {
         const types = props.userData
@@ -96,74 +99,100 @@ const EmploymentType = (props) => {
     }
 
     const onAddEmploymentType = async (index) => {
-        if (selectedType.value === "Select Type") {
-            setAlertField({"message": "Type is required"})
-        } else{
-            const response = await fetch("/api/user/add_user_emp_type/", {
-                method: "POST",
+        try{
+            if (selectedType.value === "Select Type") {
+                setAlertField({"message": "Type is required"})
+            } else{
+                const response = await fetch("/api/user/add_user_emp_type/", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        "Authorization": `JWT ${userAuthToken}`
+                    },
+                    body: JSON.stringify(selectedType)
+                })
+        
+                const data = await response.json()
+    
+                if (response.status === 201){
+                    const newType = {
+                        id: selectedType.id,
+                        type: selectedType.value
+                    }
+                    setEmploymentTypeListSelected((prevValue) => ([...prevValue, newType]))
+                    setIsAdded(true)
+                    setAlertField(null)
+                    setAlertResponse({"success": data.success})
+                } else {
+                    setAlertField({"message": data.error})
+                }
+            }
+        } catch (error){
+            console.error(error);
+        }
+    }
+
+    const onRemoveType = async() => {
+        try{
+            const id = employmentTypeListSelected[tempDeleteDataIndex]["id"]
+            const response = await fetch(`/api/user/remove_emptype/${id}/`, {
+                method: "DELETE",
                 headers: {
                     "content-type": "application/json",
                     "Authorization": `JWT ${userAuthToken}`
-                },
-                body: JSON.stringify(selectedType)
-            })
-    
-            const data = await response.json()
-
-            if (response.status === 201){
-                const newType = {
-                    id: selectedType.id,
-                    type: selectedType.value
                 }
-                setEmploymentTypeListSelected((prevValue) => ([...prevValue, newType]))
-                setIsAdded(true)
-                setAlertField(null)
+            })
+            const data = await response.json()
+            if (response.status === 200){
+                setEmploymentTypeListSelected(() => {
+                    const typeList = [...employmentTypeListSelected]
+                    typeList.splice(tempDeleteDataIndex, 1)
+                    return typeList
+                })
+                setOpenDeleteConfirmation(false)
                 setAlertResponse({"success": data.success})
             } else {
-                setAlertField({"message": data.error})
+                setAlertResponse({"error": data.error})
             }
+        } catch (error){
+            console.error(error);
+        } finally {
+            setOpenDeleteConfirmation(false)
+            document.body.classList.remove("disable-scroll")
         }
     }
 
-    const onRemoveType = async(index) => {
-        const id = employmentTypeListSelected[index]["id"]
-        
-        const response = await fetch(`/api/user/remove_emptype/${id}/`, {
-            method: "DELETE",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `JWT ${userAuthToken}`
-            }
-        })
-        const data = await response.json()
-        if (response.status === 200){
-            setEmploymentTypeListSelected(() => {
-                const typeList = [...employmentTypeListSelected]
-                typeList.splice(index, 1)
-                return typeList
-            })
-            
-            setAlertResponse({"success": data.success})
-        } else {
-            setAlertResponse({"error": data.error})
-        }
+    const onOpenDeleteConfirmation = (index) => {
+        setTempDeleteDataIndex(index)
+        setDeleteLabel(`Do you want to delete ${employmentTypeListSelected[index].type}?`)
+        setOpenDeleteConfirmation(true)
+        document.body.classList.add("disable-scroll")
     }
+
+    const onCloseDeleteConfirmation = () => {
+        setOpenDeleteConfirmation(false)
+        document.body.classList.remove("disable-scroll")
+    }
+
 
   return (
     <div className='profile-employment-type'>
-        <br />
-        <br />
-        <Divider />
-
         <h1>Employment Type</h1>
         <br />
         <div className='emp-type-list'>
             {employmentTypeListSelected.map((item, index) => {
                 return (
-                    <div key={index} className='emp-type-container'>
-                        <div className='skill-item'><b>{item.type}</b></div>
-                        {loginUserId === props.clickedUserId && <CloseIcon onClick={() => onRemoveType(index)} sx={{width: "20px"}} className='emp-type-list-close-button'/> }
-                    </div>
+                    <>
+                        <div key={index} className='emp-type-container'>
+                            <div className='skill-item'><b>{item.type}</b></div>
+                            {loginUserId === props.clickedUserId && 
+                                <CloseIcon onClick={() => onOpenDeleteConfirmation(index)} sx={{width: "20px"}} className='emp-type-list-close-button'/> 
+                            }
+                            {openDeleteConfirmation && 
+                                <DeleteConfirmation deleteLabel={deleteLabel} onClickYes={() => onRemoveType()} onClickNo={() => onCloseDeleteConfirmation()} />
+                            }
+                        </div>
+                    </>
                 )
             })}
         </div>
@@ -187,8 +216,6 @@ const EmploymentType = (props) => {
         {loginUserId === props.clickedUserId && 
             <>
                 <Button buttonType="button" label="Add Employment Type" clickedButton={onAddMoreEmploymentTypeSection} />
-                <br />
-                <br />
             </>
          }
         <AlertNotification alertData={alertResponse}/>

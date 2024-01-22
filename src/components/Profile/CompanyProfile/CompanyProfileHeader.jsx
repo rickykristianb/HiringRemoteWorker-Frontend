@@ -68,7 +68,6 @@ const handleChangeUploadImage = async (e) => {
 
   return (
       <div className='company-profile-header'>
-        
         <div className='profile_picture'>
           <div className='profile_image'>
               <img
@@ -76,22 +75,26 @@ const handleChangeUploadImage = async (e) => {
               alt={"profile-picture"}
               className="profile_image"
               />
-          </div>
-          <div className='change-progress-image-button'>
+              <div className='change-progress-image-button'>
               {loginUserId === props.clickedUserId &&
-                  <div className='input-button-change-image' onClick={handleClickChange}>
-                      Change
-                  </div>
+              <>
+                <div className='input-button-change-image' onClick={handleClickChange}>
+                        Change
+                    </div>
+                
+                <input
+                    type='file'
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleChangeUploadImage}
+                />
+              </>
               }
-              <input
-                  type='file'
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleChangeUploadImage}
-              />
+            </div>
           </div>
+          
           <div className='rate-name-company-profile'>
-                <div className='profile-rate'>
+                <div className='profile-rate' onClick={() => navigate("/profile/company/#add-rating-company")}>
                     <RateGenerator rating={props.userData?.headerData.userRate} />
                 </div>
                 <div className='user-fullname'>
@@ -116,11 +119,14 @@ const handleChangeUploadImage = async (e) => {
                     {props.userData?.headerData.address}
                     <br />
                     <br />
-                    {loginUserId === props.clickedUserId && 
-                      <Button clickedButton={props.clickEdit} customClassName="company-bio-button" buttonType="button" label="Edit" />
-                    }
+                    
                   </div>
                 </div>
+            </div>
+            <div id="edit-button-company-profile">
+              {loginUserId === props.clickedUserId && 
+                <Button clickedButton={props.clickEdit} customClassName="company-bio-button" buttonType="button" label="Edit" />
+              }
             </div>
         </div>
       </div>

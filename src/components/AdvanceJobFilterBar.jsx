@@ -11,7 +11,7 @@ import { ReactComponent as Refresh } from "../assets/images/Reload.svg"
 import { ReactComponent as RefreshHover } from "../assets/images/Reload-Mouse-Hover.svg"
 import { set } from 'date-fns';
 
-const FilterBar = (props) => {
+const AdvanceJobFilterBar = (props) => {
     const [skills, setSkills] = useState([])
     const [skillsList, setSkillsList] = useState([])
     const [locations, setLocations] = useState([])
@@ -297,37 +297,6 @@ const FilterBar = (props) => {
                     )}
                 />
             </li>
-            {props.includeRate &&
-            <li>
-            <p>Rate</p>
-            <Autocomplete
-                multiple
-                limitTags={1}
-                options={ rates }
-                onChange={handleRateChange}
-                disableCloseOnSelect
-                
-                renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setSelectedRate(option)} style={{margin: '0'}}>
-                        <li {...props}>
-                        <Checkbox
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
-                        />
-                        {option}
-                        </li>
-                    </p>
-                )}
-                style={{ alignItems: 'center' }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select user rate" placeholder="Rate" 
-                    />
-                )}
-                />
-            </li>
-            }
             <li>
             <p>Location</p>
             <Autocomplete
@@ -409,4 +378,4 @@ const FilterBar = (props) => {
   )
 }
 
-export default FilterBar
+export default AdvanceJobFilterBar

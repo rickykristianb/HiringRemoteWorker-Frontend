@@ -9,17 +9,25 @@ import Avatar from '@mui/material/Avatar';
 import AddIcon from '@mui/icons-material/Add';
 import React, {useContext, useEffect, useState} from 'react'
 import AuthContext from "../Context/AuthContext";
-import ProfileContext from "../Context/ProfileContext";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Divider, IconButton } from "@mui/material";
 import EmailContext from "../Context/EmailContext";
+import NotificationMessage from "./NotificationMessage";
 
 const Headers = (props) => {   
 
   const [isProfileClicked, setIsProfileClicked] = useState(false)
+  const [totalUnreadNotification, setTotalUnreadNotification] = useState(0)
+  const [isNotificationContainerOpen, setIsNotificationContainerOpen] = useState(false)
 
   const [loginUserId, setLoginUserId] = useState()
   const navigate = useNavigate()
-  let {user, logoutUser} = useContext(AuthContext)
+  let {user, logoutUser, authToken} = useContext(AuthContext)
+
+  let userToken;
+  if (authToken){
+    userToken = authToken.access
+  }
 
   let localDataUserName = localStorage.getItem("username")
   let localLoginUserId = localStorage.getItem("userId")
@@ -47,6 +55,41 @@ const Headers = (props) => {
     }
   }, [])
 
+  const onLoadTotalUnreadNotification = async() => {
+    const response = await fetch(`/api/job/get_total_unread_notification/`,{
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `JWT ${userToken}`
+      }
+    });
+    const data = await response.json()
+    if (response.ok){
+      setTotalUnreadNotification(data)
+    }
+  }
+
+  useEffect(() => {
+    onLoadTotalUnreadNotification()
+  }, [])
+
+  useEffect(() => {
+    const onClickDocumentCloseNotificationBox = (e) => {
+      if (!e.target.closest('#notification-menu')) {
+        setIsNotificationContainerOpen(false)
+      }
+    }
+
+    document.addEventListener("click", onClickDocumentCloseNotificationBox)
+
+    return () => {
+        document.removeEventListener("click", onClickDocumentCloseNotificationBox);
+    };
+  }, [])
+
+  const onClickNotification = () => {
+    setIsNotificationContainerOpen(!isNotificationContainerOpen)
+  }
 
   return (
     <nav className="nav">
@@ -61,15 +104,25 @@ const Headers = (props) => {
         <>
         <li>
           <Link to={loginUserType === "personal" ? `/profile/?id=${localLoginUserId}` : `/profile/company/?id=${localLoginUserId}`} >
-            <li><a className="user-name">{ localDataUserName }</a></li>   {/*//  <--- name Auth context */}
+            <li><span className="user-name">{ localDataUserName }</span></li>   {/*//  <--- name Auth context */}
           </Link>
           </li>
           <li>
-            <Link to="/messages/">
+            <Link to="/messages/?tab=inbox">
               <Badge badgeContent={messageUnreadCount ? messageUnreadCount : null} color="error" >
                 <MailIcon sx={{ width: 30, height: 30, color: "#4e6e81"}} />
               </Badge>
             </Link>
+          </li>
+          <li onClick={(e) => onClickNotification(e)} id="notification-menu">
+            <Badge badgeContent={totalUnreadNotification ? totalUnreadNotification : null} color="error" >
+              <NotificationsIcon sx={{ width: 30, height: 30, color: "#4e6e81"}} />
+            </Badge>
+            {isNotificationContainerOpen &&
+              <div id="notification-message-container">
+                <NotificationMessage onClickNotification={() => onLoadTotalUnreadNotification()} notificationType={loginUserType === "personal" ? "personal" : "company"} />
+              </div>
+            }
           </li>
           </>
         }
@@ -80,11 +133,24 @@ const Headers = (props) => {
           </li>
           {user ? 
             (loginUserType === "personal" ?
-              <Link to={`/profile/?id=${localLoginUserId}` } >
-                <li>
-                    <Avatar alt="Remy Sharp" src={profilePicture} sx={{ width: 30, height: 30, color: "#4e6e81" }} /> 
-                </li>
-              </Link>  
+              <>
+                <div className="profile-menu-container">
+                    <li id="profile-menu" onClick={() => setIsProfileClicked(!isProfileClicked)}>
+                        <Avatar alt="Remy Sharp" src={profilePicture} sx={{ width: 30, height: 30, color: "#4e6e81" }} /> 
+                    </li>
+                  {isProfileClicked && 
+                    <ul className="company-profile-menu">
+                      <Link to={`/profile/?id=${localLoginUserId}`} >
+                        <li>Profile</li>
+                      </Link>
+                      <Divider />
+                      <Link to="/interested-jobs/" >
+                        <li>Interested Jobs</li>
+                      </Link>
+                    </ul>
+                  }
+                </div>
+              </>
               :
               <div className="profile-menu-container">
                   <li id="profile-menu" onClick={() => setIsProfileClicked(!isProfileClicked)}>
@@ -95,7 +161,8 @@ const Headers = (props) => {
                     <Link to={`/profile/company/?id=${localLoginUserId}`} >
                       <li>Profile</li>
                     </Link>
-                    <Link to="/company-panel/" >
+                    <Divider />
+                    <Link to="/company-panel/?tabs=profile" >
                       <li>Manage</li>
                     </Link>
                     <Divider />

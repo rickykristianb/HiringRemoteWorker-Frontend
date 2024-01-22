@@ -201,7 +201,7 @@ export const AuthProvider = ({children}) => {
         setAuthToken(null)
         setUser(null)
         localStorage.clear()
-        navigate("/users/")
+        navigate("/jobs/")
     }
 
     let updateToken = async () => {

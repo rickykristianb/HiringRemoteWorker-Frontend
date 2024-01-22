@@ -120,10 +120,14 @@ const handleClickChange = () => {
 
 const onClickEditButton = () => {
   setIsEdit(true)
+
+  document.body.classList.add('disable-scroll');
 }
 
 const onClickCancelEdit = () => {
   setIsEdit(false)
+
+  document.body.classList.remove('disable-scroll');
 }
 
 const onChangeHeaderFormInput = (e) => {
@@ -194,8 +198,11 @@ const onSaveEditProfile = async (e) => {
     
   } catch (error){
     setAlertResponse({ "error": error.toString() });
+  } finally {
+    setLocationFieldError()
+    document.body.classList.remove('disable-scroll');
   }
-  setLocationFieldError()
+  
 };   
 
   return (

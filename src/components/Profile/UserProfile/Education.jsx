@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider';
 import AuthContext from '../../../Context/AuthContext';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import AlertNotification from '../../AlertNotification';
+import DeleteConfirmation from 'components/DeleteConfirmation';
 
 const Education = (props) => {
     const [ education, setEducation ] = useState([])
@@ -14,6 +15,9 @@ const Education = (props) => {
     const [ isEdit, setIsEdit ] = useState(false)
     const [ alert, setAlert ] = useState()
     const [ alertResponse, setAlertResponse ] = useState()
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false)
+    const [deleteLabel, setDeleteLabel] = useState("")
+    const [tempDeleteDataIndex, setTempDeleteDataIndex] = useState()
 
     const [loginUserId, setLoginUserId] = useState()
 
@@ -108,8 +112,8 @@ const Education = (props) => {
     }   
   }
 
-  const onRemoveEducation = async (index) => {
-    const educationId = educationList[index].id
+  const onRemoveEducation = async () => {
+    const educationId = educationList[tempDeleteDataIndex].id
     try{
       const response = await fetch(`/api/user/delete_education/${educationId}/`, {
         method: "DELETE",
@@ -121,7 +125,7 @@ const Education = (props) => {
       const data = await response.json()
       if (response.status === 200){
         const educations = [...educationList];
-        educations.splice(index, 1)
+        educations.splice(tempDeleteDataIndex, 1)
         setEducationList(educations)
         setAlertResponse({"success": data.success})
       } else {
@@ -130,6 +134,9 @@ const Education = (props) => {
     } catch (errors){
       console.log(String(errors));
       setAlertResponse({"error": errors})
+    } finally{
+      setOpenDeleteConfirmation(false)
+      document.body.classList.remove("disable-scroll")
     }
   };
 
@@ -195,14 +202,24 @@ const Education = (props) => {
   const onMouseLeaveHover = () => {
     setIshovered(null)
   }
+  
+  const onOpenDeleteConfirmation = (index) => {
+    setTempDeleteDataIndex(index)
+    setDeleteLabel(`Do you want to delete ${educationList[index].schoolName}?`)
+    setOpenDeleteConfirmation(true)
+    document.body.classList.add("disable-scroll")
+  }
+
+  const onCloseDeleteConfirmation = () => {
+      setOpenDeleteConfirmation(false)
+      document.body.classList.remove("disable-scroll")
+  }
 
 
   return (
     <div className='profile_education'>
-      <br />
-      <br />
-      <Divider />
         <h1>Education</h1>
+        <br />
         {/* DISPLAY ALL EDUCATION. ADD FORM TO EDIT THE EDUCATION */}
         {educationList.map((item, index) => {
               return (
@@ -246,16 +263,14 @@ const Education = (props) => {
                     {loginUserId === props.clickedUserId && isHovered === index && (
                       <div className='profile-edit-delete-button'>
                         <Button buttonType="button" label="Edit" clickedButton={() => onClickedEdit(index)} />
-                        <Button buttonType="button" label="Delete" clickedButton={() => onRemoveEducation(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
+                        <Button buttonType="button" label="Delete" clickedButton={() => onOpenDeleteConfirmation(index)} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}}  />
                       </div>
                     )}
                   </div>
                 )}
-                
                 </div> 
               )
-            })}
-        
+            })}     
 
         {/* ADD NEW EDUCATION (NEW FORM) */}
         {!isSaved && (education.length > 0) && 
@@ -278,10 +293,11 @@ const Education = (props) => {
         {loginUserId === props.clickedUserId && 
           <>
             <Button buttonType="button" label="Add Education" clickedButton={onAddMoreEducationSection} />
-            <br />
-            <br />
           </>
          }
+         {openDeleteConfirmation && 
+          <DeleteConfirmation deleteLabel={deleteLabel} onClickYes={() => onRemoveEducation()} onClickNo={() => onCloseDeleteConfirmation()} />
+        }
         <AlertNotification alertData={alertResponse}/>
     </div>
   )

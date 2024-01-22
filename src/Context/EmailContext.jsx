@@ -60,7 +60,6 @@ export const EmailProvider = ({ children }) => {
     
     const unreadMessageCount = async() => {
         if (userToken.current){
-            // console.log("MASUK SINI KAH????");
             const response = await fetch("/api/message/count_unread_messages/", {
                 method: "GET",
                 headers: {
@@ -83,10 +82,6 @@ export const EmailProvider = ({ children }) => {
         unreadMessageCount()
     },[userToken.current])
 
-    // useMemo(() => {
-    //     const count = messages.filter(message => !message.is_read).length
-    //     setMessageUnreadCount(count)
-    // }, [messages])
 
     const onLoadBody = (body) => {
         if (body.length > 95){
@@ -147,6 +142,7 @@ export const EmailProvider = ({ children }) => {
         setIsVisible(!isVisible)
         setMessageData(messageDetailData)
         setMessageSentData(messageDetailData)
+        document.body.classList.add('disable-scroll');
     }
 
     // DELETE MESSAGES -------------------------------------------------------------------------------
@@ -215,7 +211,6 @@ export const EmailProvider = ({ children }) => {
 
         const data = await response.json()
         if (response.status === 200) {
-            console.log(data);
             setSentMessages(data["data"])
             setTotalSentMessage(data["total_sent_message"])
         }
@@ -283,6 +278,7 @@ export const EmailProvider = ({ children }) => {
       }
 
     const onMessageDetailCloseClicked = () => {
+        document.body.classList.remove('disable-scroll');
         setIsVisible(!isVisible)
     }
 

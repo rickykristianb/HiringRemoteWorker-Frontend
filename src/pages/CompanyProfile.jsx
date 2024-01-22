@@ -11,6 +11,7 @@ import AlertNotification from 'components/AlertNotification';
 import AuthContext from 'Context/AuthContext';
 import Backdrop from 'components/Backdrop';
 import JobPosted from 'components/Profile/CompanyProfile/JobPosted';
+import UserRatings from 'components/UserRatings';
 
 const CompanyProfile = () => {
     const [clickedUserId, setClickedUserId] = useState()
@@ -23,6 +24,7 @@ const CompanyProfile = () => {
     const [isEdit, setIsEdit] = useState(false)
     const [alertResponse, setAlertResponse] = useState()
     const [isBackDropActive, setIsBackdropActive] = useState(false)
+    const [ratingData, setRatingData] = useState([])
     const location = useLocation();
 
     const navigate = useNavigate()
@@ -99,10 +101,11 @@ const CompanyProfile = () => {
 
     const openEditForm = () => {
         setIsEdit(true)
+        document.body.classList.add('disable-scroll');
     }
      
     const onClickCancelEdit = (e) => {
-
+      
       if(e.target.classList.contains("edit-company-profile-container") || e.target.classList.contains("company-profile-cancel-button")){
         setIsEdit(false)
         setHeaderUserData({
@@ -118,6 +121,7 @@ const CompanyProfile = () => {
         setBioUserData({bio: tempSaveData["bio"]})
         setLocationFieldError()
       }
+      document.body.classList.remove('disable-scroll');
     }
 
     const onChangeHeaderFormInput = (e) => {
@@ -192,9 +196,33 @@ const CompanyProfile = () => {
         
       } catch (error){
         setAlertResponse({ "error": error.toString() });
+      } finally {
+        setLocationFieldError()
+        document.body.classList.remove('disable-scroll');
       }
-      setLocationFieldError()
     };   
+
+    const loadUserRatings = async() => {
+        const searchParams = new URLSearchParams(location.search);
+        const id = searchParams.get('id');
+
+        const response = await fetch(`/api/rating/get_user_rating/?id=${id}`, {
+            method: "GET",
+            headers: {
+                "content-type": "application/json",
+            }
+        });
+        const data = await response.json()
+        if (response.ok){
+            setRatingData(data)
+        } else {
+            setRatingData([])
+        }
+    }
+
+    useEffect(() => {
+        loadUserRatings()
+    }, [])
 
   return (
     <div className="company-profile-container">
@@ -205,6 +233,10 @@ const CompanyProfile = () => {
         />
         <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
         <JobPosted clickedUserId={clickedUserId} />
+        <div id='add-rating-company'>
+          <UserRatings userId={clickedUserId} ratingData={ratingData} />
+        </div>
+
         {isEdit && 
           <EditBioForm 
             userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 

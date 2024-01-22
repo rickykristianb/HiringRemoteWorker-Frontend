@@ -157,10 +157,7 @@ const Rate = (props) => {
 
   return (
     <div className='expected-rate-container'>
-        <br />
         <h1>Rate</h1>
-        {/* <Divider /> */}
-        <br />
         <br />
         { savedRate !== null &&
             savedRate.map((item, index) => {
@@ -222,11 +219,8 @@ const Rate = (props) => {
         {loginUserId === props.clickedUserId && savedRate === null && 
             <>
                 <Button clickedButton={onClickAddRate} buttonType="button" label="Add Rate" />
-                <br />
-                <br />
             </>
         }
-        <br />
     </div>
   )
 }

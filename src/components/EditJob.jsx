@@ -18,7 +18,7 @@ const EditJob = (props) => {
   const experienceList = [
     "1 - 2 years", "2 - 4 years", "4 - 6 years", "6 - 8 years", "8 - 10 years", " > 10 years"
   ]
-  const jobStatus = [ "Open", "Closed"]
+  const jobStatus = [ "Open", "Closed", "Finished"]
   const [alertResponse, setAlertResponse] = useState()
   const [loadedLocation, setLoadedLocation] = useState([])
   const [employmentTypeList, setEmploymentTypeList] = useState([])
@@ -31,6 +31,7 @@ const EditJob = (props) => {
   const [jobEmploymentTypeAlertField, setJobEmploymentTypeAlertField] = useState()
   const [jobSalaryAlertField, setJobSalaryAlertField] = useState()
   const [jobExperienceLevelAlertField, setJobExperienceLevelAlertField] = useState()
+  const [deadlineAlertField, setDeadlineAlertField] = useState()
   const [editData, setEditData] = useState([])
   const [inputValue, setInputValue] = useState({
     jobStatus: "",
@@ -41,7 +42,8 @@ const EditJob = (props) => {
     jobEmploymentType: [],
     jobSalary: "",
     jobSalaryPaidPeriod: "",
-    experienceLevel: ""
+    experienceLevel: "",
+    jobDeadline: ""
   });
 
   const onLoadEditData = async() => {
@@ -54,7 +56,8 @@ const EditJob = (props) => {
         jobEmploymentType: props.editData["data"].jobEmploymentType,
         jobSalary: props.editData["data"].jobSalary.nominal,
         jobSalaryPaidPeriod: props.editData["data"].jobSalary.paid_period,
-        jobExperienceLevel: props.editData["data"].jobExperienceLevel
+        jobExperienceLevel: props.editData["data"].jobExperienceLevel,
+        jobDeadline: props.editData["data"].jobDeadline
     })
   }
 
@@ -99,17 +102,28 @@ const EditJob = (props) => {
     if (response.status === 200){
         setSkillList(data)
     }
-}
+  }
+
+  const settingMinimumDateDatelineSelection = () => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    const deadlineInput = document.getElementById('deadlineInput');
+    
+    if (deadlineInput) {
+      deadlineInput.min = currentDate;
+    }
+  };
 
   useEffect( () => {
     onLoadEditData()
     onLoadLocation()
     onLoadListEmploymentType()
     onLoadSkills()
+
+    settingMinimumDateDatelineSelection()
   }, [])
 
   const onCheckChangeInput = (name) => {
-    console.log("NAME", name);
+
     switch(name){
       case "jobTitle":
         setJobTitleAlertField();
@@ -135,12 +149,16 @@ const EditJob = (props) => {
       case "experienceLevel":
         setJobExperienceLevelAlertField();
         break;
+      case "jobDeadline":
+        setDeadlineAlertField();
+        break;
     }
     return true
   }
 
   const onChangeInputField = (e) => {
     const {name, value} = e.target
+    console.log(name, value);
     onCheckChangeInput(name)
 
     setInputValue((prevValue) => {
@@ -242,6 +260,10 @@ const EditJob = (props) => {
       setJobExperienceLevelAlertField("Please select 1 experience level.")
       status = "failed"
     } 
+    if (!inputValue.jobDeadline){
+      setDeadlineAlertField("Please select deadline.")
+      status = "failed"
+    }
     
     if (status === "success") {
       return true
@@ -249,34 +271,41 @@ const EditJob = (props) => {
   }
 
   const onSubmitSaveJobForm = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    const checking = await fieldChecking()
-    if(checking === true){
-      const response = await fetch(`/api/job/update_job/${props.editData.data.id}/`, {
-        method: "PATCH",
-        headers: {
-          "content-type": "application/json",
-          "Authorization": `JWT ${userAuthToken}`
-        },
-        body: JSON.stringify(inputValue)
-      })
-      const data = await response.json()
-      if (response.ok){
-        props.notification(data)
-        props.closeForm()
-        await props.onLoadJobPosted()
-        if (props.needPagination === false){
-          console.log(props.needPagination);
+    try{
+      e.preventDefault()
+      setIsSubmitting(true)
+      const checking = await fieldChecking()
+      if(checking === true){
+        const response = await fetch(`/api/job/update_job/${props.editData.data.id}/`, {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `JWT ${userAuthToken}`
+          },
+          body: JSON.stringify(inputValue)
+        })
+        const data = await response.json()
+        if (response.ok){
+          props.notification(data)
+          props.closeForm()
+          await props.onLoadJobPosted()
           if (props.needPagination === false){
-            return false
+            console.log(props.needPagination);
+            if (props.needPagination === false){
+              return false
+            }
+          } else {
+            await props.paginationReset()
           }
-        } else {
-          await props.paginationReset()
         }
-      }
-    }    
-    setIsSubmitting(false)
+      }    
+      setIsSubmitting(false)
+    } catch (error){
+      console.error(error);
+    } finally{
+      document.body.classList.remove("disable-scroll")
+    }
+    
   }
 
   const capitalizeFirstLetter = (string) => {
@@ -312,6 +341,7 @@ const EditJob = (props) => {
                 {jobTitleAlertField && <p className='error-field'>{jobTitleAlertField}</p>}
               </div>
             </div>
+            <Divider />
             <div className='input-title-container'>
               <div className='add-job-form-title'>
                 <div>
@@ -467,6 +497,27 @@ const EditJob = (props) => {
                   disabled={isSubmitting}
                 />
                 {jobExperienceLevelAlertField && <p className='error-field'>{jobExperienceLevelAlertField}</p>}
+              </div>
+            </div>
+            <Divider />
+            <div className='input-title-container'>
+              <div className='add-job-form-title'>
+                <div>
+                  <p>Deadline</p>
+                  <span>The date for this job is no longer available.</span>
+                </div>
+              </div>
+              <div className='add-job-input-field-container'>
+                <input 
+                  type='date' 
+                  className='add-job-input-field'
+                  id="deadlineInput"
+                  name="jobDeadline"
+                  onChange={(e) => onChangeInputField(e)} 
+                  value={inputValue?.jobDeadline}
+                  disabled={isSubmitting ? true : false}
+                />
+                {deadlineAlertField && <p className='error-field'>{deadlineAlertField}</p>}
               </div>
             </div>
             <br />

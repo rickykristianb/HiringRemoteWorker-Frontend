@@ -21,19 +21,27 @@ const UsersList = (props) => {
   const [backdropActive, setBackdropActive] = useState(false)
 
   const onLoadAllUser = async(page) => {
-    if (!page){
-      page = 1
-    }
-    const response = await fetch(`/api/user/get_all_candidate_profile/?page=${page}`, {
-      method: "GET",
-      headers: {
-        "content-type": "application/json"
+    try{
+      setBackdropActive(true)
+      if (!page){
+        page = 1
       }
-    })
-    const data = await response.json()
-    setAllUserData(data["data"])
-    totalUser.current = data["total_user"]
-    console.log(totalUser.current);
+      const response = await fetch(`/api/user/get_all_candidate_profile/?page=${page}`, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+      const data = await response.json()
+      setAllUserData(data["data"])
+      totalUser.current = data["total_user"]
+      setBackdropActive(false)
+    } catch (error){
+      console.error("Encounter an error: ", error);
+    } finally {
+      setBackdropActive(false)
+    }
+    
   }
 
   useEffect(() => {
@@ -54,11 +62,11 @@ const UsersList = (props) => {
   }
 
   const onSendMessageClicked = (data) => {
-    navigate(`/messages/?email=${data}`)
+    window.open(`/messages/?email=${data}`)
   }
 
   const onProfileClicked = (data) => {
-    navigate(`/profile/?id=${data}`)
+    window.open(`/profile/?id=${data}`)
   }
 
   const countExp = (exp_day) => {
@@ -89,140 +97,146 @@ const UsersList = (props) => {
   }, [props.paginationReset])
 
   return (
-    <div className='container-user-list' style={{ width : props.filterClicked && "75vw" }}>
+    <div className={props.filterClicked ? "container-user-list-75vw" : 'container-user-list'} >
       <div className='user-list'>
         
-        {props.searchData ? props.searchData.map((item, index) => {
-          return (
-            <div className='user-card' key={index} >
-              <div className='user-image-name'>
-                <div className='user-image'>
-                  <img className='user-image' src={item["profile_picture"]} />
-                </div>
-                  <div className='user-name'>
-                    <h3>{item.name}</h3>
-                    <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
+        {props.searchData ? 
+          props.searchData.length > 0  ? 
+            props.searchData.map((item, index) => {
+            return (
+              <div className='user-card' key={index} >
+                <div className='user-image-name'>
+                  <div className='user-image'>
+                    <img className='user-image' src={item["profile_picture"]} />
                   </div>
-              </div>
-              <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
-                <div className='user-info' >
-                  {isHover === index &&
-                  <div className='user-card-button'>
-                    <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
-                    <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
-                  </div> 
-                  }
-                  
+                    <div className='user-name'>
+                      <h3>{item.name}</h3>
+                      <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
+                    </div>
+                </div>
+                <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
+                  <div className='user-info' >
+                    {isHover === index &&
+                    <div className='user-card-button'>
+                      <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
+                      <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
+                    </div> 
+                    }
+                    
+                    <ul>
+                      <li>
+                          <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
+                      </li>
+                      <li>
+                          <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
+                      </li>
+                      <li className='emp-type-user-list'>
+                        <AccessTimeIcon />
+                          {item.useremploymenttype.slice(0, 2).map((type, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <li>{type.employment_type.type}</li>
+                                {index < item.useremploymenttype.slice(0, 2).length - 1 && <span>/</span>}
+                              </React.Fragment>
+                            )
+                          })}
+                      </li>
+                      <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                    </ul>
+                  </div>
+                  <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
+                    <li className='user-skills-list'>
+                      <ul>
+                        {item.skills.slice(0, 4).map((skill, index) => (
+                          skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
+                        ))}
+                      </ul>
+                    </li>
+                  </div>                
+                </div>
+                
+                <div className='user-rate-status'>
                   <ul>
-                    <li>
-                        <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
-                    </li>
-                    <li>
-                        <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
-                    </li>
-                    <li className='emp-type-user-list'>
-                      <AccessTimeIcon />
-                        {item.useremploymenttype.slice(0, 2).map((type, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <li>{type.employment_type.type}</li>
-                              {index < item.useremploymenttype.slice(0, 2).length - 1 && <span>/</span>}
-                            </React.Fragment>
-                          )
-                        })}
-                    </li>
-                    <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                      <div className='user-list-rating'>
+                        <RateGenerator rating={item.rate_ratio} />
+                      </div>
+                    <li><p>open/close</p></li>
                   </ul>
                 </div>
-                <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
-                  <li className='user-skills-list'>
-                    <ul>
-                      {item.skills.slice(0, 4).map((skill, index) => (
-                        skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
-                      ))}
-                    </ul>
-                  </li>
-                </div>                
               </div>
-              
-              <div className='user-rate-status'>
-                <ul>
-                    <div className='user-list-rating'>
-                      <RateGenerator rating={item.rate_ratio} />
-                    </div>
-                  <li><p>open/close</p></li>
-                </ul>
-              </div>
-            </div>
-            )
-          })
+              )}
+              )
+              :
+                <p>{noUserStatus}</p>
           :
-          allUserData.map((item, index) => {
-          return (
-            <div className='user-card' key={index} >
-              <div className='user-image-name'>
-                <div className='user-image'>
-                  <img className='user-image' src={item["profile_picture"]} />
-                </div>
-                  <div className='user-name'>
-                    <h3>{item.name}</h3>
-                    <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
+          allUserData.length > 0 ?
+            allUserData.map((item, index) => {
+            return (
+              <div className='user-card' key={index} >
+                <div className='user-image-name'>
+                  <div className='user-image'>
+                    <img className='user-image' src={item["profile_picture"]} />
                   </div>
-              </div>
-              <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
-                <div className='user-info' >
-                  {isHover === index &&
-                  <div className='user-card-button'>
-                    <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
-                    <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
-                  </div> 
-                  }
-                  
+                    <div className='user-name'>
+                      <h3>{item.name}</h3>
+                      <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
+                    </div>
+                </div>
+                <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
+                  <div className='user-info' >
+                    {isHover === index &&
+                    <div className='user-card-button'>
+                      <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
+                      <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
+                    </div> 
+                    }
+                    
+                    <ul>
+                      <li>
+                          <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
+                      </li>
+                      <li>
+                          <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
+                      </li>
+                      <li className='emp-type-user-list'>
+                      <AccessTimeIcon /> 
+                          {item.useremploymenttype.slice(0, 2).map((type, index) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <li>{type.employment_type.type}</li>
+                                {index < item.useremploymenttype.slice(0, 2).length - 1 && <span>/</span>}
+                              </React.Fragment>
+                            )
+                          })}
+                      </li>
+                      <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                    </ul>
+                  </div>
+                  <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
+                    <li className='user-skills-list'>
+                      <ul>
+                        {item.skills.slice(0, 4).map((skill, index) => (
+                          skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
+                        ))}
+                      </ul>
+                    </li>
+                  </div>                
+                </div>
+                
+                <div className='user-rate-status'>
                   <ul>
-                    <li>
-                        <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
-                    </li>
-                    <li>
-                        <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
-                    </li>
-                    <li className='emp-type-user-list'>
-                    <AccessTimeIcon /> 
-                        {item.useremploymenttype.slice(0, 2).map((type, index) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <li>{type.employment_type.type}</li>
-                              {index < item.useremploymenttype.slice(0, 2).length - 1 && <span>/</span>}
-                            </React.Fragment>
-                          )
-                        })}
-                    </li>
-                    <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                      <div className='user-list-rating'>
+                        <RateGenerator rating={item.rate_ratio} />
+                      </div>
+                    <li><p>open/close</p></li>
                   </ul>
                 </div>
-                <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
-                  <li className='user-skills-list'>
-                    <ul>
-                      {item.skills.slice(0, 4).map((skill, index) => (
-                        skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
-                      ))}
-                    </ul>
-                  </li>
-                </div>                
               </div>
-              
-              <div className='user-rate-status'>
-                <ul>
-                    <div className='user-list-rating'>
-                      <RateGenerator rating={item.rate_ratio} />
-                    </div>
-                  <li><p>open/close</p></li>
-                </ul>
-              </div>
-            </div>
-            )
-          })
-          }
-          <p>{noUserStatus}</p>
+              )
+            })
+            :
+            <p>{noUserStatus}</p>
+        }
       </div>
 
       <div className='container-pagination'>

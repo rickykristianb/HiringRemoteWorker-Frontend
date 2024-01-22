@@ -1,15 +1,23 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import EmailContext from '../../Context/EmailContext'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const MessageMenu = (props) => {
-
-    const [isClicked, setIsClicked] = useState("inbox")
-
     const {messageUnreadCount} = useContext(EmailContext)
+    const navigate = useNavigate()
+    const [isClicked, setIsClicked] = useState()
+    const location = useLocation()
+    
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const selectedTab = params.get('tab');
+
+        setIsClicked(selectedTab)
+      }, [location.search]);
 
     const onMenuClicked = (item) => {
         setIsClicked(item)
-        return props.menuClicked(item)
+        navigate(`/messages/?tab=${item}`)
     }
 
   return (

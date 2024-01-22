@@ -11,7 +11,7 @@ import { ReactComponent as Refresh } from "../assets/images/Reload.svg"
 import { ReactComponent as RefreshHover } from "../assets/images/Reload-Mouse-Hover.svg"
 import { set } from 'date-fns';
 
-const FilterBar = (props) => {
+const AdvanceUserFilterBar = (props) => {
     const [skills, setSkills] = useState([])
     const [skillsList, setSkillsList] = useState([])
     const [locations, setLocations] = useState([])
@@ -217,7 +217,6 @@ const FilterBar = (props) => {
         setTypeSelected(selectedType)
     }
 
-    // LOOK AT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     const setType = (selectedType) => {
         setTypeSelected((prevValue) => {
             return (Array.from(new Set([...prevValue, selectedType])))
@@ -297,7 +296,6 @@ const FilterBar = (props) => {
                     )}
                 />
             </li>
-            {props.includeRate &&
             <li>
             <p>Rate</p>
             <Autocomplete
@@ -327,7 +325,6 @@ const FilterBar = (props) => {
                 )}
                 />
             </li>
-            }
             <li>
             <p>Location</p>
             <Autocomplete
@@ -358,7 +355,7 @@ const FilterBar = (props) => {
                 />
             </li>
             <li>
-            <p>Job Type</p>
+            <p>Employment Type</p>
             <Autocomplete
                 multiple
                 limitTags={1}
@@ -409,4 +406,4 @@ const FilterBar = (props) => {
   )
 }
 
-export default FilterBar
+export default AdvanceUserFilterBar
