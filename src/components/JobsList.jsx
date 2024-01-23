@@ -300,8 +300,8 @@ const JobsList = (props) => {
         </div>
         {isNotLogin && 
             <NotLoginAction 
-                boxTitle="Interested? Please use Remote Match account."
-                boxTagline="Build your profile, apply to this job with a free Remote Match account."
+                boxTitle="Interested? Please use Work Match account."
+                boxTagline="Build your profile, apply to this job with a free Work Match account."
                 close={onCloseIsNotLogin}     
             />
         }

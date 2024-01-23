@@ -21,15 +21,15 @@ const DemoAccountInfo = () => {
                         <CloseIcon onClick={() => setOpenCredential(false)} />
                     </div>
                     <div className='account-credential'>
-                        <span>Email: contact@rickykristianbutarbutar.com</span>
-                        <span>Password: Bdba7649</span>
+                        <span>Email: candidate.demo@rickykristianbutarbutar.com</span>
+                        <span>Password: Cand1dat3</span>
                     </div>
                 </div>
                 <div className='account-wrapper'>
                     <h3>Company</h3>
                     <div className='account-credential'>
-                        <span>Email: learnpythn@gmail.com</span>
-                        <span>Password: Bdba7649</span>
+                        <span>Email: company.demo@rickykristianbutarbutar.com</span>
+                        <span>Password: C0mp4ny</span>
                     </div>
                 </div>
             </div>
