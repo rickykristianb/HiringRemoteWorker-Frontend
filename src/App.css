@@ -2763,7 +2763,6 @@ input[type="radio"]:checked + .button-label {
 @media screen and (min-width: 1366px) and (max-width: 1600px) {
     #company-panel-container{
         grid-template-columns: 390px 900px;
-        background-color: red;
     }
   
     /* Add more specific styles for this screen size if needed */
