@@ -282,22 +282,6 @@ export const EmailProvider = ({ children }) => {
         setIsVisible(!isVisible)
     }
 
-    // const getTotalInbox = async() => {
-    //     const response = await fetch("/api/user/total_inbox_message/", {
-    //         method: "GET",
-    //         headers: {
-    //             "content-type": "application/json",
-    //             "Authorization": `JWT ${userToken.current}`
-    //         }
-    //     })
-
-    //     const data = await response.json()
-    //     if (response.ok){
-    //         setTotalInboxMessage(data["total"])
-    //     }
-    // }
-
-
     const contextData = {
         onLoadMessages:onLoadMessages,
         messages:messages,

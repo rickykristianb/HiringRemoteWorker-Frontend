@@ -7,6 +7,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { ReactComponent as Refresh } from "../../assets/images/Refresh.svg"
 import AlertNotification from '../AlertNotification';
 import Pagination from '../Pagination';
+import NotificationContext from 'Context/NotificationContext';
 
 const Inbox = () => {
 
@@ -36,11 +37,16 @@ const Inbox = () => {
         
     } = useContext(EmailContext)
 
+    const {
+        onLoadTotalUnreadNotification
+    } = useContext(NotificationContext)
+
     useEffect(() => {
         onLoadMessages()
         setIsRead([])
         setAlertDeleteResponse()
         unreadMessageCount()
+        onLoadTotalUnreadNotification()
     }, [])
 
     const onHoverMouse = (index) => {

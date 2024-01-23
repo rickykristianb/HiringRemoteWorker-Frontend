@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import JobsList from 'components/JobsList'
 import Backdrop from 'components/Backdrop';
 import FilterBar from 'components/FilterBar';
@@ -8,6 +8,7 @@ import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import TuneIcon from '@mui/icons-material/Tune';
+import NotificationContext from 'Context/NotificationContext';
 
 const PersonalView = () => {
 
@@ -31,6 +32,8 @@ const PersonalView = () => {
     const loading = useRef(false)
     const showData = useRef()
     const totalUser = useRef()
+
+    const {onLoadTotalUnreadNotification} = useContext(NotificationContext)
 
     const onLoadSearchBarData = async() => {
         const response = await fetch("/api/user/search_bar_data/", {
@@ -56,6 +59,7 @@ const PersonalView = () => {
     useEffect(() => {
         onClickOutsideOfSearchBarData()
         onLoadSearchBarData()
+        onLoadTotalUnreadNotification()
     }, [])
 
     const onChangeSearchBox = async(e) => {

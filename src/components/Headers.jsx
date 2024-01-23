@@ -1,4 +1,4 @@
-import { ReactComponent as Logo } from "../assets/images/logo 90x90.svg"
+import { ReactComponent as Logo } from "../assets/images/rwm.svg"
 import MailIcon from '@mui/icons-material/Mail';
 import Badge from '@mui/material/Badge';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -11,19 +11,18 @@ import React, {useContext, useEffect, useState} from 'react'
 import AuthContext from "../Context/AuthContext";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Divider, IconButton } from "@mui/material";
-import EmailContext from "../Context/EmailContext";
 import NotificationMessage from "./NotificationMessage";
+import NotificationContext from "../Context/NotificationContext";
+import EmailContext from "../Context/EmailContext";
 
 const Headers = (props) => {   
 
   const [isProfileClicked, setIsProfileClicked] = useState(false)
-  const [totalUnreadNotification, setTotalUnreadNotification] = useState(0)
   const [isNotificationContainerOpen, setIsNotificationContainerOpen] = useState(false)
 
-  const [loginUserId, setLoginUserId] = useState()
-  const navigate = useNavigate()
-  let {user, logoutUser, authToken} = useContext(AuthContext)
+  let { onLoadTotalUnreadNotification, totalUnreadNotification } = useContext(NotificationContext)
 
+  let {user, logoutUser, authToken} = useContext(AuthContext)
   let userToken;
   if (authToken){
     userToken = authToken.access
@@ -55,23 +54,6 @@ const Headers = (props) => {
     }
   }, [])
 
-  const onLoadTotalUnreadNotification = async() => {
-    const response = await fetch(`/api/job/get_total_unread_notification/`,{
-      method: "GET",
-      headers: {
-        "content-type": "application/json",
-        "Authorization": `JWT ${userToken}`
-      }
-    });
-    const data = await response.json()
-    if (response.ok){
-      setTotalUnreadNotification(data)
-    }
-  }
-
-  useEffect(() => {
-    onLoadTotalUnreadNotification()
-  }, [])
 
   useEffect(() => {
     const onClickDocumentCloseNotificationBox = (e) => {
@@ -85,6 +67,10 @@ const Headers = (props) => {
     return () => {
         document.removeEventListener("click", onClickDocumentCloseNotificationBox);
     };
+  }, [])
+
+  useEffect(() => {
+    onLoadTotalUnreadNotification()
   }, [])
 
   const onClickNotification = () => {
@@ -127,8 +113,8 @@ const Headers = (props) => {
           </>
         }
           <li>
-            <Link to={loginUserType === "personal" ? "/jobs/" : "/users/"}>
-              <HomeRoundedIcon sx={{ width: 30, height: 30, color: "#4e6e81" }} />
+            <Link to={!loginUserType ? "/": loginUserType === "personal" ? "/" : "/users/"}>
+              <HomeRoundedIcon sx={{ width: 32, height: 32, marginTop: "5px", color: "#4e6e81" }} />
             </Link>
           </li>
           {user ? 
@@ -176,7 +162,7 @@ const Headers = (props) => {
           :
             <Link to={"/login/"} >
             <li>
-              <AccountCircle sx={{ width: 30, height: 30, color: "#4e6e81" }} />    {/*If not login */}
+              <AccountCircle sx={{ width: 30, height: 30, marginTop:"5px", color: "#4e6e81" }} />    {/*If not login */}
             </li>
           </Link>
           }

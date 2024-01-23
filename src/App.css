@@ -52,13 +52,14 @@ li {
 .nav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0 5%;
-    padding-top: 1%;
     border-bottom: 0.5px solid rgb(211,211,211);
     box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
     align-items: flex-end;
     z-index: 9999;
 }
+
 
 .navbar-menu {
     display: inline-flex;
@@ -66,6 +67,7 @@ li {
     list-style: none;
     gap: 2rem;
     text-decoration: none;
+    margin-bottom: 20px;
 }
 
 .navbar-menu > li a {
@@ -3328,6 +3330,11 @@ input[type="radio"]:checked + .button-label {
 }
 
 /* NOTIFICATION */
+
+#notification-menu{
+    cursor: pointer;
+}
+
 #notification-message-container {
     width: 300px;
     height: 450px;

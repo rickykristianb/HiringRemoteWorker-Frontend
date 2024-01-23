@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80" viewBox="0 0 200 100">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 83.333px;
+      }
+
+      .cls-1, .cls-2 {
+        fill: #4e6e81;
+        font-family: "Bauhaus 93";
+      }
+
+      .cls-2 {
+        font-size: 16.667px;
+      }
+    </style>
+  </defs>
+  <text id="w" class="cls-1" transform="translate(28.516 85.747) scale(1.304)">w</text>
+  <text id="work" class="cls-2" x="33.437" y="26.339">work</text>
+  <text id="w-2" data-name="w" class="cls-1" transform="translate(164.747 16.321) rotate(180) scale(1.304)">w</text>
+  <text id="match" class="cls-2" x="112.994" y="85.583">match</text>
+</svg>

@@ -111,7 +111,7 @@ export const AuthProvider = ({children}) => {
       const data = await response.json()
       if (response.ok){
         if (data === "personal"){
-          navigate("/jobs/")
+          navigate("/")
         } else if (data === "company"){
           navigate("/users/")
         }
@@ -201,7 +201,7 @@ export const AuthProvider = ({children}) => {
         setAuthToken(null)
         setUser(null)
         localStorage.clear()
-        navigate("/jobs/")
+        navigate("/")
     }
 
     let updateToken = async () => {
