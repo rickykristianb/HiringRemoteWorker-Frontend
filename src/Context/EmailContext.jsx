@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import AuthContext from "./AuthContext";
 
 const EmailContext = createContext();
@@ -86,6 +86,14 @@ export const EmailProvider = ({ children }) => {
     const onLoadBody = (body) => {
         if (body.length > 95){
             return <p>{body.slice(0, 95)}...</p>
+        } else {
+            return body
+        }
+    }
+
+    const onLoadSubjectForMobile = (body) => {
+        if (body.length > 40){
+            return <p>{body.slice(0, 40)}...</p>
         } else {
             return body
         }
@@ -295,6 +303,7 @@ export const EmailProvider = ({ children }) => {
         setIsRead:setIsRead,
         messageUnreadCount:messageUnreadCount,
         onLoadBody:onLoadBody,
+        onLoadSubjectForMobile:onLoadSubjectForMobile,
         onMessageClicked:onMessageClicked,
         onMessageDetailCloseClicked:onMessageDetailCloseClicked,
         onDeleteMessage:onDeleteMessage,

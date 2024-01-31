@@ -206,8 +206,8 @@ const onSaveEditProfile = async (e) => {
 };   
 
   return (
-    <div id='panel-profile-content-container'>
-      <div id="panel-profile-content-image-edit-button">
+    <div className='h-full'>
+      <div className='flex justify-between' >
         <div className='profile_picture'>
           <div className='profile_image'>
             <img
@@ -232,9 +232,10 @@ const onSaveEditProfile = async (e) => {
           <Button buttonType="button" label="Edit" clickedButton={() => onClickEditButton()} />
         </div>
       </div>
+
       <br />
       <br />
-      <div id="panel-profile-info-container">
+      <div className='flex flex-col gap-4'>
         <div className='profile-info'>
           <div className='profile-info-name'>
             <p><b>Name</b></p>
@@ -264,7 +265,7 @@ const onSaveEditProfile = async (e) => {
             <p><b>Location</b></p>
           </div>
           <div className='profile-info-data'>
-            <p>{panelProfileData?.userlocation.location.location}</p>
+            <p>{panelProfileData?.userlocation?.location.location}</p>
           </div>
         </div>
         <div className='profile-info'>
@@ -280,7 +281,7 @@ const onSaveEditProfile = async (e) => {
             <p><b>Profile</b></p>
           </div>
           <div className='profile-info-data'>
-            <p>{panelProfileData?.bio.split("\n").map((line, i) => {
+            <p>{panelProfileData?.bio?.split("\n").map((line, i) => {
               return (
                 <Fragment key={i}>
                   {i > 0 && <br />}

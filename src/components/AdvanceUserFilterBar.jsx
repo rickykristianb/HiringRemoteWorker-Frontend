@@ -166,10 +166,10 @@ const AdvanceUserFilterBar = (props) => {
 
 
     // take all the selected skills
-    const setSkill = (skills) => {
-        setSkillSelected((prevValue) => {
-            return (Array.from(new Set([...prevValue, skills])))
-        })
+    const handleSkillSelected = (skills) => {
+        setSkillSelected((prevValue) => [
+            ...prevValue
+        ]);
     }  
 
     const handleSkillChange = (event, newSkills) => {
@@ -240,9 +240,9 @@ const AdvanceUserFilterBar = (props) => {
               
 
   return (
-    <div className='filter-box'>
-        <CloseIcon onClick={ props.barClicked } className='filter-close-button' />
-        <ul>             
+    <div className='flex flex-col justify-start z-3 py-3 px-10 w-[450px] md:h-full border-dark-basic shadow-box-shadow mb-4 max-xl:fixed max-xl:bottom-11 max-xl:w-screen max-xl:bg-white border-t-0.5 border-soft-basic'>
+        <CloseIcon onClick={ props.barClicked } className='justify-end xl:relative left-[100%] top-[0.4%] max-xl:self-end' />
+        <ul className="flex flex-col mt-10 gap-4">             
             <li>
             <p>Skills</p>
             <Autocomplete
@@ -251,9 +251,9 @@ const AdvanceUserFilterBar = (props) => {
                 options={skillsList}
                 onChange={handleSkillChange}
                 disableCloseOnSelect
-                value={skillSelected}
+                
                 renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setSkill(option)} style={{margin: '0'}}>
+                    <p onClick={() => handleSkillSelected(option)} style={{margin: '0'}}>
                         <li {...props} >
                         <Checkbox
                             icon={icon}
@@ -383,23 +383,24 @@ const AdvanceUserFilterBar = (props) => {
             />
             </li>
         </ul>
-        <a 
+        <a className='self-end '
             onClick={() => onShowButtonClicked()}
             onMouseEnter={onMouseEnterShowButton}
             onMouseLeave={onMouseLeaveShowButton}
         >
+        <br />
         <Button
             buttonType="button"
             label={
                 loadingFilter
                 ?
-                <span className='show-refresh-button'>
+                <span className='flex flex-row gap-1'>
                     Show {mouseEnterShowButton ? <RefreshHover /> : <Refresh />}
                 </span>
                 : 
                 <span>Show &#40;{totalUserFiltered}&#41;</span>   
             }
-            customClassName="filter-show-button"
+            customClassName="show-advance-filter-button"
             />
         </a>
     </div>

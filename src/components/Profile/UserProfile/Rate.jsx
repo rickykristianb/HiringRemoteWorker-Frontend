@@ -156,8 +156,8 @@ const Rate = (props) => {
     }
 
   return (
-    <div className='expected-rate-container'>
-        <h1>Rate</h1>
+    <div>
+        <p className='text-[32px] font-bold'>Rate</p>
         <br />
         { savedRate !== null &&
             savedRate.map((item, index) => {
@@ -165,7 +165,7 @@ const Rate = (props) => {
                 <>
                 {!isEdit ?
                 <div key={index} className='expected-rate'>
-                    <div className='amount-expected-rate'>
+                    <div className='flex p-2 bg-soft-basic rounded-lg'>
                         <p><b>$</b></p>
                         <p><b>{item.amount}</b></p>
                         <p style={{marginLeft: "10px", marginRight: "5px"}}>/</p>
@@ -179,10 +179,8 @@ const Rate = (props) => {
                      }
                 </div> 
                 :
-                <div key={index} className='expected-rate-form' >
-                    <div className='currency-expected-rate-form'>
-                        <p><b>$</b></p>
-                    </div>
+                <div key={index} className='flex flex-row items-center gap-2 mb-4' >
+                    <p className='text-2xl'><b>$</b></p>
                     <input onChange={(e) => onAmountEditChange(e)} name="amount-input" value={amount} type="number" step="0.01" className='rate-input-field' placeholder='120'></input>
                     <Select
                         options={period.map((item) => ({value: item, label: item}))}
@@ -201,10 +199,8 @@ const Rate = (props) => {
         }
                
         {isShow && 
-            <div className='expected-rate-form' >
-                <div className='currency-expected-rate-form'>
-                    <p><b>$</b></p>
-                </div>
+            <div className='flex flex-row items-center gap-2 mb-4' >
+                <p className='text-2xl'><b>$</b></p>
                 <input onChange={onAmountChange} name="amount-input" type="number" step="0.01" className='rate-input-field' placeholder='120'></input>
                 <Select
                     options={period.map((item) => ({value: item, label: item}))}

@@ -196,8 +196,8 @@ const Skills = (props) => {
 
 
   return (
-    <div className='skills-container'>
-        <h1>Skills</h1>
+    <div >
+        <p className='text-[32px] font-bold'>Skills</p>
         <br />
         <div className='skill-level-list'>
             {skillAndLevelList.map((item, index) => (

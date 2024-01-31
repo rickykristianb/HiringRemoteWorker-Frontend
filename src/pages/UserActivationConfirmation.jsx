@@ -6,13 +6,13 @@ import { useForm } from 'react-hook-form'
 import AuthContext from '../Context/AuthContext'
 
 const UserActivationConfirmation = () => {
-
+    
     const { uid, token } = useParams()
+    
     const [ buttonLabel, setButtonLabel ] = useState("Activate")
     const [ alert, setAlert ] = useState()
     const [ resendActivate, setResendActivate ] = useState(false)
     
-    // const [ activationSuccess, setActivationSuccess] = useState()
 
     let { resendActivationLink, resendLoading, resendActivationAlert } = useContext(AuthContext)
 
@@ -40,10 +40,8 @@ const UserActivationConfirmation = () => {
     };
             
     useEffect(() => {
-        console.log("MASUK USE EFFECT")
         console.log(activationSuccess.current);
         if (activationSuccess.current) {
-            console.log("BENAR NIH")
             const timeoutId = setTimeout(() => {
                 navigate("/login/");
               }, 5000);
@@ -53,51 +51,29 @@ const UserActivationConfirmation = () => {
         activationSuccess.current = false
     }, [activationSuccess.current]);
 
-
     const sendActivationConfirmation = async () => {
-        
-        setButtonLabel("Activating ...")
+        setButtonLabel("Activating ...");
         try {
-            let response = await fetch("/auth/users/activation/", {
-                method: "POST",
+            let response = await fetch(`/api/user/accounts/activate/${uid}/${token}`, {
+                method: "GET",
                 headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    "uid": uid,
-                    "token": token
-                })
+                    "Content-Type": "application/json",
+                }
             });
-
-            console.log(response);
-            if (response.ok){
-                setAlert({
-                    success: "You account has been activated. We'll redirect you to login page in 5 seconds",
-                })
-                console.log("MASUK SINI");
-                activationSuccess.current = true
-                console.log(activationSuccess.current);
-                
-            } else if (response.status === 403){
-                setAlert({
-                    error: "This link is expired, please generate new activation link"
-                })
-            } else if (response.status === 400){
-                setAlert({
-                    error: "Bad Request, user maybe accidentally deleted."
-                })
-            }      
-        } catch (error) {
-            if (error.name ==="SyntaxError" && error.message.includes("Unexpected end of JSON input")) {
-                console.error("Truncated data: Not all of the JSON data was received");
-                } else {
-                console.error(error);
+            if (response.status === 204) {
+                setAlert({"success": "You account has been activated. You'll redirected to login page in 5 seconds."});
+                activationSuccess.current = true;
+            } else if (response.status === 403) {
+                setAlert({"error": "Your account was activated. Please login."})
+            } else if (response.status === 400) {
+                setAlert({"error": "No account associated with this activation link, please register first."})
             }
+        } catch (error) {
+            console.error(error);
         } finally {
-            setButtonLabel("Activate")
+            setButtonLabel("Activate");
         }
-        console.log(activationSuccess.current);
-    }
+    };
 
   return (
     <div className='container-user-activation'>
@@ -113,7 +89,7 @@ const UserActivationConfirmation = () => {
                     "pattern": {
                         "value": /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                         "message": "Please Insert Correct Email"
-                    }})} className="login-input" placeholder='Email'></input>
+                    }})} className="login-input-resend-activation" placeholder='Email'></input>
                     <br />
                     {errors.email && <span className='error-field'>{errors.email.message}</span>}
                     <br />

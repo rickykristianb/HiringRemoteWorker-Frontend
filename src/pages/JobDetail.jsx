@@ -11,10 +11,11 @@ import { format } from 'date-fns';
 import AuthContext from 'Context/AuthContext';
 import NotLoginAction from 'components/NotLoginAction';
 import AlertNotification from 'components/AlertNotification';
+import JobDetailSkeleton from 'components/Skeleton/JobDetailSkeleton';
 
 const JobDetail = (props) => {
-  const { user, authToken } = useContext(AuthContext)
-  const [clickedUserId, setClickedUserId] = useState()
+  const navigate = useNavigate()
+  const { user, authToken} = useContext(AuthContext)
   const location = useLocation();
 
   let userToken = null
@@ -22,12 +23,11 @@ const JobDetail = (props) => {
     userToken = authToken.access
   }
 
-  const navigate = useNavigate()
+  const userType = localStorage.getItem("userType")
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
-    setClickedUserId(id)
   }, [location.search])
 
   const { jobId } = useParams();
@@ -38,12 +38,14 @@ const JobDetail = (props) => {
   const [isSendingInterest, setIsSendingInterest] = useState(false)
   const [alertResponse, setAlertResponse] = useState()
   const [loginUserId, setLoginUserId] = useState()
+  const [getJobDetailLoading, setGetJobDetailLoading] = useState(false)
 
   useEffect(() => {
     setLoginUserId(localStorage.getItem("userId"))
   }, [])
 
   const onLoadJobDetail = async() => {
+    setGetJobDetailLoading(true)
     const response = await fetch(`/api/job/get_job_detail/${jobId}/`, {
       method: "GET",
       headers: {
@@ -56,11 +58,10 @@ const JobDetail = (props) => {
       navigate("/job-not-found/")
     } else {
       if(response.ok){
-        console.log(data);
         setJobData(data)
       }
     }
-    
+    setGetJobDetailLoading(false)
   }
 
   const onCheckAppliedJobs = async() => {
@@ -117,7 +118,6 @@ const JobDetail = (props) => {
   }
 
   const onProcessInterestedClick = async (jobId) => {
-    console.log("ID: ", jobId);
     try{
         setIsSendingInterest(true)
         const response = await fetch(`/api/job/interest_job/${jobId}/`, {
@@ -156,133 +156,273 @@ const JobDetail = (props) => {
   }
 
   const onInterestedClicked = (jobId) => {
-    {user ? onProcessInterestedClick(jobId) : onOpenIsNotLogin()}
+    if (user){
+      if (userType === "personal"){
+        onProcessInterestedClick(jobId)
+      }
+    } else {
+      onOpenIsNotLogin()
+    }
   }
 
   return (
-    <div id="job-detail-section">
-      <div id='job-detail-container'>
-      {jobData ? 
-        <div id="job-detail-layout">
-          <div id='job-time-status'>
-            <p><span id={(() => {
-                switch(jobData.status){
-                  case "Open":
-                    return "job-status-open"
-                  case "Closed":
-                    return "job-status-closed"
-                  case "Onprogress":
-                    return "job-status-onprogress"
-                  case "Finished":
-                    return "job-status-finished"
-                }
-              })()}>{capitalizeFirstLetter(jobData.status)}</span>
-            </p>
-            <p>Posted On: {jobData.created_at}</p>
-          </div>
-          <div id='job-detail'>
-            <div className='profile_image'>
-              <img
-              src={jobData.user_profile_picture} // Replace with the actual path or URL of your image
-              alt={"profile-picture"}
-              className="profile_image"
-              />
-            </div>
-            <div id="job-detail-header">
-              <h1>{jobData.job_title}</h1>
-              <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
-                <p id='job-detail-company-name'>{jobData.user_posted?.name}</p>
-              </Link>
-              <div className='job-detail-icon-info'>
-                <LocationOnIcon />
-                {jobData.joblocation?.map((item, i) => {
-                  return (
-                    <p key={i}>{item.location.location} </p>
-                  )
-                })}
+    <>
+    {getJobDetailLoading ?
+      <JobDetailSkeleton />
+      :
+      <>
+      {/* FOR LARGE SCREEN */}
+        <div className="flex justify-center max-sm:hidden">
+          <div className='bg-white flex flex-wrap flex-col my-16 xl:w-[70%] max-lg:w-[90%] rounded-lg shadow-box-shadow p-2'>
+          {jobData ? 
+            <div className='flex flex-col'>
+              <div className='flex justify-end gap-10 mx-10'>
+                <p><span id={(() => {
+                    switch(jobData.status){
+                      case "Open":
+                        return "job-status-open"
+                      case "Closed":
+                        return "job-status-closed"
+                      case "Onprogress":
+                        return "job-status-onprogress"
+                      case "Finished":
+                        return "job-status-finished"
+                    }
+                  })()}>{capitalizeFirstLetter(jobData.status)}</span>
+                </p>
+                <p>Posted On: {jobData.created_at}</p>
               </div>
-              <div className='job-detail-icon-info'>
-                <AccessTimeIcon />
-                {jobData.jobemploymenttype?.map((item, i) => {
-                  return (
-                    <p key={i}>{item.employment_type.type}</p>
-                  )
-                })}
-              </div>
-              <div className='job-detail-icon-info'>
-                <AttachMoneyIcon />
-                <p>{jobData.jobsalaryrates?.nominal}</p><span> / </span><p>{jobData.jobsalaryrates?.paid_period}</p>
-              </div>
-              <div className='job-detail-icon-info'>
-                <PsychologyIcon />
-                <p>{jobData.experience_level}</p>
-              </div>
-              <div className='job-detail-icon-info'>
-                <span>Apply before:</span>
-                <p>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</p>
-              </div>
-              
-              <div id="job-skills">
-                  <ul>
-                  {jobData.jobskills?.map((item, i) => {
-                    return (
-                      <li key={i}>{item.skill.skill_name}</li>
-                    )
-                  })}
-                  </ul>
-              </div>
-            </div>
-          </div>
-          <div id="job-detail-action-button">
-              {
-              isAlreadyApplied ?
-                <div id='job-already-applied-status-container'>
-                  <div id='job-already-applied-status-layout'>
-                    <p>{onGenerateStatusHighlight(jobInterestedStatus)}</p>
+              <div className='flex p-12'>
+                <div className='profile_image max-lg:w-48 max-lg:h-48'>
+                  <img
+                  src={jobData.user_profile_picture} // Replace with the actual path or URL of your image
+                  alt={"profile-picture"}
+                  className="profile_image max-lg:w-48 max-lg:h-48"
+                  />
+                </div>
+                <div className='px-10'>
+                  <p className='text-3xl font-bold'>{jobData.job_title}</p>
+                  <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
+                    <p className='hover:underline my-6'>{jobData.user_posted?.name}</p>
+                  </Link>
+                  <div className='flex items-center gap-2 my-6'>
+                    <LocationOnIcon />
+                    <ul className='flex flex-wrap gap-2'>
+                      {jobData.joblocation?.map((item, i) => {
+                        return (
+                          <li key={i}>{item.location.location} </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <AccessTimeIcon />
+                    {jobData.jobemploymenttype?.map((item, i) => {
+                      return (
+                        <p key={i}>{item.employment_type.type}</p>
+                      )
+                    })}
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <AttachMoneyIcon />
+                    <p>{jobData.jobsalaryrates?.nominal}</p><span> / </span><p>{jobData.jobsalaryrates?.paid_period}</p>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <PsychologyIcon />
+                    <p>{jobData.experience_level}</p>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <span>Apply before:</span>
+                    <p>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</p>
+                  </div>
+                  
+                  <div className='w-full'>
+                      <ul className='pl-0 flex flex-wrap gap-[10px]'>
+                      {jobData.jobskills?.map((item, i) => {
+                        return (
+                          <li key={i} className='bg-gray-200 border border-skills-list rounded-md p-1'>{item.skill.skill_name}</li>
+                        )
+                      })}
+                      </ul>
                   </div>
                 </div>
-              :
-              (loginUserId !== jobData.user_posted?.id) && 
-                (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed") &&
-                  <Button 
-                    buttonType="button" 
-                    label={isSendingInterest ? "Sending..." : "Interested"}
-                    clickedButton={() => onInterestedClicked(jobData.id)} 
-                    customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
-                    isDisabled={jobData.status === "closed" ? true : false}
-                  />
-              }   
+              </div>
+              <div className='mx-5'>
+                  {
+                  isAlreadyApplied ?
+                    <div className='flex justify-center'>
+                      <div className='flex items-center h-12 px-10 bg-soft-basic rounded-lg shadow-box-shadow'>
+                        <p>{onGenerateStatusHighlight(jobInterestedStatus)}</p>
+                      </div>
+                    </div>
+                  :
+                  (loginUserId !== jobData.user_posted?.id) && 
+                    (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed" && userType !== "company") &&
+                      <Button 
+                        buttonType="button" 
+                        label={isSendingInterest ? "Sending..." : "Interested"}
+                        clickedButton={() => onInterestedClicked(jobData.id)} 
+                        customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
+                        isDisabled={jobData.status === "closed" ? true : false}
+                      />
+                  }   
+              </div>
+              <br />
+              <div className='mx-10'>
+                <br />
+                <Divider />
+                <p className='text-3xl mt-5 font-bold'>Job Description</p>
+                <br />
+                {jobData.job_detail?.split("\n").map((line, i) => (
+                    <Fragment key={i}>
+                      {i > 0 && <br />}
+                      {line}
+                    </Fragment>
+                ))}
+                <br />
+                <br />
+                <br />
+              </div>
+            </div>
+          :
+          <p>No job at the moment.</p>
+          }
           </div>
-          <br />
-          <div id='job-detail-description'>
-            <br />
-            <Divider />
-            <h1>Job Description</h1>
-            <br />
-            {jobData.job_detail?.split("\n").map((line, i) => (
-                <Fragment key={i}>
-                  {i > 0 && <br />}
-                  {line}
-                </Fragment>
-            ))}
-            <br />
-            <br />
-            <br />
-          </div>
+          {isNotLogin && 
+            <NotLoginAction 
+              boxTitle="Interested? Please use Work Match account."
+              boxTagline="Build your profile, apply to this job with a free Work Match account."
+              close={onCloseIsNotLogin} 
+            />
+          }
+          {<AlertNotification alertData={alertResponse} />}
         </div>
-      :
-      <p>No job at the moment.</p>
-      }
-      </div>
-      {isNotLogin && 
-        <NotLoginAction 
-          boxTitle="Interested? Please use Work Match account."
-          boxTagline="Build your profile, apply to this job with a free Work Match account."
-          close={onCloseIsNotLogin} 
-        />
-      }
-      {<AlertNotification alertData={alertResponse} />}
-    </div>
+
+        {/* FOR MOBILE */}
+        <div className="max-sm:blocked sm:hidden mt-24">
+          {jobData ? 
+            <div className='flex flex-col'>
+              <div className='flex justify-between pl-10 pr-5'>
+                <p>Posted On: {jobData.created_at}</p>
+                <p className='self-end'><span id={(() => {
+                    switch(jobData.status){
+                      case "Open":
+                        return "job-status-open"
+                      case "Closed":
+                        return "job-status-closed"
+                      case "Onprogress":
+                        return "job-status-onprogress"
+                      case "Finished":
+                        return "job-status-finished"
+                    }
+                  })()}>{capitalizeFirstLetter(jobData.status)}</span>
+                </p>
+                
+              </div>
+              <div className='flex flex-col'>
+                <br />
+                <div className='px-10'>
+                  <p className='text-3xl font-bold'>{jobData.job_title}</p>
+                  <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
+                    <p className='hover:underline my-6'>{jobData.user_posted?.name}</p>
+                  </Link>
+                  <div className='flex items-start gap-2 my-6'>
+                    <LocationOnIcon />
+                    <ul className='flex flex-wrap gap-2'>
+                      {jobData.joblocation?.map((item, i) => {
+                        return (
+                          <li key={i}>{item.location.location} </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <AccessTimeIcon />
+                    {jobData.jobemploymenttype?.map((item, i) => {
+                      return (
+                        <p key={i}>{item.employment_type.type}</p>
+                      )
+                    })}
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <AttachMoneyIcon />
+                    <p>{jobData.jobsalaryrates?.nominal}</p><span> / </span><p>{jobData.jobsalaryrates?.paid_period}</p>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <PsychologyIcon />
+                    <p>{jobData.experience_level}</p>
+                  </div>
+                  <div className='flex items-center gap-2 my-6'>
+                    <span>Apply before:</span>
+                    <p>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</p>
+                  </div>
+                  
+                  <div className='w-full'>
+                      <ul className='pl-0 flex flex-wrap gap-[10px]'>
+                      {jobData.jobskills?.map((item, i) => {
+                        return (
+                          <li key={i} className='bg-gray-200 border border-skills-list rounded-md p-1'>{item.skill.skill_name}</li>
+                        )
+                      })}
+                      </ul>
+                  </div>
+                </div>
+              </div>
+              <div className='mx-5'>
+                  {
+                  isAlreadyApplied ?
+                    <div className='flex justify-center mt-10 px-5'>
+                      <div className='flex text-center items-center h-12 px-2 bg-soft-basic rounded-lg shadow-box-shadow'>
+                        <p>{onGenerateStatusHighlight(jobInterestedStatus)}</p>
+                      </div>
+                    </div>
+                  :
+                  (loginUserId !== jobData.user_posted?.id) && 
+                    (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed" && userType !== "company") &&
+                      <div className='pl-5'>
+                        <br />
+                        <Button 
+                          buttonType="button" 
+                          label={isSendingInterest ? "Sending..." : "Interested"}
+                          clickedButton={() => onInterestedClicked(jobData.id)} 
+                          customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
+                          isDisabled={jobData.status === "closed" ? true : false}
+                        />
+                      </div>
+                      
+                  }   
+              </div>
+              <div className='mx-10 mt-0'>
+                <br />
+                <Divider />
+                <p className='text-3xl mt-5 font-bold'>Job Description</p>
+                <br />
+                {jobData.job_detail?.split("\n").map((line, i) => (
+                    <Fragment key={i} >
+                      {i > 0 && <br />}
+                      <p className="text-sm">{line}</p>
+                    </Fragment>
+                ))}
+                <br />
+                <br />
+                <br />
+              </div>
+            </div>
+          :
+          <p>No job at the moment.</p>
+          }
+          </div>
+          {isNotLogin && 
+            <NotLoginAction 
+              boxTitle="Interested? Please use Work Match account."
+              boxTagline="Build your profile, apply to this job with a free Work Match account."
+              close={onCloseIsNotLogin} 
+            />
+          }
+          {<AlertNotification alertData={alertResponse} />}
+      </>
+    }
+    </>
   )
 }
 

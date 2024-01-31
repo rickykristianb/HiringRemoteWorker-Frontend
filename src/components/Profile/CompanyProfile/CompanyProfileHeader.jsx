@@ -2,12 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import AuthContext from 'Context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import RateGenerator from 'components/RateGenerator'
-
-import Zoom from '@mui/material/Zoom';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Divider, Tooltip } from '@mui/material';
 import Button from 'components/Button';
 
@@ -67,20 +64,20 @@ const handleChangeUploadImage = async (e) => {
   }
 
   return (
-      <div className='company-profile-header'>
-        <div className='profile_picture'>
-          <div className='profile_image'>
+      <div className='flex flex-col items-center justify-center bg-soft-basic  max-sm:mx-2 max-sm:h-[500px] rounded-3xl shadow-box-shadow'>
+         <div className='profile-img relative bottom-10'>
               <img
               src={profilePicture} // Replace with the actual path or URL of your image
               alt={"profile-picture"}
-              className="profile_image"
+              className="profile-img"
+              loading='lazy'
               />
-              <div className='change-progress-image-button'>
+              <div className='flex self-end pl-[200px] max-sm:pl-[150px]'>
               {loginUserId === props.clickedUserId &&
               <>
                 <div className='input-button-change-image' onClick={handleClickChange}>
-                        Change
-                    </div>
+                    Change
+                </div>
                 
                 <input
                     type='file'
@@ -93,41 +90,41 @@ const handleChangeUploadImage = async (e) => {
             </div>
           </div>
           
-          <div className='rate-name-company-profile'>
-                <div className='profile-rate' onClick={() => navigate("/profile/company/#add-rating-company")}>
-                    <RateGenerator rating={props.userData?.headerData.userRate} />
-                </div>
-                <div className='user-fullname'>
-                    <h1>{props.userData?.headerData.name}</h1>
-                </div>
-                <Divider />
-                <br />
-                <div className='basic-company-info'>
-                  <div className='company-phone-email'>
-                    <div>
-                      <LocalPhoneIcon /><span>{props.userData?.headerData.phoneNumber}</span>
-                    </div>
-                    <div>
-                      <EmailIcon /><span>{props.userData?.headerData.email}</span>
-                    </div>
-                  </div>
-                  <div className='company-address'>
-                    <div>
-                      <LocationOnIcon /><span>{props.userData.locationData?.location}</span>
-                    </div>
-                    <br />
-                    {props.userData?.headerData.address}
-                    <br />
-                    <br />
-                    
-                  </div>
-                </div>
+          <div className='w-full px-12'>
+            <div className='ml-20' onClick={() => navigate("/profile/company/#add-rating-company")}>
+                <RateGenerator rating={Math.round(props.userData?.headerData.userRate * 10)/10} />
             </div>
-            <div id="edit-button-company-profile">
-              {loginUserId === props.clickedUserId && 
-                <Button clickedButton={props.clickEdit} customClassName="company-bio-button" buttonType="button" label="Edit" />
-              }
+            <div className='user-fullname'>
+                <p className='text-[35px] font-bold'>{props.userData?.headerData.name}</p>
             </div>
+            <Divider />
+          </div>
+          <br />
+          <br />
+          <div className='flex flex-wrap justify-between flex-row gap-4 w-full px-12'>
+            <div className='flex flex-col gap-4'>
+              <div className='flex items-center gap-2'>
+                <LocalPhoneIcon /><span>{props.userData?.headerData.phoneNumber}</span>
+              </div>
+              <div className='flex items-center gap-2'>
+                <EmailIcon /><span className='break-all'>{props.userData?.headerData.email}</span>
+              </div>
+            </div>
+            <div className='self-start'>
+              <div className='flex items-center gap-2'>
+                <LocationOnIcon /><span>{props.userData.locationData?.location}</span>
+              </div>
+              <br />
+                {props.userData?.headerData.address}
+              <br />
+              <br />
+              
+            </div>
+          </div>
+        <div className='self-end pr-10 pb-10'>
+          {loginUserId === props.clickedUserId && 
+            <Button clickedButton={props.clickEdit} buttonType="button" label="Edit" />
+          }
         </div>
       </div>
   )

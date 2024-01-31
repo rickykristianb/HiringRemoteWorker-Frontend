@@ -9,7 +9,6 @@ import { TextField } from '@mui/material';
 import Button from './Button';
 import { ReactComponent as Refresh } from "../assets/images/Reload.svg"
 import { ReactComponent as RefreshHover } from "../assets/images/Reload-Mouse-Hover.svg"
-import { set } from 'date-fns';
 
 const AdvanceJobFilterBar = (props) => {
     const [skills, setSkills] = useState([])
@@ -19,7 +18,6 @@ const AdvanceJobFilterBar = (props) => {
     const [typeData, setTypeData] = useState([])
     const [typeList, setTypeList] = useState([])
     const [rates, setRates] = useState([])
-    // const [userFilteredData, setUserFilteredData] = useState()
     const [totalUserFiltered, setTotalUserFiltered] = useState(0)
     const [loadingFilter, setLoadingFilter] = useState(false)
     const [skillSelected, setSkillSelected] = useState([])
@@ -72,7 +70,7 @@ const AdvanceJobFilterBar = (props) => {
                 console.error(response.context.error, response.status)
             }
         } catch (error){
-            console.log(error);
+            
         }
     }
     
@@ -132,7 +130,6 @@ const AdvanceJobFilterBar = (props) => {
         const option = UserRate.map((rate, index) => {
             return rate.icon
         })
-        // console.log(option)
         setRates(option)
     }
 
@@ -166,10 +163,10 @@ const AdvanceJobFilterBar = (props) => {
 
 
     // take all the selected skills
-    const setSkill = (skills) => {
-        setSkillSelected((prevValue) => {
-            return (Array.from(new Set([...prevValue, skills])))
-        })
+    const handleSkillSelected = (skills) => {
+        setSkillSelected((prevValue) => [
+            ...prevValue
+        ]);
     }  
 
     const handleSkillChange = (event, newSkills) => {
@@ -182,30 +179,9 @@ const AdvanceJobFilterBar = (props) => {
         setExperienceSelected(experience)
     }
 
-    const setSelectedRate = (selectedIcon) => {
-        console.log(selectedIcon);
-        const icon = UserRate.find((rate) => rate.icon === selectedIcon)
-
-        setRateSelected((prevValue) => {
-           return [
-            ...prevValue,
-            icon["value"]
-        ]})
-    }
-
-    const handleRateChange = (event, selectedIcon) => {   
-        const rateValue = []
-        for (var i=0; i<selectedIcon.length; i++){
-            const rate = UserRate.find((rate) => rate.icon === selectedIcon[i])
-            rateValue.push(rate["value"])
-        } 
-        setRateSelected(rateValue)
-    }
-
     const handleLocationSelected = (selectedLocation) => {
         setLocationSelected((prevValue) => [
-            ...prevValue,
-            selectedLocation
+            ...prevValue
         ]);
     }
 
@@ -217,7 +193,6 @@ const AdvanceJobFilterBar = (props) => {
         setTypeSelected(selectedType)
     }
 
-    // LOOK AT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     const setType = (selectedType) => {
         setTypeSelected((prevValue) => {
             return (Array.from(new Set([...prevValue, selectedType])))
@@ -237,144 +212,147 @@ const AdvanceJobFilterBar = (props) => {
         // SEND THIS DATA TO SEARCH PAGE
         props.buttonShowClicked()
         props.resetPage(resetPage.current) // RESET PAGINATION NUMBER TO 1
-    }
-              
+    }              
 
   return (
-    <div className='filter-box'>
-        <CloseIcon onClick={ props.barClicked } className='filter-close-button' />
-        <ul>             
-            <li>
-            <p>Skills</p>
-            <Autocomplete
-                multiple
-                limitTags={1}
-                options={skillsList}
-                onChange={handleSkillChange}
-                disableCloseOnSelect
-                value={skillSelected}
-                renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setSkill(option)} style={{margin: '0'}}>
-                        <li {...props} >
-                        <Checkbox
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
-                        />
-                        {option}
-                        </li>
-                    </p>
-                )}
-                style={{ alignItems: 'center' }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select skills" placeholder="Skills" 
-                    />
-                )}
-            />
-            </li>
+    <>
+        <div className='flex flex-col justify-start z-3 py-3 px-10 w-[450px] md:h-full border-dark-basic shadow-box-shadow mb-4 max-xl:fixed max-xl:bottom-11 max-xl:w-screen max-xl:bg-white border-t-0.5 border-soft-basic'>
+            <CloseIcon onClick={ props.barClicked } className='justify-end xl:relative left-[100%] top-[0.4%] max-xl:self-end' />
+            <ul className="flex flex-col mt-10 gap-4">             
+                <li>
+                <p>Skills</p>
+                    <Autocomplete
+                        multiple
+                        limitTags={1}
+                        options={skillsList}
+                        onChange={handleSkillChange}
+                        disableCloseOnSelect
 
-            <li>
-                <p>Experience</p>
-                <Autocomplete
-                    freeSolo
-                    limitTags={1}
-                    options={experienceList}
-                    onChange={setExperience}
-                    disableCloseOnSelect
-                    value={experienceSelected}
-                    renderOption={(props, option, { selected }) => (
-                        <p onClick={() => setExperience(option)} style={{margin: '0'}}>
-                            <li {...props}>
+                        renderOption={(props, option, { selected }) => (
+                            <p onClick={() => handleSkillSelected(option)} style={{margin: '0'}}>
+                                <li {...props} >
+                                <Checkbox
+                                    icon={icon}
+                                    checkedIcon={checkedIcon}
+                                    style={{ marginRight: 8 }}
+                                    checked={selected}
+                                />
                                 {option}
+                                </li>
+                            </p>
+                        )}
+                        style={{ alignItems: 'center' }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Select skills" placeholder="Skills" 
+                            />
+                        )}
+                    />
+                </li>
+
+                <li>
+                    <p>Experience</p>
+                    <Autocomplete
+                        freeSolo
+                        limitTags={1}
+                        options={experienceList}
+                        onChange={setExperience}
+                        disableCloseOnSelect
+                        value={experienceSelected}
+                        renderOption={(props, option, { selected }) => (
+                            <p onClick={() => setExperience(option)} style={{margin: '0'}}>
+                                <li {...props}>
+                                    {option}
+                                </li>
+                            </p>
+                        )}
+                        style={{ alignItems: 'center' }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Select experience" placeholder="Experience" 
+                            />
+                        )}
+                    />
+                </li>
+                <li>
+                <p>Location</p>
+                <Autocomplete
+                    multiple
+                    limitTags={1}
+                    options={ locationsList }
+                    onChange={handleLocationChange}
+                    disableCloseOnSelect
+                    
+                    renderOption={(props, option, { selected }) => (
+                        <p onClick={() => handleLocationSelected(option)} style={{margin: '0'}}>
+                            <li {...props}>
+                            <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                            />
+                            {option}
                             </li>
                         </p>
                     )}
                     style={{ alignItems: 'center' }}
                     renderInput={(params) => (
-                        <TextField {...params} label="Select experience" placeholder="Experience" 
+                        <TextField {...params} label="Select Location" placeholder="Location" 
                         />
                     )}
                 />
-            </li>
-            <li>
-            <p>Location</p>
-            <Autocomplete
-                multiple
-                limitTags={1}
-                options={ locationsList }
-                onChange={handleLocationChange}
-                disableCloseOnSelect
-                
-                renderOption={(props, option, { selected }) => (
-                    <p onClick={() => handleLocationSelected(option)} style={{margin: '0'}}>
-                        <li {...props}>
-                        <Checkbox
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
+                </li>
+                <li>
+                <p>Job Type</p>
+                <Autocomplete
+                    multiple
+                    limitTags={1}
+                    options={typeList}
+                    onChange={handleTypeChange}
+                    disableCloseOnSelect
+                    renderOption={(props, option, { selected }) => (
+                        <p onClick={() => setType(option)} style={{margin: '0'}}>
+                            <li {...props} >
+                            <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                            />
+                            {option}
+                            </li>
+                        </p>
+                    )}
+                    style={{ alignItems: 'center' }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Select type" placeholder="Types" 
                         />
-                        {option}
-                        </li>
-                    </p>
-                )}
-                style={{ alignItems: 'center' }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select Location" placeholder="Location" 
-                    />
-                )}
+                    )}
                 />
-            </li>
-            <li>
-            <p>Job Type</p>
-            <Autocomplete
-                multiple
-                limitTags={1}
-                options={typeList}
-                onChange={handleTypeChange}
-                disableCloseOnSelect
-                renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setType(option)} style={{margin: '0'}}>
-                        <li {...props} >
-                        <Checkbox
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
-                        />
-                        {option}
-                        </li>
-                    </p>
-                )}
-                style={{ alignItems: 'center' }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select type" placeholder="Types" 
-                    />
-                )}
-            />
-            </li>
-        </ul>
-        <a 
-            onClick={() => onShowButtonClicked()}
-            onMouseEnter={onMouseEnterShowButton}
-            onMouseLeave={onMouseLeaveShowButton}
-        >
-        <Button
-            buttonType="button"
-            label={
-                loadingFilter
-                ?
-                <span className='show-refresh-button'>
-                    Show {mouseEnterShowButton ? <RefreshHover /> : <Refresh />}
-                </span>
-                : 
-                <span>Show &#40;{totalUserFiltered}&#41;</span>   
-            }
-            customClassName="filter-show-button"
-            />
-        </a>
-    </div>
+                </li>
+            </ul>
+            <a className='self-end '
+                onClick={() => onShowButtonClicked()}
+                onMouseEnter={onMouseEnterShowButton}
+                onMouseLeave={onMouseLeaveShowButton}
+            >
+            <br />
+            <Button
+                buttonType="button"
+                label={
+                    loadingFilter
+                    ? 
+                    <span className='flex flex-row gap-1'>
+                        Show {mouseEnterShowButton ? <RefreshHover /> : <Refresh />}
+                    </span>
+                    : 
+                    <span>Show &#40;{totalUserFiltered}&#41;</span>   
+                }
+                customClassName="show-advance-filter-button"
+                />
+            </a>
+        </div>
+    </>
+    
   )
 }
 

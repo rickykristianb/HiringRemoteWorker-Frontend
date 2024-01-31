@@ -6,25 +6,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import CompanyProfileHeader from 'components/Profile/CompanyProfile/CompanyProfileHeader'
 import EditBioForm from 'components/EditBioForm';
 import CompanyBio from 'components/Profile/CompanyProfile/CompanyBio';
-import AlertDialog from 'components/AlertDialog';
 import AlertNotification from 'components/AlertNotification';
 import AuthContext from 'Context/AuthContext';
 import Backdrop from 'components/Backdrop';
 import JobPosted from 'components/Profile/CompanyProfile/JobPosted';
 import UserRatings from 'components/UserRatings';
+import CompanyProfileSkeleton from 'components/Skeleton/CompanyProfileSkeleton';
 
 const CompanyProfile = () => {
     const [clickedUserId, setClickedUserId] = useState()
     const [headerUserData, setHeaderUserData] = useState([])
     const [bioUserData, setBioUserData] = useState([])
     const [locationUserData, setLocationUserData] = useState([])
-    const [locationChangeUserData, setLocationChangeUserData] = useState([])
     const [locationFieldError, setLocationFieldError] = useState()
     const [tempSaveData, setTempSaveData] = useState([])
     const [isEdit, setIsEdit] = useState(false)
     const [alertResponse, setAlertResponse] = useState()
     const [isBackDropActive, setIsBackdropActive] = useState(false)
     const [ratingData, setRatingData] = useState([])
+    const [getProfileLoading, setGetProfileLoading] = useState(false)
     const location = useLocation();
 
     const navigate = useNavigate()
@@ -44,6 +44,7 @@ const CompanyProfile = () => {
     const onGetProfile = async () => {
         const id = clickedUserId
         try {
+          setGetProfileLoading(true)
           if (id !== null){
             const response = await fetch(`/api/user/profile/${id.toString()}`, {
               method: "GET",
@@ -91,8 +92,11 @@ const CompanyProfile = () => {
           else {
             navigate("/user-not-found/")
           }
-        }catch {
-        }  
+        }catch (error) {
+          console.error(error);
+        } finally {
+          setGetProfileLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -117,7 +121,6 @@ const CompanyProfile = () => {
           profilePicture: tempSaveData.profilePicture  // Use the correct method name
         })
         setLocationUserData(tempSaveData.location)
-        console.log(tempSaveData["bio"]);
         setBioUserData({bio: tempSaveData["bio"]})
         setLocationFieldError()
       }
@@ -150,10 +153,6 @@ const CompanyProfile = () => {
       setLocationUserData({
         id: option["id"],
         location: option["value"]
-      })
-
-      setLocationChangeUserData({
-        location: option["id"]
       })
     }
 
@@ -225,31 +224,38 @@ const CompanyProfile = () => {
     }, [])
 
   return (
-    <div className="company-profile-container">
-        <CompanyProfileHeader 
-          userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-          clickedUserId={clickedUserId} 
-          clickEdit={openEditForm} 
-        />
-        <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
-        <JobPosted clickedUserId={clickedUserId} />
-        <div id='add-rating-company'>
-          <UserRatings userId={clickedUserId} ratingData={ratingData} />
-        </div>
+    <>
+      {getProfileLoading ?
+        <CompanyProfileSkeleton />
+      :
+        <div className="flex flex-col gap-16 my-14 max-sm:mt-44 max-sm:mx-4 justify-center items-center">
+          <div className='xl:w-[1000px] max-xl:px-12 max-sm:px-0 w-full max-sm:w-full flex flex-col gap-16'>
+            <CompanyProfileHeader 
+                userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
+                clickedUserId={clickedUserId} 
+                clickEdit={openEditForm} 
+              />
+              <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
+              <JobPosted clickedUserId={clickedUserId} />
+              <UserRatings userId={clickedUserId} ratingData={ratingData} />
 
-        {isEdit && 
-          <EditBioForm 
-            userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-            locationFieldError={locationFieldError}
-            onChangeHeaderFormInput={onChangeHeaderFormInput}
-            onChangeBioForm={onChangeBioFormInput}
-            onChangeLocationForm={onChangeLocationForm}
-            saveEditProfile={onSaveEditProfile} 
-            onClickCancel={onClickCancelEdit}
-          />}
-        <AlertNotification alertData={alertResponse} />
-        { isBackDropActive && <Backdrop /> }
-    </div>
+              {isEdit && 
+                <EditBioForm 
+                  userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
+                  locationFieldError={locationFieldError}
+                  onChangeHeaderFormInput={onChangeHeaderFormInput}
+                  onChangeBioForm={onChangeBioFormInput}
+                  onChangeLocationForm={onChangeLocationForm}
+                  saveEditProfile={onSaveEditProfile} 
+                  onClickCancel={onClickCancelEdit}
+                />}
+              <AlertNotification alertData={alertResponse} />
+              { isBackDropActive && <Backdrop /> }
+          </div>
+        </div>
+      }
+    </>
+    
   )
 }
 

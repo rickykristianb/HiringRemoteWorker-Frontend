@@ -11,8 +11,11 @@ const NewPassword = (match) => {
     const [loading, setLoading] = useState(false)
     const [alert, setAlert] = useState()
     const [passwordHide, setPasswordHide] = useState(true);
+    const [password, setPassword] = useState()
+    const [retypePassword, setRetypePassword] = useState(null)
     const [retypePasswordHide, setRetypePasswordHide] = useState(true)
     const [navigation, setNavigation] = useState(false)
+    const [alertField, setAlertField] = useState()
     const { uid, token } = useParams()
 
     const [userid, setUserid] = useState("")
@@ -44,9 +47,9 @@ const NewPassword = (match) => {
         setRetypePasswordHide(!retypePasswordHide)
     }
 
-    let onSubmit = async (e) => {
-      console.log(e.new_password, e.re_new_password);
-        let response = await fetch("http://127.0.0.1:8000/auth/users/reset_password_confirm/", {
+    const onSubmit = async (e) => {
+      if (e.new_password === e.re_new_password){
+        let response = await fetch(`/api/user/accounts/reset_password_confirm`, {
           method: "POST",
           headers: {
             "content-type": "application/json"
@@ -61,7 +64,11 @@ const NewPassword = (match) => {
         setAlert({
           "success": "New password has been saved. We'll redirect you to login page"
         })
+        setAlertField()
         setNavigation(true)
+      } else {
+        setAlertField("Password and retype password do not match")
+      }
     }
 
     useEffect(() => {
@@ -72,6 +79,32 @@ const NewPassword = (match) => {
         return () => clearTimeout(timeout)
       }      
     }, [navigation, navigate]);
+
+    const newPasswordOnChange = (e) => {
+      setPassword(e.target.value)
+      
+      if (retypePassword === null  || retypePassword === ""){
+        setAlertField()
+      } else if (e.target.value !== retypePassword){
+        setAlertField("Password and retype password do not match")
+      } else if (e.target.value == retypePassword){
+        setAlertField()
+      } else if (e.target.value === ""){
+        setAlertField()
+      } 
+    }
+
+    const retypePasswordOnChange = (e) => {
+      setRetypePassword(e.target.value)
+
+      if (e.target.value !== password){
+        setAlertField("Password and retype password do not match")
+      } else if (e.target.value == password){
+        setAlertField()
+      } else if (e.target.value === ""){
+        setAlertField()
+      }
+    }
 
 
   return (
@@ -85,7 +118,7 @@ const NewPassword = (match) => {
                 <div className='new-password-field'>
                     <label>New Password</label>
                     <div className='password-input'>
-                      <input {...register("new_password", {required: "New Password is required"})} className="password-input-field" type={ passwordHide ? 'password' : "text"} disabled={ isSubmitting } />
+                      <input {...register("new_password", {required: "New Password is required"})} className="password-input-field" onChange={(e) => newPasswordOnChange(e)} type={ passwordHide ? 'password' : "text"} disabled={ isSubmitting } />
                       <div className='eye-icon'>
                         {!passwordHide ? 
                           <i class="fa-solid fa-eye fa-xl" onClick={onClickPasswordIcon}></i>
@@ -98,10 +131,10 @@ const NewPassword = (match) => {
                 </div>
                 
 
-                <div className='retype-password-field'>
+                <div className='retype-password-field'> 
                     <label>Retype New Password</label>
                     <div className='password-input'>
-                      <input {...register("re_new_password", {required: "Retype new password is required"})} className="password-input-field" type={ retypePasswordHide ? "password" : "text"} disabled={ isSubmitting } value={ isSubmitSuccessful ? reset() : null}></input>
+                      <input {...register("re_new_password", {required: "Retype new password is required"})} className="password-input-field" onChange={(e) => retypePasswordOnChange(e)} type={ retypePasswordHide ? "password" : "text"} disabled={ isSubmitting } value={ isSubmitSuccessful ? (!alertField ? reset() : null) : null }></input>
                       <div className='eye-icon'>
                         {!retypePasswordHide ? 
                         <i class="fa-solid fa-eye fa-xl" onClick={onClickRetypePasswordHide}></i>
@@ -111,6 +144,7 @@ const NewPassword = (match) => {
                       </div>
                     </div>
                     {errors.re_new_password && <span className='error-field'>{errors.re_new_password.message}</span>}
+                    {alertField && <span className='error-field'>{alertField}</span>}
         
                 </div>              
                 <Button label={ isSubmitting ? "Saving" : "Save"} buttonType="input" disabled={isSubmitting ? true : false} />

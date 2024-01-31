@@ -158,7 +158,6 @@ const EditJob = (props) => {
 
   const onChangeInputField = (e) => {
     const {name, value} = e.target
-    console.log(name, value);
     onCheckChangeInput(name)
 
     setInputValue((prevValue) => {
@@ -167,7 +166,6 @@ const EditJob = (props) => {
         [name]: value
       }
      })
-    console.log(inputValue);
   }
 
   const onChangeSelectField = (name, value) => {
@@ -209,54 +207,43 @@ const EditJob = (props) => {
         [name]: value
       }
      })
-    console.log(name, value);
   }
 
   const fieldChecking = async() => {
-    console.log(inputValue?.jobSkills.length);
     const regex = /\S/;
     let status = "success"
 
     if (!regex.test(inputValue?.jobTitle)){
-      console.log("MASUK 1");
       setJobTitleAlertField("Job title is required")
       status = "failed"
     }
     if (!regex.test(inputValue?.jobDetail)){
-      console.log("MASUK 2");
       setJobDetailAlertField("Job detail is required.")
       status = "failed"
     }
     if (inputValue.jobSkills?.length === 0){
-      console.log("MASUK 3");
       setJobSkillAlertField("Please select minimum 1 skill.")
       status = "failed"
     }
     if (inputValue.jobLocation?.length === 0){
-      console.log("MASUK 4");
       setJobLocationAlertField("Please select minimum 1 location.")
       status = "failed"
     }
     if (inputValue.jobEmploymentType?.length === 0){
-      console.log("MASUK 5");
       setJobEmploymentTypeAlertField("Please select minimum 1 employment type.")
       status = "failed"
     }
     if (!regex.test(inputValue?.jobSalary) && inputValue.jobSalaryPaidPeriod?.length === 0){
-      console.log("MASUK 6");
       setJobSalaryAlertField("Please insert the job salary dan period.")
       status = "failed"
     } else if(!regex.test(inputValue?.jobSalary)){
-      console.log("MASUK 7");
       setJobSalaryAlertField("Please insert the job salary.")
       status = "failed"
     } else if(inputValue.jobSalaryPaidPeriod?.length === 0){
-      console.log("MASUK 8");
       setJobSalaryAlertField("Please insert the job salary period.")
       status = "failed"
     }
     if (inputValue.experienceLevel?.length === 0){
-      console.log("MASUK 9");
       setJobExperienceLevelAlertField("Please select 1 experience level.")
       status = "failed"
     } 
@@ -290,7 +277,6 @@ const EditJob = (props) => {
           props.closeForm()
           await props.onLoadJobPosted()
           if (props.needPagination === false){
-            console.log(props.needPagination);
             if (props.needPagination === false){
               return false
             }
@@ -313,23 +299,23 @@ const EditJob = (props) => {
   }
 
   return (
-    <div id="edit-job-section">
-      <div id="edit-job-container">
+    <div className='flex justify-center w-screen h-screen items-center'>
+      <div className='w-[80%] h-[90%] max-sm:w-[95%] max-sm:h-[80%] bg-white flex flex-wrap items-center justify-center shadow-box-shadow rounded-md'>
         <div id="job-title">
           <p>EDIT JOB</p>
           <br />
           <Divider />
         </div>
-        <div id="add-job-form-container">
+        <div id="add-job-form-container" className='w-full h-[80%] px-14 max-sm:px-6'>
           <form id="add-job-form" onSubmit={(e) => onSubmitSaveJobForm(e)}>
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Status</p>
+                  <p className='font-bold'>Status</p>
                   <span>Select this job current status.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <Select
                   id="job-status"
                   name="jobStatus"
@@ -342,14 +328,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Job Title</p>
+                  <p className='font-bold'>Job Title</p>
                   <span>A job title must describe one position only</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <input 
                   className='add-job-input-field'
                   value={inputValue?.jobTitle}
@@ -361,14 +347,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Job Detail</p>
+                  <p className='font-bold'>Job Detail</p>
                   <span>Provide a short description about the job. Keep it short and to the point.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <textarea 
                   className='add-job-textarea-field' rows="15" 
                   value={inputValue?.jobDetail}
@@ -380,14 +366,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Skills</p>
+                  <p className='font-bold'>Skills</p>
                   <span>Select skills needed for this job.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <Select
                   isMulti
                   id="skill-list"
@@ -401,14 +387,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Job Location</p>
+                  <p className='font-bold'>Job Location</p>
                   <span>Add location for this job.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <Select
                   isMulti
                   id="company-location"
@@ -422,14 +408,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Employment Type</p>
+                  <p className='font-bold'>Employment Type</p>
                   <span>You can pick more than 1 types.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <Select
                   isMulti
                   id="job-employment-type"
@@ -443,51 +429,49 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Salary</p>
+                  <p className='font-bold'>Salary</p>
                   <span>Choose how you prefer to pay for this job.</span>
                 </div>
               </div>
-              <div id='add-job-input-salary-field-container'>
-                <div id='job-salary-currency'>
-                  <div className='currency-input-field-container'>
-                    <div className='currency-sign-placeholder'>
-                      <p>$</p>
-                    </div>
-                    <input id='add-job-input-field-salary'
-                      placeholder='12.3'
-                      name='jobSalary'
-                      type='number'
-                      step="0.01"
-                      value={inputValue.jobSalary}
-                      onChange={(e) => onChangeInputField(e)}
-                      disabled={isSubmitting ? true : false}
-                    />
+              <div className='flex gap-2 w-[50%] max-sm:w-full'>
+                <div className='currency-input-field-container'>
+                  <div className='currency-sign-placeholder'>
+                    <p>$</p>
                   </div>
-                  <Select
-                    placeholder="Select period..."
-                    id='add-job-salary-selection'
-                    name="jobSalaryPaidPeriod"
-                    options={period.map((item) => ({value: item, label: item}))}
-                    value={{value: inputValue.jobSalaryPaidPeriod, label: inputValue.jobSalaryPaidPeriod}}
-                    onChange={(selectedOption) => onChangeSelectField("jobSalaryPaidPeriod", selectedOption["value"])}
+                  <input id='add-job-input-field-salary'
+                    placeholder='12.3'
+                    name='jobSalary'
+                    type='number'
+                    step="0.01"
+                    value={inputValue.jobSalary}
+                    onChange={(e) => onChangeInputField(e)}
                     disabled={isSubmitting ? true : false}
                   />
                 </div>
-                {jobSalaryAlertField && <p className='error-field'>{jobSalaryAlertField}</p>}
+                <Select
+                  placeholder="Select period..."
+                  id='add-job-salary-selection'
+                  name="jobSalaryPaidPeriod"
+                  options={period.map((item) => ({value: item, label: item}))}
+                  value={{value: inputValue.jobSalaryPaidPeriod, label: inputValue.jobSalaryPaidPeriod}}
+                  onChange={(selectedOption) => onChangeSelectField("jobSalaryPaidPeriod", selectedOption["value"])}
+                  disabled={isSubmitting ? true : false}
+                />
               </div>
+              {jobSalaryAlertField && <p className='error-field'>{jobSalaryAlertField}</p>}
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Experience Level</p>
+                  <p className='font-bold'>Experience Level</p>
                   <span>How many years is the candidate required to have experience for this job?</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <Select
                   id='add-job-experience-level-selection'
                   name="jobExperienceLevel"
@@ -500,14 +484,14 @@ const EditJob = (props) => {
               </div>
             </div>
             <Divider />
-            <div className='input-title-container'>
-              <div className='add-job-form-title'>
+            <div className='flex flex-row flex-wrap max-sm:flex-col max-sm:gap-6'>
+              <div className='w-[50%] max-sm:w-full'>
                 <div>
-                  <p>Deadline</p>
+                  <p className='font-bold'>Deadline</p>
                   <span>The date for this job is no longer available.</span>
                 </div>
               </div>
-              <div className='add-job-input-field-container'>
+              <div className='w-[50%] max-sm:w-full'>
                 <input 
                   type='date' 
                   className='add-job-input-field'
@@ -523,7 +507,7 @@ const EditJob = (props) => {
             <br />
             <div id="add-new-job-button">
               <Button buttonType="input" label={isSubmitting ? "Saving..." : "Save"} />
-              <Button clickedButton={props.clickedCancel} customClassName="company-profile-cancel-button" buttonType="input" label="Cancel" />
+              <Button clickedButton={props.clickedCancel} customClassName="cancel-button" buttonType="input" label="Cancel" />
             </div>
             <br />
           </form>

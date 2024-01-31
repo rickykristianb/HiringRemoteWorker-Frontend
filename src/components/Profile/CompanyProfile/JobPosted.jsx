@@ -150,8 +150,8 @@ const JobPosted = (props) => {
   return (
     <div id='job-posted-container'>
         <Divider />
-        <div id="job-posted-title-button">
-            <h1>Job Posted</h1>
+        <div className='flex justify-between'>
+            <p className='text-3xl font-bold leading-[80px]'>Job Posted</p>
             {loginUserId === props.clickedUserId && 
               <div id='add-job-button'>
                 {loginUserId === props.clickedUserId &&
@@ -178,12 +178,12 @@ const JobPosted = (props) => {
         {jobPostedData.length > 0 ? 
           jobPostedData.map((item) => {
             return (
-              <div key={item.id} id="job-container" onMouseEnter={() => onMouseEnterJob(item.id)} onMouseLeave={() => onMouseLeaveJob()}>
-                <div id="job-basic-info">
+              <div key={item.id} className='flex border p-4 w-full max-sm:flex-col' onMouseEnter={() => onMouseEnterJob(item.id)} onMouseLeave={() => onMouseLeaveJob()}>
+                <div className='w-[470px] max-sm:w-full'>
                   <Link to={`/jobs/${item.id}/?id=${props.clickedUserId}`}>
-                    <h2>{item.job_title}</h2>
+                    <p className='text-3xl font-bold mb-6'>{item.job_title}</p>
                   </Link>
-                  <p>{item.user_posted?.name}</p>
+                  <p className='mb-2'>{item.user_posted?.name}</p>
                   <div>
                     {item.joblocation.slice(0, 3).map((location) => {
                       return(
@@ -197,51 +197,52 @@ const JobPosted = (props) => {
                     }
                   </div>
                 </div>
-                <div id="job-skills">
-                  <ul>
+                <div className='w-[380px] max-sm:w-full'>
+                  <ul className='flex flex-row flex-wrap gap-2 mt-4'>
                   {item.jobskills.slice(0, 6).map((item) => {
                     return (
-                      <li>{item.skill.skill_name}</li>
+                      <li className='p-[5px] border-1.5 rounded-sm bg-skills-list'>{item.skill.skill_name}</li>
                     )
                   })}
                   </ul>
                 </div>
-                <div id="job-date-action-button">
+                <div className='flex flex-col gap-4 justify-center items-end max-sm:flex-row max-sm:justify-start max-sm:mt-4'>
                   {isMouseEnter === item.id
                   ?
-                  <div id='job-posted-list-action-button'>
+                  <div className='pl-3 max-sm:pl-0'>
                     {loginUserId !== props.clickedUserId ?
                       item.status !== "Finished" ? 
                         <Button buttonType="button" label={isSendingInterest ? "Sending..." : "Interested"} clickedButton={() => onInterestedClicked(item.id)} />
                       :
                       setIsMouseEnter("")
                     :
-                      <Button buttonType="button" label="Edit" 
-                        clickedButton={() => onClickEditJobButton({
-                          data: {
-                            id: item.id, 
-                            jobTitle: item.job_title,
-                            jobDetail: item.job_detail,
-                            skills: item.jobskills,
-                            jobLocation: item.joblocation,
-                            jobEmploymentType: item.jobemploymenttype,
-                            jobSalary: item.jobsalaryrates,
-                            jobExperienceLevel: item.experience_level,
-                            jobStatus: item.status,
-                            jobDeadline: item.deadline
-                          }
-                        })} />
+                      <div className='pl-8 max-sm:pl-0'>
+                        <Button buttonType="button" label="Edit" 
+                          clickedButton={() => onClickEditJobButton({
+                            data: {
+                              id: item.id, 
+                              jobTitle: item.job_title,
+                              jobDetail: item.job_detail,
+                              skills: item.jobskills,
+                              jobLocation: item.joblocation,
+                              jobEmploymentType: item.jobemploymenttype,
+                              jobSalary: item.jobsalaryrates,
+                              jobExperienceLevel: item.experience_level,
+                              jobStatus: item.status,
+                              jobDeadline: item.deadline
+                            }
+                          })} />
+                        </div>
+                      
                     }
                   </div>
                   :
-                  <>
+                  <div className='flex flex-col gap-4 items-end pl-6 max-sm:flex-row max-sm:pl-0'>
                     <p>{item.created_at}</p>
-                    {item.interesteduser.length === 0 && 
-                      <div id="loved-counter">
-                        <FavoriteIcon />
-                        <span>0</span>
-                      </div>
-                    }
+                    <div id="loved-counter">
+                      <FavoriteIcon />
+                      <span>{item.interesteduser.length}</span>
+                    </div>
                     <p><span id={(() => {
                       switch(item.status){
                         case "Open":
@@ -252,7 +253,7 @@ const JobPosted = (props) => {
                           return "job-status-finished"
                       }
                     })()}>{capitalizeFirstLetter(item.status)}</span></p>
-                  </>
+                  </div>
                   }
                 </div>
               </div>
@@ -262,13 +263,16 @@ const JobPosted = (props) => {
           <p>No job at the moment</p>
         }
         </div>
+        <br />
         {jobPostedData.length > 0 &&
-          <Pagination 
-            type="jobPosted" 
-            totalData={totalJobPosted} 
-            onLoadJobPostedPaginate={onLoadJobPosted}
-            paginationReset={isPaginationReset}
-          />
+          <div>
+            <Pagination 
+              type="jobPosted" 
+              totalData={totalJobPosted} 
+              onLoadJobPostedPaginate={onLoadJobPosted}
+              paginationReset={isPaginationReset}
+            />
+          </div>
         }
 
         {isEditJob && 
@@ -283,7 +287,12 @@ const JobPosted = (props) => {
             />
           </div>
         }
-        {isNotLogin && <NotLoginAction close={onCloseIsNotLogin} />}
+        {isNotLogin &&
+          <NotLoginAction close={onCloseIsNotLogin} 
+            boxTitle="Interested? Please use Work Match account."
+            boxTagline="Build your profile, apply to this job with a free Work Match account."
+          />
+        }
         {alertResponse && <AlertNotification alertData={alertResponse} />}
     </div>
   )

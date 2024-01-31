@@ -63,11 +63,10 @@ const JobDetailPanel = () => {
     const onClickSeeAllJobs = () => {
         navigate("/company-panel/?tab=jobs")
     }
-
   return (
-    <div id='job-detail-panel-container'>
-        <div id="job-detail-panel-layout">
-            <div id="job-detail-panel-content">
+    <div className='flex justify-center'>
+        <div className='flex w-[70%] max-xl:w-[90%] my-10 rounded-xl shadow-box-shadow p-10'>
+            <div className='w-full py-10'>
                 <div id='job-detail-panel-back-button' >
                     <div onClick={() => onClickSeeAllJobs()}>
                         <ArrowBackIcon  />

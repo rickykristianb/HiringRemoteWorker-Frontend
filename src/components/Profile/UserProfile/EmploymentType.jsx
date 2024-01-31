@@ -176,10 +176,10 @@ const EmploymentType = (props) => {
 
 
   return (
-    <div className='profile-employment-type'>
-        <h1>Employment Type</h1>
+    <div>
+        <p className='text-[32px] font-bold'>Employment Type</p>
         <br />
-        <div className='emp-type-list'>
+        <div className='emp-type-list px-1'>
             {employmentTypeListSelected.map((item, index) => {
                 return (
                     <>
@@ -196,10 +196,10 @@ const EmploymentType = (props) => {
                 )
             })}
         </div>
-        
+        <br />
         {!isAdded && employmentType.map((type, index) => {
             return (
-                <div key={index} className='add-emp-type-section'>
+                <div key={index} className='flex gap-2 mb-2 items-center'>
                     <Select
                         options={employmentTypeList.map((item) => ({id: item.id, value: item.type, label: item.type}))}
                         className='skill-selection'
@@ -212,7 +212,6 @@ const EmploymentType = (props) => {
             )
         })}
         {alertField && <p className='error-field'>{alertField.message}</p>}  
-        <br />   
         {loginUserId === props.clickedUserId && 
             <>
                 <Button buttonType="button" label="Add Employment Type" clickedButton={onAddMoreEmploymentTypeSection} />

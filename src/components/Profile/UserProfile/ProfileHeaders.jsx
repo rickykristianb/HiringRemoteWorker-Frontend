@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ProfileHeaders = (props) => {
     const navigate = useNavigate()
+    const [newSetSavedName, setNewSetSavedName] = useState(null)
 
     const [loginUserId, setLoginUserId] = useState()
     useEffect(() => {
@@ -68,15 +69,20 @@ const ProfileHeaders = (props) => {
         navigate(`/messages/?email=${data}`)
     }
 
+    const onSavedNewName = (name) => {
+        setNewSetSavedName(name)
+    }
+    
   return (
-    <div className='profile_detail_header'>
-        <div className='profilepicture-rate-name'>
-            <div className='profile_picture'>
-                <div className='profile_image'>
+    <>
+        <div className='p-10 pl-0 max-sm:pl-0 max-sm:pt-0 xl:w-[30%] md:w-[40%]'>
+            <div className='flex items-center w-full'>
+                <div className='profile-img'>
                     <img
                     src={profilePicture} // Replace with the actual path or URL of your image
                     alt={profile.name}
-                    className="profile_image"
+                    className="profile-img"
+                    loading='lazy'
                     />
                 </div>
                 <div className='change-progress-image-button'>
@@ -95,13 +101,11 @@ const ProfileHeaders = (props) => {
                     />
                 </div>
             </div>
-            <div className='rate-name'>
-                <div className='profile-rate'>
-                    <RateGenerator rating={props.userData.userRate} />
+            <div className='flex flex-col mt-10 w-full'>
+                <div className='flex pl-20 h-[40px]'>
+                    <RateGenerator rating={Math.round(props.userData?.userRate * 10) / 10} />
                 </div>
-                <div className='user-fullname'>
-                    <h1>{props.userData.name}</h1>
-                </div>
+                <p className='text-3xl font-bold mb-4 break-words'>{newSetSavedName ? newSetSavedName : props.userData.name}</p>
             </div>
             <Location userData={props.userData.location} clickedUserId={props.clickedUserId} />
             {loginUserId !== props.clickedUserId && 
@@ -110,8 +114,10 @@ const ProfileHeaders = (props) => {
                 </div>
             }
         </div>
-        <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} />
-    </div>
+        <div className='xl:w-[70%] md:w-[60%] max-sm:w-full'>
+            <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} setNewName={onSavedNewName} />
+        </div>
+    </>
   )
 }
 

@@ -5,10 +5,10 @@ import { Divider } from '@mui/material'
 const CompanyBio = (props) => {
 
   return (
-    <div className='company-bio-container'>
+    <div className='w-full'>
     <br />
       <Divider />
-      <h1>Company Profile</h1>
+      <p className='text-3xl font-bold leading-[80px]'>Company Profile</p>
       <p className='company-bio-content'>{props.userData.bio?.split('\n').map((line, i) => (
           <Fragment key={i}>
               {i > 0 && <br />}

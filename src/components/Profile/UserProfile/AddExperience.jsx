@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from 'components/Button'
 import { useForm } from 'react-hook-form'
 import AuthContext from 'Context/AuthContext'
@@ -9,6 +9,7 @@ const AddExperience = (props) => {
 
   const [experience, setExperience] = useState([])
   const [disableEndDate, setDisableEndData] = useState(true)
+  const [isMobile, setIsMobile] = useState(false);
 
   const {register, handleSubmit, reset,
     formState: {
@@ -91,10 +92,24 @@ const AddExperience = (props) => {
       }
     }
 
+    useEffect(() => {
+      const checkWindowSize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      }
+
+      checkWindowSize()
+      
+      window.addEventListener('resize', checkWindowSize)
+
+      return () => {
+        window.removeEventListener('resize', checkWindowSize)
+      }
+    }, [])
+
   return (
-    <>
-      <form onSubmit={handleSubmit(onAddExperience)} className='experience-form'>
-        <CloseIcon className='addExperience-close-button' onClick={props.close} />
+    <div className='p-10 max-sm:p-4 rounded-lg shadow-box-shadow w-[70%] max-sm:w-[95%] bg-white'>
+      <form onSubmit={handleSubmit(onAddExperience)} className='flex flex-col gap-2'>
+        <CloseIcon className='text-dark-basic relative self-end' onClick={props.close} />
         <input {...register ("companyName", {"required": "Company Name is required"})}
           value={experience.companyName}
           onChange={(e) => onChangeExperience(e)}
@@ -120,7 +135,7 @@ const AddExperience = (props) => {
               type="date" 
               id="since-date" 
               name="jobStartDate" 
-              className='input-field-experience-startend-date'
+              className='w-30 h-[2em] max-sm:w-28 border border-skills-list rounded-md outline-none'
               disabled={isSubmitting ? true : false}
             ></input>
             {errors.jobStartDate && <span className='error-field'>{errors.jobStartDate.message}</span>}
@@ -134,7 +149,7 @@ const AddExperience = (props) => {
                 type="date"
                 id="end-date"
                 name="jobEndDate"
-                className='input-field-experience-startend-date'
+                className='w-30 h-[2em] max-sm:w-28 border border-skills-list rounded-md outline-none'
                 disabled={isSubmitting ? true : false}
               ></input>
               {errors.jobEndDate && <span className='error-field'>{errors.jobEndDate.message}</span>}
@@ -148,13 +163,13 @@ const AddExperience = (props) => {
           value={experience.jobDescription}
           onChange={(e) => onChangeExperience(e)}
           className='experience-textArea' 
-          rows="30" 
+          rows={isMobile ? "15" : "20"} 
           placeholder='Job Description'
           disabled={isSubmitting ? true : false}
         ></textarea>
         <Button buttonType="input" label={isSubmitting ? "Saving..." : "Add"} />
       </form> 
-    </>      
+    </div>      
   )
 }
 

@@ -217,15 +217,15 @@ const Education = (props) => {
 
 
   return (
-    <div className='profile_education'>
-        <h1>Education</h1>
+    <div>
+        <p className='text-[32px] font-bold'>Education</p>
         <br />
         {/* DISPLAY ALL EDUCATION. ADD FORM TO EDIT THE EDUCATION */}
         {educationList.map((item, index) => {
               return (
-                <div key={index} className='education-list' onMouseEnter={() => onMouseHover(index)} onMouseLeave={onMouseLeaveHover}>
+                <div key={index} className='education-list px-1' onMouseEnter={() => onMouseHover(index)} onMouseLeave={onMouseLeaveHover}>
                 {isEdit === index ? (
-                  <div className='edit-field'>
+                  <div className='add-education max-sm:w-full'>
                     <div>
                       <CloseIcon onClick={() => onClickCancel(index)} className='addEducation-close-button' />
                     </div>
@@ -254,9 +254,9 @@ const Education = (props) => {
                   </div>
                 ) : (
                   <div className='education-edit-button'>
-                    <RadioButtonCheckedIcon className='education-list-icon' />
+                    <RadioButtonCheckedIcon className='education-list-icon' sx={{width: "30px", height: "30px"}} />
                     <div className='education-item'>
-                      <li><h3>{item.schoolName}</h3></li>
+                      <li><p className='text-xl font-bold'>{item.schoolName}</p></li>
                       <li>{item.major}</li>
                       <li>{item.degree}</li>
                     </div>
@@ -275,8 +275,8 @@ const Education = (props) => {
         {/* ADD NEW EDUCATION (NEW FORM) */}
         {!isSaved && (education.length > 0) && 
         education.map((educationItem, index) => (
-            <div key={index} className='education-container'>
-                <div className='add-education'>
+            <div key={index} className='education-container px-1'>
+                <div className='add-education max-sm:w-full'>
                     <div>
                         <CloseIcon onClick={() => onClickCancelAdd()} className='addEducation-close-button' />
                     </div>

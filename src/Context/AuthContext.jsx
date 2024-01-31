@@ -1,7 +1,7 @@
-import { createContext, useState, useEffect, useRef, useContext } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-import ProfileContext from "./ProfileContext";
+import { useLocation } from "react-router-dom";
+import { BroadcastChannel } from "broadcast-channel";
 
 const AuthContext = createContext();
 
@@ -9,9 +9,12 @@ export default AuthContext;
 
 export const AuthProvider = ({children}) => {
 
-    const navigate = useNavigate();
-    // get user token from the local storage
+    const location = useLocation();
+    
+    const logoutChannel = new BroadcastChannel("logout");
+    const loginChannel = new BroadcastChannel("login");
 
+    // get user token from the local storage
     const dataUser = () => {
         return localStorage.getItem("authToken") ? jwtDecode(localStorage.getItem("authToken")) : null
     }
@@ -42,7 +45,7 @@ export const AuthProvider = ({children}) => {
         }
       })
       const data = await response.json()
-      console.log("CEK DATA: ", data);
+
       if (response.ok){
         let localLoginProfilePicture = localStorage.getItem("login_user_profile_picture")
         let localUserName = localStorage.getItem("username")
@@ -89,7 +92,7 @@ export const AuthProvider = ({children}) => {
 
         if (response.status === 200){
             setAuthToken(data)
-            setUser(jwtDecode(data.access))
+            // setUser(jwtDecode(data.access))
             onLoadUserHeader(data.access)
             localStorage.setItem("authToken", JSON.stringify(data))
             redirectUserPage(data.access)
@@ -111,13 +114,16 @@ export const AuthProvider = ({children}) => {
       const data = await response.json()
       if (response.ok){
         if (data === "personal"){
-          navigate("/")
+          window.location.href = "/"
+          loginChannel.postMessage("personal-login");
         } else if (data === "company"){
-          navigate("/users/")
+          window.location.href = "/users/"
+          loginChannel.postMessage("company-login")
         }
         localStorage.setItem("userType", data)
       }
     }
+
 
     const userRegistration = async (e) => {
         try {
@@ -175,21 +181,23 @@ export const AuthProvider = ({children}) => {
 
     const resendActivationLink = async (email) => {
       setResendLoading(true)
-      
       try{
-        let response = await fetch("/auth/users/resend_activation/", {
-          method: "POST",
+        const response = await fetch(`/api/user/accounts/resend_activation/${email ? email : newRegisteredEmail}`, {
+          method: "GET",
           headers: {
             "content-type": "application/json"
           },
-          body: JSON.stringify({
-            "email": email ? email : newRegisteredEmail
+        })
+        console.log(response.status);
+        if (response.status === 204){
+          setResendActivationAlert({
+            "success": `Activation link has been sent. Please check your email ${email ? email : newRegisteredEmail}`
           })
-        })
-
-        setResendActivationAlert({
-          "success": `Please check your email ${email ? email : newRegisteredEmail}`
-        })
+        } else if (response.status === 400){
+            setResendActivationAlert({
+              "error": "No activation required. User is active."
+            })
+        }
       } catch (error){
         console.error(error)
       } finally {
@@ -197,11 +205,36 @@ export const AuthProvider = ({children}) => {
       } 
     }
 
-    let logoutUser = () => {
-        setAuthToken(null)
-        setUser(null)
-        localStorage.clear()
-        navigate("/")
+    useEffect(() => {
+      logoutChannel.addEventListener("message", (event) => {
+        window.location.href ="/"
+      });
+
+      loginChannel.addEventListener("message", (event) => {
+        
+        if (event === "personal-login"){
+          window.location.href ="/"
+        } else if (event === "company-login") {
+          if (location.pathname === "/profile/company/"){
+            window.location.href = "/users/"
+          } else {
+            window.location.reload();
+          }
+        }
+      });
+  
+      return () => {
+        logoutChannel.close(); // Close the channel when the component is unmounted
+        loginChannel.close()
+      };
+    }, []);
+
+    let logoutUser = async () => {
+      localStorage.clear()
+      await logoutChannel.postMessage("logout");
+      setAuthToken(null)
+      setUser(null)
+        // navigate("/")
     }
 
     let updateToken = async () => {
@@ -243,7 +276,6 @@ export const AuthProvider = ({children}) => {
           // Set loading to false regardless of the outcome
           setLoading(false);
       }
-      console.log(JSON.parse(localStorage.getItem("authToken"))["access"]);
   };
   
     useEffect( () => {
@@ -263,7 +295,7 @@ export const AuthProvider = ({children}) => {
     }, [authToken, loading]);
 
     const ResetPasswordConfirm = async (e) => {
-        const response = await fetch("/users/reset_password_confirm/", {
+        await fetch("/users/reset_password_confirm/", {
             method: "POST",
             headers: {
                 "content-type": "application/json"

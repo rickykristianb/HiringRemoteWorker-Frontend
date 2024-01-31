@@ -224,8 +224,8 @@ const Portfolio = (props) => {
     }
 
   return (
-    <div className='portfolio-container'> 
-        <h1>Portfolio</h1> 
+    <div> 
+        <p className='text-[32px] font-bold'>Portfolio</p> 
         <br />
         <div className='portfolio-list'>
         {portfolioList.map((item, index) => {
@@ -233,8 +233,8 @@ const Portfolio = (props) => {
                 <>                    
                     {isEdit === index ?
                         <div className='portfolio-edit-container'>
-                            <div className='portfolio-edit'>
-                                <input onChange={(e) => onChangePortfolioInputEdit(e, index)} value={portfolioList[index].link} name="portfolio-input" placeholder='Link' className='portfolio-input-field'></input>
+                            <div className='flex gap-2 mb-2 items-center'>
+                                <input onChange={(e) => onChangePortfolioInputEdit(e, index)} value={portfolioList[index].link} name="portfolio-input" placeholder='Link' className='h-10 w-full outline-none border-2 border-input-field-border rounded-md'></input>
                                 <Select
                                     options={portfolio.map((item) => ({value: item, label: item}))}
                                     className='portfolio-selection'
@@ -266,7 +266,6 @@ const Portfolio = (props) => {
                                 }
                             </>                                
                         }
-                        {/* () => onRemovePortfolio(index) */}
                     </div>
                     }
                 </>
@@ -275,8 +274,8 @@ const Portfolio = (props) => {
         </div>
         {isAdded && newPortfolioField.map((item, index) => {
             return (
-                <div key={index} className='add-portfolio-section'>
-                    <input onChange={(e) => onChangePortfolioInput(e)} name="portfolio-input" placeholder='Link' className='portfolio-input-field'></input>
+                <div key={index} className='flex gap-2 mb-2 items-center'>
+                    <input onChange={(e) => onChangePortfolioInput(e)} name="portfolio-input" placeholder='Link' className='h-10 w-full outline-none border-2 border-input-field-border rounded-md'></input>
                     <Select
                         options={portfolio.map((item) => ({value: item, label: item}))}
                         className='portfolio-selection'
@@ -289,8 +288,7 @@ const Portfolio = (props) => {
             )
         })}
         {alertField && <p className='error-field'>{alertField.message}</p>}
-        <br />
-        <br />
+
         {loginUserId === props.clickedUserId && 
             <>
                 <Button buttonType="button" label="Add Portfolio" clickedButton={() => onAddMorePortfolio()} />

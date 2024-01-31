@@ -23,8 +23,8 @@ const CompanyLoginAction = () => {
 
     return (
         <>  
-            {(!user && location.pathname === "/jobs/") &&
-                <div id="looking-candidate-container" onClick={() => onOpenIsNotLogin()} >
+            {(!user && location.pathname === "/") &&
+                <div className='max-lg:hidden fixed z-2 flex items-center border xl:bottom-5 bottom-16 left-6 bg-dark-basic text-white p-4 rounded-lg cursor-pointer transition duration-300 hover:bg-white hover:text-dark-basic hover:border-dark-basic' onClick={() => onOpenIsNotLogin()} >
                     <p>Looking for candidate?</p>
                     <LoginIcon />
                 </div>

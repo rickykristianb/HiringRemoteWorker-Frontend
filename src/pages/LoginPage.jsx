@@ -30,13 +30,13 @@ const LoginPage = () => {
 
 
   return (
-    <div className='container-login'>
-      <div className='container-login-form'>
-        <div className='login-form-header'>
+    <div className='container-login-reset-password-register'>
+      <div className='container-login-for-container-reset-password-form-container-register-form'>
+        <div className='self-center mb-6'>
           <p>LOGIN</p>
         </div>
         <Divider />
-        <form onSubmit={handleSubmit(loginUser)}>
+        <form onSubmit={handleSubmit(loginUser)} className='form-container-login-reset-password-register'>
           <div className='container-username'>
             <label>Email</label>
             <input {...register("email", {required: "Email is required"})} className="login-input" disabled={ isSubmitting }/>
@@ -60,11 +60,11 @@ const LoginPage = () => {
           <Button label={ isSubmitting ? "Login..." : "Login"} buttonType="input" disabled={isSubmitting ? true : false} />
           { alert && <AlertNotification alertData={alert} />}
         </form>
-        <Link to={"/reset-password/"} className='forget-password'>
+        <Link to={"/reset-password/"} className='self-end py-4'>
           <p>Forget Password? </p>
         </Link>
         <Divider />
-        <div className='sign-up-area'>
+        <div className='flex justify-center mt-4 flex-col items-center gap-4'>
           <p>Don't have account yet?</p>
           <Link to={"/register/"}>
             <Button buttonType="button" label="Sign-Up" />

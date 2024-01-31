@@ -97,7 +97,7 @@ const InterestedUsers = (props) => {
     { field: 'name', headerName: 'Name', width: 220 },
     { field: 'rateRatio', headerName: 'Rate', width: 150,
       renderCell: (params) => ( 
-      <div id="interested-user-table-rate">
+      <div className='pl-20'>
         <RateGenerator rating={params.value} />
       </div>
       )
@@ -205,18 +205,18 @@ const InterestedUsers = (props) => {
   }
 
   return (
-    <div id="interested-user-container">
-      <div id="interested-user-layout">
+    <div className='w-full '>
+      <div className='w-full'>
         <br />
         <Divider />
-        <div id="interested-user-title">
-          <h1>Interested User </h1>
-          <h3>{totalInterestedUser} applicant{totalInterestedUser > 1 && <span>s</span>}</h3>
+        <div className='flex justify-between my-5'>
+          <p className='text-2xl font-bold'>Interested User </p>
+          <p className='font-bold'>{totalInterestedUser} applicant{totalInterestedUser > 1 && <span>s</span>}</p>
         </div>
         <div id="interested-user-list">
           {mappedData && mappedData.length > 0 
             ?
-            <div style={{ height: 630, width: 1080 }}>
+            <div style={{ height: 630, width: 1100 }}>
               <DataGrid
                 rows={mappedData}
                 columns={columns}

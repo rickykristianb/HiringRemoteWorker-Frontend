@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import RateGenerator from './RateGenerator'
-import { Divider } from '@mui/material'
-import { Link, useLocation } from 'react-router-dom'
 import AuthContext from 'Context/AuthContext'
 
 const UserRatings = (props) => {
@@ -32,29 +30,30 @@ const UserRatings = (props) => {
 
   return (
     <div>
-        <h1>Ratings</h1>
+        <p className='text-[32px] font-bold'>Ratings</p>
         <br />
-        {props.ratingData.length > 0 ?
-        props.ratingData.map((item) => {
-            return (
-                <div key={item.id} id='rating-detail-container'>
-                    <p id="user-rating"><RateGenerator rating={item.rate_value} /></p>
-                    <div id='job-name-date-wrapper'>
-                        <h2>{item.job_name}</h2>
-                        <p>{item.created_at.split("T")[0]}</p>
+        <div className='w-full'>
+            {props.ratingData.length > 0 ?
+            props.ratingData.map((item) => {
+                return (
+                    <div key={item.id} id='rating-detail-container' className='flex flex-col gap-5 p-10'>
+                        <div className='flex justify-between'>
+                            <p className='pl-20'><RateGenerator rating={item.rate_value} /></p>
+                            <p>{item.created_at.split("T")[0]}</p>
+                        </div>
+                        <p className='text-2xl font-bold'>{item.job_name}</p>
+                        <p onClick={() => clickUserName(item.from_user.id)}><b>{item.from_user.name}</b></p>
+                        <div id='comment-wrapper'>
+                            <p>Comment:</p>
+                            <p>{item.comment}</p>
+                        </div>
                     </div>
-                    <p onClick={() => clickUserName(item.from_user.id)}><b>{item.from_user.name}</b></p>
-                    <div id='comment-wrapper'>
-                        <p>Comment:</p>
-                        <p>{item.comment}</p>
-                    </div>
-                </div>
-            )
-        })
-        :
-        <p>No Rating at the moment</p>
-        }
-        
+                )
+            })
+            :
+            <p>No Rating at the moment</p>
+            }
+        </div>        
     </div>
   )
 }

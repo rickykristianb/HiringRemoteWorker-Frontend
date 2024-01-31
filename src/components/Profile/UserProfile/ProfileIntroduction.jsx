@@ -89,6 +89,7 @@ const ProfileIntroduction = (props) => {
                 setIsSaved(true)
                 updateUserData(profileChange)
                 setAlertResponse({"success": data.success})
+                props.setNewName(profileChange["name"])
             } else if (response.status === 401){
                 localStorage.removeItem("authToken")
                 navigate("/login")
@@ -114,14 +115,12 @@ const ProfileIntroduction = (props) => {
         }))
         setIsSaved(true)
     } 
-    
   return (
-    <div className='profile-container'>
+    <>
         {isSaved ? 
-            <div className='profile-detail'>
-                <h2>{profile.shortIntro}</h2>
+            <div className='w-full my-10 max-sm:my-5 flex flex-col gap-5'>
+                <p className='text-lg font-bold'>{profile.shortIntro}</p>
                 <Divider />
-                <br />
                 <div className='profile-detail-bio'>
                 <label><b>Bio</b></label>
                 <p className='profile-content'>{profile.bio}</p>
@@ -129,18 +128,16 @@ const ProfileIntroduction = (props) => {
                 <label><b>Username</b></label>
                 <p className='profile-content'>{profile.username}</p>
                 <label><b>Email</b></label>
-                <p className='profile-content'>{profile.email}</p>
+                <p className='profile-content break-all'>{profile.email}</p>
                 <label><b>Phone Number</b></label>
                 <p className='profile-content'>{profile.phoneNumber}</p>
 
                 {loginUserId === props.clickedUserId && 
                     <Button buttonType="button" label="Edit" clickedButton={() => setIsSaved(false)} />
                 }
-                
-
             </div>
         :
-            <div className='profile-input'>
+            <div className='w-full'>
                 <form onSubmit={onSaveProfile}>
                     <div className='profile-input-field'>
                         <label>Name</label>
@@ -202,7 +199,7 @@ const ProfileIntroduction = (props) => {
             </div>
         }  
         <AlertNotification alertData={alertResponse}/>     
-    </div>       
+    </>       
   )
 }
 

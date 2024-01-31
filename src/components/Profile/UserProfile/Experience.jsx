@@ -188,110 +188,111 @@ const Experience = (props) => {
 
 
   return (
-    <div className='profile_experience'>
-      <h1>Experience</h1>
+    <div>
+      <p className='text-[32px] font-bold'>Experience</p>
+      <br />
       <p>Total Experience:  {totalExp < 365 && totalExp > 0 ? <span>&nbsp;&nbsp;&lt; 1 year</span> : (totalExp === 0 ? `${totalExp} year` : <span>{onLoadTotalExp()}</span>)}  </p>
-
+      <br />
       {/* LIST OF EXPERIENCE */}
-      {experienceList.map((experience, index) => (        
-          <div key={index} className='experience-container'>
-          {isEdit === index ?
-            <div className='experience-edit-form'>
-              <CloseIcon className='addExperience-close-button' onClick={() => onClickCloseEditForm(index)} />
-              <input 
-                value={experienceList[index].companyName}
-                name="companyName"
-                onChange={(e) => onChangeEditExperience(e, index)}
-                className='input-field' 
-                placeholder='Company' />
-              <input 
-                value={experienceList[index].jobTitle}
-                name="jobTitle"
-                onChange={(e) => onChangeEditExperience(e, index)}
-                className='input-field' 
-                placeholder='Job Title' />
-              <div className='experience-date'>
-                <input
-                  value={experienceList[index].jobStartDate}
+      <div className='w-full px-1 flex flex-col gap-2'>
+        {experienceList.map((experience, index) => (        
+            <div key={index} >
+            {isEdit === index ?
+              <div className='experience-edit-form'>
+                <CloseIcon className='addExperience-close-button' onClick={() => onClickCloseEditForm(index)} />
+                <input 
+                  value={experienceList[index].companyName}
+                  name="companyName"
                   onChange={(e) => onChangeEditExperience(e, index)}
-                  type="date" 
-                  id="since-date" 
-                  name="jobStartDate" 
-                  className='input-field-experience-startend-date' />
-                {(disableEndDateEdit && experienceList[index].jobEndDate !== null) &&
+                  className='input-field' 
+                  placeholder='Company' />
+                <input 
+                  value={experienceList[index].jobTitle}
+                  name="jobTitle"
+                  onChange={(e) => onChangeEditExperience(e, index)}
+                  className='input-field' 
+                  placeholder='Job Title' />
+                <div className='experience-date'>
                   <input
-                    value={!disableEndDateEdit ? "9999-12-31" : experienceList[index].jobEndDate}
+                    value={experienceList[index].jobStartDate}
                     onChange={(e) => onChangeEditExperience(e, index)}
-                    type="date"
-                    id="end-date"
-                    name="jobEndDate"
+                    type="date" 
+                    id="since-date" 
+                    name="jobStartDate" 
                     className='input-field-experience-startend-date' />
-                }
-                <div className='checkbox-input'>
-                  <input type="checkbox" name="task1" onClick={() => onDisableEndDateEdit(index)}></input><label>Still Working</label>
-                </div>
-              </div>
-              <textarea
-                value={experienceList[index].jobDescription}
-                name="jobDescription"
-                onChange={(e) => onChangeEditExperience(e, index)}
-                className='experience-textArea' 
-                rows="10" 
-                placeholder='Job Description' />
-              <Button buttonType="input" label="Save" clickedButton={() => onSaveEditExperience(index)} />
-            </div>
-           :
-           <Accordion sx={{color: "#4e6e81", width: "100%"}}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                sx={{backgroundColor: "rgba(216, 230, 239, 1)", boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}
-              >
-                <Typography>
-                <div className='experience-detail'>
-                  <div className='jobTitle'>
-                    <p>{experience.jobTitle}</p>
+                  {(disableEndDateEdit && experienceList[index].jobEndDate !== null) &&
+                    <input
+                      value={!disableEndDateEdit ? "9999-12-31" : experienceList[index].jobEndDate}
+                      onChange={(e) => onChangeEditExperience(e, index)}
+                      type="date"
+                      id="end-date"
+                      name="jobEndDate"
+                      className='input-field-experience-startend-date' />
+                  }
+                  <div className='checkbox-input'>
+                    <input type="checkbox" name="task1" onClick={() => onDisableEndDateEdit(index)}></input><label>Still Working</label>
                   </div>
-                    <div className='experience-date-list'>
+                </div>
+                <textarea
+                  value={experienceList[index].jobDescription}
+                  name="jobDescription"
+                  onChange={(e) => onChangeEditExperience(e, index)}
+                  className='experience-textArea' 
+                  rows="10" 
+                  placeholder='Job Description' />
+                <Button buttonType="input" label="Save" clickedButton={() => onSaveEditExperience(index)} />
+              </div>
+            :
+            <Accordion sx={{color: "#4e6e81", width: "100%"}} >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  sx={{height: "80px", backgroundColor: "rgba(216, 230, 239, 1)", boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}
+                >
+                  <Typography>
+                  <div className='flex xl:w-[1300px] lg:w-[650px] max-md:w-[320px] justify-between items-center'>
+                    <div className='jobTitle'>
+                      <p>{experience.jobTitle}</p>
+                    </div>
+                    <div className='flex gap-2'>
                       <p><i>{experience.jobStartDate}</i></p>
-                      <p id='date-dash'>-</p>
+                      <p>-</p>
                       <p><i>{experience.jobEndDate ? experience.jobEndDate : "present"}</i></p>
                     </div>                 
-                </div>
-              </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}>
-                <p><b><u>{experience.companyName}</u></b></p>
-                <p>
-                  {experience.jobDescription.split('\n').map((line, i) => (
-                    <Fragment key={i}>
-                      {i > 0 && <br />}
-                      {line}
-                    </Fragment>
-                  ))}
-                </p>
-                {loginUserId === props.clickedUserId &&
-                <div className='edit-delete-exp-button'>
-                  <Button buttonType="button" label="Edit" clickedButton={() => onEditExperience(index)} />
-                  <Button buttonType="button" label="Delete" clickedButton={() => onOpenDeleteConfirmation()} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
-                </div>
-                }
-              </AccordionDetails>
-            </Accordion>
-          }  
-          {openDeleteConfirmation && 
-            <DeleteConfirmation deleteLabel="Do you want to delete this experience." onClickYes={() => onDeleteExperience(index)} onClickNo={onCloseDeleteConfirmation} />
-          }
-          </div>
-      ))
-
-    }
+                  </div>
+                </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}>
+                  <p><b><u>{experience.companyName}</u></b></p>
+                  <p>
+                    {experience.jobDescription.split('\n').map((line, i) => (
+                      <Fragment key={i}>
+                        {i > 0 && <br />}
+                        {line}
+                      </Fragment>
+                    ))}
+                  </p>
+                  {loginUserId === props.clickedUserId &&
+                  <div className='edit-delete-exp-button'>
+                    <Button buttonType="button" label="Edit" clickedButton={() => onEditExperience(index)} />
+                    <Button buttonType="button" label="Delete" clickedButton={() => onOpenDeleteConfirmation()} customStyle={{backgroundColor: "red", color: "white", border: "1px solid red"}} />
+                  </div>
+                  }
+                </AccordionDetails>
+              </Accordion>
+            }  
+            {openDeleteConfirmation && 
+              <DeleteConfirmation deleteLabel="Do you want to delete this experience." onClickYes={() => onDeleteExperience(index)} onClickNo={onCloseDeleteConfirmation} />
+            }
+            </div>
+          ))
+        }
+      </div>
       
       {/* FORM ADD EXPERIENCE */}
-      
       {isAdded &&
-        <div id='add-experience-container'>
+        <div className='fixed z-6 bg-pop-up-bg w-screen h-screen top-0 left-0 flex justify-center items-center'>
           <AddExperience experience={experience} close={onClickCloseForm} setExperienceList={setExperienceList} setAlertResponse={setAlertResponse}/>
         </div>
       }

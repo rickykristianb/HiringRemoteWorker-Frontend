@@ -26,6 +26,7 @@ const DeletedMessages = () => {
         isRead,
         isReadDeletedMessage,
         onLoadBody,
+        onLoadSubjectForMobile,
         onMessageClicked,
         onMessageDetailCloseClicked,
         onDeleteMessage,
@@ -70,62 +71,130 @@ const DeletedMessages = () => {
     }
 
   return (
-    <div className='inbox-container'>
-    <div className='inbox-header'>
-        <h3>Deleted Messages</h3>
-        {deletedMessages.length !== 0 && 
+    <>
+    {/* DELETED MESSAGES FOR LARGE SCREEN */}
+        <div className='max-md:hidden'>
+            <div className='flex flex-row justify-between items-center mb-4'>
+                <h3 className='font-bold text-xl leading-10'>Deleted Messages</h3>
+                {deletedMessages.length !== 0 && 
+                    <div>
+                        {!refreshIsClicked ?
+                            <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                        :
+                            <Refresh style={{backgroundColor: "white"}} />
+                        }
+                    </div>
+                }        
+            </div>
+            {deletedMessages.length !== 0 ? 
+            deletedMessages.map((item, index) => (
+                <div key={index} className={(item.is_read === true || isReadDeletedMessage.includes(index)) ? "inbox-read" :'inbox'} 
+                    onClick={isHoverDeleteForeverIcon.current ? null : () => onMessageDeletedClicked(index)} 
+                    onMouseEnter={() => onHoverMouse(index)}
+                    onMouseLeave={() => onLeaveMouse()} >
+
+                    <div className='sender-name-container'>
+                        <p><b>{item.sender.name}</b></p>
+                    </div>
+                    <div>
+                        <p><b>{item.subject}</b></p>
+                        <p>{onLoadBody(item.body)}</p>
+                    </div>
+                    {hover === index ?
+                        <div className='inbox-delete-button'>
+                            <Tooltip title="Delete Forever" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
+                                <DeleteIcon onClick={() => onDeleteMessageForever(index)} sx={{fontSize: "40px", cursor: "pointer", color: "red"}} />
+                            </Tooltip>
+                        </div>
+                    :
+                    <div className='date-container'>
+                        <p>{item.created.date}</p>
+                    </div>
+                    }
+                </div>
+            ))
+            :
             <div>
+                <p className='leading-10'>You do not have deleted messages yet.</p>
+                <br />
                 {!refreshIsClicked ?
                     <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
                 :
                     <Refresh style={{backgroundColor: "white"}} />
                 }
             </div>
-        }        
-    </div>
-        {deletedMessages.length !== 0 ? 
-          deletedMessages.map((item, index) => (
-            <div key={index} className={(item.is_read === true || isReadDeletedMessage.includes(index)) ? "inbox-read" :'inbox'} 
-                onClick={isHoverDeleteForeverIcon.current ? null : () => onMessageDeletedClicked(index)} 
-                onMouseEnter={() => onHoverMouse(index)}
-                onMouseLeave={() => onLeaveMouse()} >
+            }
+            <br />
+            <Pagination type="deleted" totalData={totalDeletedMessage} />
+            {isVisible && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
+            <AlertNotification alertData={alertDeleteForeverResponse}/>
+        </div>
 
-                <div className='sender-name-container'>
-                    <p><b>{item.sender.name}</b></p>
-                </div>
-                <div>
-                    <p><b>{item.subject}</b></p>
-                    <p>{onLoadBody(item.body)}</p>
-                </div>
-                {hover === index ?
-                    <div className='inbox-delete-button'>
-                        <Tooltip title="Delete Forever" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
-                            <DeleteIcon onClick={() => onDeleteMessageForever(index)} sx={{fontSize: "40px", cursor: "pointer", color: "red"}} />
-                        </Tooltip>
+        {/* DELETED MESSAGES FOR MOBILE SCREEN */}
+        <div className='md:hidden max-md:block'>
+            <div className='flex flex-row justify-between items-center mb-4'>
+                <h3 className='font-bold text-xl leading-10 max-md:pl-4 max-md:mt-[150px]'>Deleted Messages</h3>
+                {deletedMessages.length !== 0 && 
+                    <div className='max-md:mt-[150px] max-md:pr-6'>
+                        {!refreshIsClicked ?
+                            <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                        :
+                            <Refresh style={{backgroundColor: "white"}} />
+                        }
                     </div>
+                }        
+            </div>
+            <div className='h-[800px] max-md:px-4'>
+                {deletedMessages.length !== 0 ? 
+                deletedMessages.map((item, index) => (
+                    <div key={index} className={(item.is_read === true || isReadDeletedMessage.includes(index)) ? "bg-read-messages border border-border-messages h-[160px] p-2" :'bg-soft-basic border border-border-messages h-[160px] p-2'} 
+                        onClick={isHoverDeleteForeverIcon.current ? null : () => onMessageDeletedClicked(index)} 
+                    >
+
+                        <div className='sender-name-container'>
+                            <p><b>{item.sender.name}</b></p>
+                        </div>
+                        <div className='h-[100px]'>
+                            <p className='leading-10'><b>{onLoadSubjectForMobile(item.subject)}</b></p>
+                            <p>{onLoadBody(item.body)}</p>
+                        </div>
+                        {hover === index ?
+                            <div className='inbox-delete-button'>
+                                <Tooltip title="Delete Forever" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
+                                    <DeleteIcon onClick={() => onDeleteMessageForever(index)} sx={{fontSize: "40px", cursor: "pointer", color: "red"}} />
+                                </Tooltip>
+                            </div>
+                        :
+                        <div className='flex justify-end mr-2 items-center'>
+                            <p>{item.created.date}</p>
+                        </div>
+                        }
+                    </div>
+                ))
                 :
-                <div className='date-container'>
-                    <p>{item.created.date}</p>
+                <div>
+                    <p className='leading-10'>You do not have deleted messages yet.</p>
+                    <br />
+                    {!refreshIsClicked ?
+                        <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                    :
+                        <Refresh style={{backgroundColor: "white"}} />
+                    }
                 </div>
                 }
             </div>
-        ))
-        :
-        <div>
-            <p>You do not have deleted messages yet.</p>
+        
             <br />
-            {!refreshIsClicked ?
-                <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
-            :
-                <Refresh style={{backgroundColor: "white"}} />
-            }
+            <div className='max-md:px-4'>
+                <Pagination type="deleted" totalData={totalDeletedMessage} />
+            </div>
+            
+            {isVisible && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
+            <AlertNotification alertData={alertDeleteForeverResponse}/>
         </div>
-        }
         <br />
-        <Pagination type="deleted" totalData={totalDeletedMessage} />
-        {isVisible && (<MessageDetail data={{data: messageData, type: "deleted-forever"}} clickedClosed={onMessageDetailCloseClicked} />) }
-        <AlertNotification alertData={alertDeleteForeverResponse}/>
-    </div>
+    </>
+    
   )
 }
 
