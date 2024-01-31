@@ -7,7 +7,10 @@ import AuthContext from '../Context/AuthContext'
 
 const UserActivationConfirmation = () => {
 
-    const { uid, token } = useParams()
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get("uid");
+    const token = params.get("token");
+    
     const [ buttonLabel, setButtonLabel ] = useState("Activate")
     const [ alert, setAlert ] = useState()
     const [ resendActivate, setResendActivate ] = useState(false)
@@ -55,49 +58,44 @@ const UserActivationConfirmation = () => {
 
 
     const sendActivationConfirmation = async () => {
-        
-        setButtonLabel("Activating ...")
+        setButtonLabel("Activating ...");
         try {
-            let response = await fetch("/auth/users/activation/", {
+            let response = await fetch(`/auth/users/activation/`, {
                 method: "POST",
                 headers: {
-                    "content-type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    "uid": uid,
-                    "token": token
+                    uid: uid,
+                    token: token
                 })
             });
-
-            console.log(response);
-            if (response.ok){
+    
+            if (response.ok) {
                 setAlert({
-                    success: "You account has been activated. We'll redirect you to login page in 5 seconds",
-                })
-                console.log("MASUK SINI");
-                activationSuccess.current = true
-                console.log(activationSuccess.current);
-                
-            } else if (response.status === 403){
+                    success: "Your account has been activated. We'll redirect you to the login page in 5 seconds.",
+                });
+                activationSuccess.current = true;
+            } else if (response.status === 403) {
+                let data = await response.json();
                 setAlert({
-                    error: "This link is expired, please generate new activation link"
-                })
-            } else if (response.status === 400){
+                    error: data.error
+                });
+            } else if (response.status === 400) {
                 setAlert({
-                    error: "Bad Request, user maybe accidentally deleted."
-                })
-            }      
+                    error: "Bad Request, user may have been accidentally deleted."
+                });
+            }
         } catch (error) {
-            if (error.name ==="SyntaxError" && error.message.includes("Unexpected end of JSON input")) {
+            if (error.name === "SyntaxError" && error.message.includes("Unexpected end of JSON input")) {
                 console.error("Truncated data: Not all of the JSON data was received");
-                } else {
+            } else {
                 console.error(error);
             }
         } finally {
-            setButtonLabel("Activate")
+            setButtonLabel("Activate");
         }
-        console.log(activationSuccess.current);
-    }
+    };
 
   return (
     <div className='container-user-activation'>
@@ -113,7 +111,7 @@ const UserActivationConfirmation = () => {
                     "pattern": {
                         "value": /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                         "message": "Please Insert Correct Email"
-                    }})} className="login-input" placeholder='Email'></input>
+                    }})} className="login-input-resend-activation" placeholder='Email'></input>
                     <br />
                     {errors.email && <span className='error-field'>{errors.email.message}</span>}
                     <br />

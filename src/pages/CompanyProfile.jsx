@@ -12,6 +12,7 @@ import AuthContext from 'Context/AuthContext';
 import Backdrop from 'components/Backdrop';
 import JobPosted from 'components/Profile/CompanyProfile/JobPosted';
 import UserRatings from 'components/UserRatings';
+import CompanyProfileSkeleton from 'components/Skeleton/CompanyProfileSkeleton';
 
 const CompanyProfile = () => {
     const [clickedUserId, setClickedUserId] = useState()
@@ -25,6 +26,7 @@ const CompanyProfile = () => {
     const [alertResponse, setAlertResponse] = useState()
     const [isBackDropActive, setIsBackdropActive] = useState(false)
     const [ratingData, setRatingData] = useState([])
+    const [getProfileLoading, setGetProfileLoading] = useState(false)
     const location = useLocation();
 
     const navigate = useNavigate()
@@ -44,6 +46,7 @@ const CompanyProfile = () => {
     const onGetProfile = async () => {
         const id = clickedUserId
         try {
+          setGetProfileLoading(true)
           if (id !== null){
             const response = await fetch(`/api/user/profile/${id.toString()}`, {
               method: "GET",
@@ -91,8 +94,11 @@ const CompanyProfile = () => {
           else {
             navigate("/user-not-found/")
           }
-        }catch {
-        }  
+        }catch (error) {
+          console.error(error);
+        } finally {
+          setGetProfileLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -225,31 +231,38 @@ const CompanyProfile = () => {
     }, [])
 
   return (
-    <div className="company-profile-container">
-        <CompanyProfileHeader 
-          userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-          clickedUserId={clickedUserId} 
-          clickEdit={openEditForm} 
-        />
-        <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
-        <JobPosted clickedUserId={clickedUserId} />
-        <div id='add-rating-company'>
-          <UserRatings userId={clickedUserId} ratingData={ratingData} />
-        </div>
+    <>
+      {getProfileLoading ?
+        <CompanyProfileSkeleton />
+      :
+        <div className="company-profile-container">
+            <CompanyProfileHeader 
+              userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
+              clickedUserId={clickedUserId} 
+              clickEdit={openEditForm} 
+            />
+            <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
+            <JobPosted clickedUserId={clickedUserId} />
+            <div id='add-rating-company'>
+              <UserRatings userId={clickedUserId} ratingData={ratingData} />
+            </div>
 
-        {isEdit && 
-          <EditBioForm 
-            userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-            locationFieldError={locationFieldError}
-            onChangeHeaderFormInput={onChangeHeaderFormInput}
-            onChangeBioForm={onChangeBioFormInput}
-            onChangeLocationForm={onChangeLocationForm}
-            saveEditProfile={onSaveEditProfile} 
-            onClickCancel={onClickCancelEdit}
-          />}
-        <AlertNotification alertData={alertResponse} />
-        { isBackDropActive && <Backdrop /> }
-    </div>
+            {isEdit && 
+              <EditBioForm 
+                userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
+                locationFieldError={locationFieldError}
+                onChangeHeaderFormInput={onChangeHeaderFormInput}
+                onChangeBioForm={onChangeBioFormInput}
+                onChangeLocationForm={onChangeLocationForm}
+                saveEditProfile={onSaveEditProfile} 
+                onClickCancel={onClickCancelEdit}
+              />}
+            <AlertNotification alertData={alertResponse} />
+            { isBackDropActive && <Backdrop /> }
+        </div>
+      }
+    </>
+    
   )
 }
 

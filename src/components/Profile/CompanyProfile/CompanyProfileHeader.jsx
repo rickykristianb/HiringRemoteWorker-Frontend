@@ -2,12 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import AuthContext from 'Context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import RateGenerator from 'components/RateGenerator'
-
-import Zoom from '@mui/material/Zoom';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Divider, Tooltip } from '@mui/material';
 import Button from 'components/Button';
 

@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import AuthContext from 'Context/AuthContext';
 import NotLoginAction from 'components/NotLoginAction';
 import AlertNotification from 'components/AlertNotification';
+import JobDetailSkeleton from 'components/Skeleton/JobDetailSkeleton';
 
 const JobDetail = (props) => {
   const { user, authToken } = useContext(AuthContext)
@@ -38,12 +39,14 @@ const JobDetail = (props) => {
   const [isSendingInterest, setIsSendingInterest] = useState(false)
   const [alertResponse, setAlertResponse] = useState()
   const [loginUserId, setLoginUserId] = useState()
+  const [getJobDetailLoading, setGetJobDetailLoading] = useState(false)
 
   useEffect(() => {
     setLoginUserId(localStorage.getItem("userId"))
   }, [])
 
   const onLoadJobDetail = async() => {
+    setGetJobDetailLoading(true)
     const response = await fetch(`/api/job/get_job_detail/${jobId}/`, {
       method: "GET",
       headers: {
@@ -60,7 +63,7 @@ const JobDetail = (props) => {
         setJobData(data)
       }
     }
-    
+    setGetJobDetailLoading(false)
   }
 
   const onCheckAppliedJobs = async() => {
@@ -160,129 +163,135 @@ const JobDetail = (props) => {
   }
 
   return (
-    <div id="job-detail-section">
-      <div id='job-detail-container'>
-      {jobData ? 
-        <div id="job-detail-layout">
-          <div id='job-time-status'>
-            <p><span id={(() => {
-                switch(jobData.status){
-                  case "Open":
-                    return "job-status-open"
-                  case "Closed":
-                    return "job-status-closed"
-                  case "Onprogress":
-                    return "job-status-onprogress"
-                  case "Finished":
-                    return "job-status-finished"
-                }
-              })()}>{capitalizeFirstLetter(jobData.status)}</span>
-            </p>
-            <p>Posted On: {jobData.created_at}</p>
-          </div>
-          <div id='job-detail'>
-            <div className='profile_image'>
-              <img
-              src={jobData.user_profile_picture} // Replace with the actual path or URL of your image
-              alt={"profile-picture"}
-              className="profile_image"
-              />
+    <>
+    {getJobDetailLoading ?
+      <JobDetailSkeleton />
+      :
+      <div id="job-detail-section">
+        <div id='job-detail-container'>
+        {jobData ? 
+          <div id="job-detail-layout">
+            <div id='job-time-status'>
+              <p><span id={(() => {
+                  switch(jobData.status){
+                    case "Open":
+                      return "job-status-open"
+                    case "Closed":
+                      return "job-status-closed"
+                    case "Onprogress":
+                      return "job-status-onprogress"
+                    case "Finished":
+                      return "job-status-finished"
+                  }
+                })()}>{capitalizeFirstLetter(jobData.status)}</span>
+              </p>
+              <p>Posted On: {jobData.created_at}</p>
             </div>
-            <div id="job-detail-header">
-              <h1>{jobData.job_title}</h1>
-              <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
-                <p id='job-detail-company-name'>{jobData.user_posted?.name}</p>
-              </Link>
-              <div className='job-detail-icon-info'>
-                <LocationOnIcon />
-                {jobData.joblocation?.map((item, i) => {
-                  return (
-                    <p key={i}>{item.location.location} </p>
-                  )
-                })}
+            <div id='job-detail'>
+              <div className='profile_image'>
+                <img
+                src={jobData.user_profile_picture} // Replace with the actual path or URL of your image
+                alt={"profile-picture"}
+                className="profile_image"
+                />
               </div>
-              <div className='job-detail-icon-info'>
-                <AccessTimeIcon />
-                {jobData.jobemploymenttype?.map((item, i) => {
-                  return (
-                    <p key={i}>{item.employment_type.type}</p>
-                  )
-                })}
-              </div>
-              <div className='job-detail-icon-info'>
-                <AttachMoneyIcon />
-                <p>{jobData.jobsalaryrates?.nominal}</p><span> / </span><p>{jobData.jobsalaryrates?.paid_period}</p>
-              </div>
-              <div className='job-detail-icon-info'>
-                <PsychologyIcon />
-                <p>{jobData.experience_level}</p>
-              </div>
-              <div className='job-detail-icon-info'>
-                <span>Apply before:</span>
-                <p>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</p>
-              </div>
-              
-              <div id="job-skills">
-                  <ul>
-                  {jobData.jobskills?.map((item, i) => {
+              <div id="job-detail-header">
+                <h1>{jobData.job_title}</h1>
+                <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
+                  <p id='job-detail-company-name'>{jobData.user_posted?.name}</p>
+                </Link>
+                <div className='job-detail-icon-info'>
+                  <LocationOnIcon />
+                  {jobData.joblocation?.map((item, i) => {
                     return (
-                      <li key={i}>{item.skill.skill_name}</li>
+                      <p key={i}>{item.location.location} </p>
                     )
                   })}
-                  </ul>
+                </div>
+                <div className='job-detail-icon-info'>
+                  <AccessTimeIcon />
+                  {jobData.jobemploymenttype?.map((item, i) => {
+                    return (
+                      <p key={i}>{item.employment_type.type}</p>
+                    )
+                  })}
+                </div>
+                <div className='job-detail-icon-info'>
+                  <AttachMoneyIcon />
+                  <p>{jobData.jobsalaryrates?.nominal}</p><span> / </span><p>{jobData.jobsalaryrates?.paid_period}</p>
+                </div>
+                <div className='job-detail-icon-info'>
+                  <PsychologyIcon />
+                  <p>{jobData.experience_level}</p>
+                </div>
+                <div className='job-detail-icon-info'>
+                  <span>Apply before:</span>
+                  <p>{jobData?.deadline && format(new Date(jobData?.deadline), 'MM-dd-yyyy')}</p>
+                </div>
+                
+                <div id="job-skills">
+                    <ul>
+                    {jobData.jobskills?.map((item, i) => {
+                      return (
+                        <li key={i}>{item.skill.skill_name}</li>
+                      )
+                    })}
+                    </ul>
+                </div>
               </div>
             </div>
-          </div>
-          <div id="job-detail-action-button">
-              {
-              isAlreadyApplied ?
-                <div id='job-already-applied-status-container'>
-                  <div id='job-already-applied-status-layout'>
-                    <p>{onGenerateStatusHighlight(jobInterestedStatus)}</p>
+            <div id="job-detail-action-button">
+                {
+                isAlreadyApplied ?
+                  <div id='job-already-applied-status-container'>
+                    <div id='job-already-applied-status-layout'>
+                      <p>{onGenerateStatusHighlight(jobInterestedStatus)}</p>
+                    </div>
                   </div>
-                </div>
-              :
-              (loginUserId !== jobData.user_posted?.id) && 
-                (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed") &&
-                  <Button 
-                    buttonType="button" 
-                    label={isSendingInterest ? "Sending..." : "Interested"}
-                    clickedButton={() => onInterestedClicked(jobData.id)} 
-                    customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
-                    isDisabled={jobData.status === "closed" ? true : false}
-                  />
-              }   
+                :
+                (loginUserId !== jobData.user_posted?.id) && 
+                  (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed") &&
+                    <Button 
+                      buttonType="button" 
+                      label={isSendingInterest ? "Sending..." : "Interested"}
+                      clickedButton={() => onInterestedClicked(jobData.id)} 
+                      customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
+                      isDisabled={jobData.status === "closed" ? true : false}
+                    />
+                }   
+            </div>
+            <br />
+            <div id='job-detail-description'>
+              <br />
+              <Divider />
+              <h1>Job Description</h1>
+              <br />
+              {jobData.job_detail?.split("\n").map((line, i) => (
+                  <Fragment key={i}>
+                    {i > 0 && <br />}
+                    {line}
+                  </Fragment>
+              ))}
+              <br />
+              <br />
+              <br />
+            </div>
           </div>
-          <br />
-          <div id='job-detail-description'>
-            <br />
-            <Divider />
-            <h1>Job Description</h1>
-            <br />
-            {jobData.job_detail?.split("\n").map((line, i) => (
-                <Fragment key={i}>
-                  {i > 0 && <br />}
-                  {line}
-                </Fragment>
-            ))}
-            <br />
-            <br />
-            <br />
-          </div>
+        :
+        <p>No job at the moment.</p>
+        }
         </div>
-      :
-      <p>No job at the moment.</p>
-      }
+        {isNotLogin && 
+          <NotLoginAction 
+            boxTitle="Interested? Please use Work Match account."
+            boxTagline="Build your profile, apply to this job with a free Work Match account."
+            close={onCloseIsNotLogin} 
+          />
+        }
+        {<AlertNotification alertData={alertResponse} />}
       </div>
-      {isNotLogin && 
-        <NotLoginAction 
-          boxTitle="Interested? Please use Work Match account."
-          boxTagline="Build your profile, apply to this job with a free Work Match account."
-          close={onCloseIsNotLogin} 
-        />
-      }
-      {<AlertNotification alertData={alertResponse} />}
-    </div>
+    }
+    </>
   )
 }
 

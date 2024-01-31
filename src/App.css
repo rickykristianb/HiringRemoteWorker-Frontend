@@ -861,7 +861,6 @@ li {
 }
 
 .login-input,
-.reset-password-input,
 .new-passport-input,
 .input-field,
 .portfolio-input-field,
@@ -872,17 +871,39 @@ li {
     font-size: 15px;
     border: 1px solid rgb(211,211,211);
     border-radius: 5px;
-    /* border: 1px solid #4e6e81;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3); */
 }
 
 .login-input:focus,
-.reset-password-input:focus,
 .new-passport-input:focus,
 .input-field:focus,
 .portfolio-input-field:focus,
 .rate-input-field:focus {
+    outline: none
+}
+
+.reset-password-input {
+    gap: 20px;
+    width: 100%;
+    height: 2rem;
+    font-size: 15px;
+    border: 1px solid rgb(211,211,211);
+    border-radius: 5px;
+}
+
+.reset-password-input:focus{
+    outline: none
+}
+
+.login-input-resend-activation {
+    gap: 20px;
+    width: 100%;
+    height: 2rem;
+    font-size: 15px;
+    border: 1px solid rgb(211,211,211);
+    border-radius: 5px;
+}
+
+.login-input-resend-activation:focus{
     outline: none
 }
 
@@ -1049,7 +1070,6 @@ input[type="radio"]:checked + .button-label {
 }
 .activation-confirmation {
     padding: 100px 100px;
-    border: 1px solid #4e6e81;
     border-radius: 5px;
     box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
     
@@ -3604,4 +3624,40 @@ input[type="radio"]:checked + .button-label {
     cursor: pointer;
     background-color: rgba(216, 230, 239, 1);
     padding: 10px;
+}
+
+#lazy-load-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 99dvw;
+    height: 1000px;
+}
+
+#lazy-load-container > img {
+    width: 200px;
+    height: 200px;
+}
+
+#job-detail-skills-skeleton {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#job-detail-posted-on-skeleton {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+#job-skills-company-profile-skeleton {
+    display: flex;
+    gap: 10px;
+}
+
+#company-profile-skeleton-pagination {
+    display: flex;
+    gap: 10px;
 }

@@ -11,6 +11,7 @@ import Rate from '../components/Profile/UserProfile/Rate';
 import ProfileMenu from 'components/Profile/UserProfile/ProfileMenu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserRatings from 'components/UserRatings';
+import UserProfileSkeleton from 'components/Skeleton/UserProfileSkeleton';
 
 const UserProfile = (props) => {
 
@@ -26,6 +27,7 @@ const UserProfile = (props) => {
   const [clickedUserId, setClickedUserId] = useState()
   const [ratingData, setRatingData] = useState([])
   const [menuClicked, setMenuClicked] = useState()
+  const [getProfileLoading, setGetProfileLoading] = useState(false)
 
   const location = useLocation();
 
@@ -44,8 +46,9 @@ const UserProfile = (props) => {
 
   const onGetProfile = async () => {
     const id = clickedUserId
-    console.log("ID");
+    
     try {
+      setGetProfileLoading(true);
       if (id !== null){
         const response = await fetch(`/api/user/profile/${id.toString()}`, {
           method: "GET",
@@ -89,12 +92,14 @@ const UserProfile = (props) => {
         else {
           navigate("/user-not-found/")
         }
-      }catch {
-        
+      }catch (error) {
+        console.error(error);
+    } finally {
+      setGetProfileLoading(false);
     }
-};
+  };
 
-    useEffect(() => {
+  useEffect(() => {
       onGetProfile()
     }, [clickedUserId, menuClicked])
 
@@ -124,46 +129,80 @@ const UserProfile = (props) => {
     setMenuClicked(item)
   }
 
-    const menuAppear = (selected) => {
-      if (selected){
-        const content = {
-          "skills": <Skills userData={skillsUserData} clickedUserId={clickedUserId} />,
-          "rate": <Rate userData={expectedRateUserData} clickedUserId={clickedUserId} />,
-          "experience": <Experience userData={experienceUserData} clickedUserId={clickedUserId} />,
-          "portfolio": <Portfolio userData={portfolioUserData} clickedUserId={clickedUserId} />,
-          "education": <Education userData={educationUserData} clickedUserId={clickedUserId} />,
-          "emp-type": <EmploymentType userData={employmentTypeData} clickedUserId={clickedUserId} />,
-          "language": <Language userData={languageUserData} clickedUserId={clickedUserId} />
-        }
-        return content[selected];
-      } else {
-        return <Skills userData={skillsUserData} clickedUserId={clickedUserId} />;
+  const menuAppear = (selected) => {
+    if (selected){
+      const content = {
+        "skills": <Skills userData={skillsUserData} clickedUserId={clickedUserId} />,
+        "rate": <Rate userData={expectedRateUserData} clickedUserId={clickedUserId} />,
+        "experience": <Experience userData={experienceUserData} clickedUserId={clickedUserId} />,
+        "portfolio": <Portfolio userData={portfolioUserData} clickedUserId={clickedUserId} />,
+        "education": <Education userData={educationUserData} clickedUserId={clickedUserId} />,
+        "emp-type": <EmploymentType userData={employmentTypeData} clickedUserId={clickedUserId} />,
+        "language": <Language userData={languageUserData} clickedUserId={clickedUserId} />
       }
+      return content[selected];
+    } else {
+      return <Skills userData={skillsUserData} clickedUserId={clickedUserId} />;
     }
+  }
 
   return (
-    <div className='profile_container'>
-      <div className='profile-header'>
-        <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
-      </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <div className='profile-menu-content-container'>
-        <div id='profile-menu-wrapper'>
-          <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
+    <>
+      {!menuClicked ?
+        getProfileLoading
+         ?
+        <div className='profile_container'>
+          <UserProfileSkeleton />
         </div>
-        <Divider />
-        <div className='profile-menu-action'>
-          {menuAppear(menuClicked)}
-        </div>
-      </div>
+        :
+        <div className='profile_container'>
+          <div className='profile-header'>
+            <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
+          </div>
+          <br />
+          <br />
+          <br />
+          <br />
+          <div className='profile-menu-content-container'>
+            <div id='profile-menu-wrapper'>
+              <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
+            </div>
+            <Divider />
+            <div className='profile-menu-action'>
+              {menuAppear(menuClicked)}
+            </div>
+          </div>
 
-      <div id='user-profile-rating'>
-          <UserRatings ratingData={ratingData} />
+          <div id='user-profile-rating'>
+              <UserRatings ratingData={ratingData} />
+          </div>
         </div>
-    </div>
+      :
+        <div className='profile_container'>
+          <div className='profile-header'>
+            <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
+          </div>
+          <br />
+          <br />
+          <br />
+          <br />
+          <div className='profile-menu-content-container'>
+            <div id='profile-menu-wrapper'>
+              <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
+            </div>
+            <Divider />
+            <div className='profile-menu-action'>
+              {menuAppear(menuClicked)}
+            </div>
+          </div>
+
+          <div id='user-profile-rating'>
+              <UserRatings ratingData={ratingData} />
+          </div>
+        </div>
+      }
+    </>
+    
   )
 }
 

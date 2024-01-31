@@ -136,8 +136,6 @@ const ProfileIntroduction = (props) => {
                 {loginUserId === props.clickedUserId && 
                     <Button buttonType="button" label="Edit" clickedButton={() => setIsSaved(false)} />
                 }
-                
-
             </div>
         :
             <div className='profile-input'>

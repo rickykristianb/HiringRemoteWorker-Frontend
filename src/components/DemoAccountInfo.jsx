@@ -22,14 +22,14 @@ const DemoAccountInfo = () => {
                     </div>
                     <div className='account-credential'>
                         <span>Email: candidate.demo@rickykristianbutarbutar.com</span>
-                        <span>Password: Cand1dat3</span>
+                        <span>Password: C4nD1d4te1234</span>
                     </div>
                 </div>
                 <div className='account-wrapper'>
                     <h3>Company</h3>
                     <div className='account-credential'>
                         <span>Email: company.demo@rickykristianbutarbutar.com</span>
-                        <span>Password: C0mp4ny</span>
+                        <span>Password: C0mp4ny1234</span>
                     </div>
                 </div>
             </div>
