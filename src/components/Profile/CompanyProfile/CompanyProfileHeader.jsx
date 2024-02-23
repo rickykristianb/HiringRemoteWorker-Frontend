@@ -71,6 +71,7 @@ const handleChangeUploadImage = async (e) => {
               src={profilePicture} // Replace with the actual path or URL of your image
               alt={"profile-picture"}
               className="profile_image"
+              loading='lazy'
               />
               <div className='change-progress-image-button'>
               {loginUserId === props.clickedUserId &&
@@ -92,7 +93,7 @@ const handleChangeUploadImage = async (e) => {
           
           <div className='rate-name-company-profile'>
                 <div className='profile-rate' onClick={() => navigate("/profile/company/#add-rating-company")}>
-                    <RateGenerator rating={props.userData?.headerData.userRate} />
+                    <RateGenerator rating={Math.round(props.userData?.headerData.userRate * 10)/10} />
                 </div>
                 <div className='user-fullname'>
                     <h1>{props.userData?.headerData.name}</h1>

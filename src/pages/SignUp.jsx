@@ -3,9 +3,7 @@ import { useForm } from "react-hook-form";
 import Divider from '@mui/material/Divider';
 import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
-import { Link } from 'react-router-dom';
 import AuthContext from '../Context/AuthContext';
-import UserType from '../components/Profile/UserProfile/UserType';
 
 const SignUp = () => {
   const [passwordHide, setPasswordHide] = useState(true);
@@ -16,15 +14,13 @@ const SignUp = () => {
   const [passwordMatch, setPasswordMatch] = useState(true)  // alert for password type
 
   let { 
-    loginUser, 
     alert, 
     userRegistration, 
     passwordError, 
     rePasswordError,
     successRegistration,
     resendActivationLink,
-    resendActivationAlert,
-    newRegisteredUserEmail } = useContext(AuthContext)
+    resendActivationAlert } = useContext(AuthContext)
   
   const onClickPasswordIcon = () => {
     setPasswordHide(!passwordHide);
@@ -52,9 +48,9 @@ const SignUp = () => {
     }
   }, [password, rePassword])
 
-  const {register, handleSubmit, setError, reset,
+  const {register, handleSubmit, reset,
     formState: {
-      errors, isSubmitting, isSubmitSuccessful
+      errors, isSubmitting
     }} = useForm({
       defaultValues: {
         "username": "",
@@ -73,7 +69,6 @@ const SignUp = () => {
     }
 
     const submitRegistration = async (e) => {
-      console.log("MASUK SUBMIT");
       console.log(e);
       if (passwordMatch) {
         try{

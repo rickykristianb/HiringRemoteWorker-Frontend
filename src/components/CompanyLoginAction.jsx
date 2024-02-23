@@ -23,7 +23,7 @@ const CompanyLoginAction = () => {
 
     return (
         <>  
-            {(!user && location.pathname === "/jobs/") &&
+            {(!user && location.pathname === "/") &&
                 <div id="looking-candidate-container" onClick={() => onOpenIsNotLogin()} >
                     <p>Looking for candidate?</p>
                     <LoginIcon />

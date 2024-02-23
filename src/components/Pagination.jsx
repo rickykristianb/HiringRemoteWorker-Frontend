@@ -19,7 +19,8 @@ const Pagination = (props) => {
     const [totalPages, setTotalPages] = useState(0)
     const [pageResetNumberOne, setPageResetNumberOne] = useState(false)
     const page = useRef(1)  // default page 1
-    const maxNumber = 5;
+    const maxNumber = 2;
+    const countTotalPages = useRef(0)
 
 
     const onClickPageNumber = (item) => {
@@ -28,7 +29,6 @@ const Pagination = (props) => {
         if (props.type === "inbox"){
             onLoadMessages(item)
         } else if (props.type === "sent"){
-            console.log("SENT");
             onCheckSentMessages(item)
         } else if (props.type === "deleted"){
             onCheckDeletedMessages(item)
@@ -49,22 +49,23 @@ const Pagination = (props) => {
     }
 
     const getTotalPages = () => {
-        // console.log("CEK TOTAL DATA", props.totalData);
         let totalDataPerPage = 0;
-        console.log("TYPE: ", props.type);
-        if (props.type === "userList") {
-            totalDataPerPage = 4     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
+
+        if (props.type === "userList" || props.type === "userSearchList") {
+            totalDataPerPage = 12     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
         } 
-        if (props.type === "allJobList"){
-            totalDataPerPage = 4
+        if (props.type === "allJobList" || props.type == "jobSearchList"){
+            totalDataPerPage = 12
         }
-        else {
+        if (props.type === "jobPosted"){
+            totalDataPerPage = 5
+        }
+        if (props.type !== "allJobList" && props.type !== "userList" && props.type !== "userSearchList" && props.type !== "jobSearchList" && props.type !== "jobPosted"){
             totalDataPerPage = 5     // need to match with the backend pagination setting, check your MessagesResultsSetPagination page size.
         }
         
-        let totalPages = 0
-        totalPages = Math.ceil(props.totalData / totalDataPerPage)
-        setTotalPages(totalPages)
+        countTotalPages.current = Math.ceil(props.totalData / totalDataPerPage)
+        setTotalPages(countTotalPages.current)
     }
 
     useEffect(() => {
@@ -177,7 +178,6 @@ const Pagination = (props) => {
         const paginateNumber = [];
         
         if (totalPages <= maxNumber || (page.current >= totalPages - maxNumber && totalPages <= 10)){
-            // console.log("MASK 1");
             for(let i=1; i <= totalPages; i++){
                 paginateNumber.push(i)
             }
@@ -185,7 +185,6 @@ const Pagination = (props) => {
                 pageNumberList({paginateNumber, totalPages, type})
             )
         } else if (page.current < maxNumber){
-            // console.log("MASUK 2");
             for(let i=1; i <= maxNumber; i++){
                 paginateNumber.push(i)
                 if (i === 5){
@@ -208,7 +207,6 @@ const Pagination = (props) => {
         } 
         
         else if(page.current >= maxNumber && page.current >= totalPages - 5){
-            // console.log("MASK 4");
             paginateNumber.push(1)
             paginateNumber.push(DOTS)
             for(let i = totalPages-5 ; i <= totalPages; i++){
@@ -218,7 +216,6 @@ const Pagination = (props) => {
                 pageNumberList({paginateNumber, totalPages, type})
             )
         } else if(page.current >= maxNumber && page.current < totalPages - maxNumber){
-            // console.log("MASUK 5");
             const siblings = 2
             paginateNumber.push(1)
             paginateNumber.push(DOTS)

@@ -166,10 +166,10 @@ const AdvanceUserFilterBar = (props) => {
 
 
     // take all the selected skills
-    const setSkill = (skills) => {
-        setSkillSelected((prevValue) => {
-            return (Array.from(new Set([...prevValue, skills])))
-        })
+    const handleSkillSelected = (skills) => {
+        setSkillSelected((prevValue) => [
+            ...prevValue
+        ]);
     }  
 
     const handleSkillChange = (event, newSkills) => {
@@ -251,9 +251,9 @@ const AdvanceUserFilterBar = (props) => {
                 options={skillsList}
                 onChange={handleSkillChange}
                 disableCloseOnSelect
-                value={skillSelected}
+                
                 renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setSkill(option)} style={{margin: '0'}}>
+                    <p onClick={() => handleSkillSelected(option)} style={{margin: '0'}}>
                         <li {...props} >
                         <Checkbox
                             icon={icon}

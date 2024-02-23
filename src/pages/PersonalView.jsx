@@ -9,6 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import TuneIcon from '@mui/icons-material/Tune';
 import NotificationContext from 'Context/NotificationContext';
+import CompanyLoginAction from 'components/CompanyLoginAction';
 
 const PersonalView = () => {
 
@@ -152,10 +153,7 @@ const PersonalView = () => {
         }
     }
 
-
     const advanceFilter = async (page) => {
-        console.log("MASUK TIDAK");
-        console.log(jobTypeSelected);
         if (!page){
             page = 1
         } else{
@@ -169,7 +167,7 @@ const PersonalView = () => {
             },
         })
         const data = await response.json()
-        console.log(data);
+
         if (response.ok){
             setAdvancedFilterResultData(data)
             setSearchResultData()
@@ -180,7 +178,7 @@ const PersonalView = () => {
         }
     }
 
-    const advanceFilterPageClicked = async (page) => {       
+    const advanceFilterPageClicked = async (page) => {    
         setBackdropActive(true)
         if (!page){
             page = 1
@@ -203,7 +201,6 @@ const PersonalView = () => {
             setTimeout(() => {
                 setIsShowButtonClicked(false)
             }, 10)
-            console.log("AKHIR",loading.current);
         }
         setBackdropActive(false)
     }
@@ -321,6 +318,7 @@ const PersonalView = () => {
                 }
             </div>
             {backdropActive && <Backdrop />}
+            <CompanyLoginAction />
         </div>
     )
 }

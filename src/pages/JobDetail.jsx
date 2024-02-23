@@ -14,7 +14,8 @@ import AlertNotification from 'components/AlertNotification';
 import JobDetailSkeleton from 'components/Skeleton/JobDetailSkeleton';
 
 const JobDetail = (props) => {
-  const { user, authToken } = useContext(AuthContext)
+  const navigate = useNavigate()
+  const { user, authToken} = useContext(AuthContext)
   const [clickedUserId, setClickedUserId] = useState()
   const location = useLocation();
 
@@ -23,7 +24,7 @@ const JobDetail = (props) => {
     userToken = authToken.access
   }
 
-  const navigate = useNavigate()
+  const userType = localStorage.getItem("userType")
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -159,7 +160,13 @@ const JobDetail = (props) => {
   }
 
   const onInterestedClicked = (jobId) => {
-    {user ? onProcessInterestedClick(jobId) : onOpenIsNotLogin()}
+    if (user){
+      if (userType === "personal"){
+        onProcessInterestedClick(jobId)
+      }
+    } else {
+      onOpenIsNotLogin()
+    }
   }
 
   return (
@@ -250,7 +257,7 @@ const JobDetail = (props) => {
                   </div>
                 :
                 (loginUserId !== jobData.user_posted?.id) && 
-                  (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed") &&
+                  (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed" && userType !== "company") &&
                     <Button 
                       buttonType="button" 
                       label={isSendingInterest ? "Sending..." : "Interested"}

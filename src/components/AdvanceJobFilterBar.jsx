@@ -132,7 +132,6 @@ const AdvanceJobFilterBar = (props) => {
         const option = UserRate.map((rate, index) => {
             return rate.icon
         })
-        // console.log(option)
         setRates(option)
     }
 
@@ -166,10 +165,10 @@ const AdvanceJobFilterBar = (props) => {
 
 
     // take all the selected skills
-    const setSkill = (skills) => {
-        setSkillSelected((prevValue) => {
-            return (Array.from(new Set([...prevValue, skills])))
-        })
+    const handleSkillSelected = (skills) => {
+        setSkillSelected((prevValue) => [
+            ...prevValue
+        ]);
     }  
 
     const handleSkillChange = (event, newSkills) => {
@@ -182,30 +181,9 @@ const AdvanceJobFilterBar = (props) => {
         setExperienceSelected(experience)
     }
 
-    const setSelectedRate = (selectedIcon) => {
-        console.log(selectedIcon);
-        const icon = UserRate.find((rate) => rate.icon === selectedIcon)
-
-        setRateSelected((prevValue) => {
-           return [
-            ...prevValue,
-            icon["value"]
-        ]})
-    }
-
-    const handleRateChange = (event, selectedIcon) => {   
-        const rateValue = []
-        for (var i=0; i<selectedIcon.length; i++){
-            const rate = UserRate.find((rate) => rate.icon === selectedIcon[i])
-            rateValue.push(rate["value"])
-        } 
-        setRateSelected(rateValue)
-    }
-
     const handleLocationSelected = (selectedLocation) => {
         setLocationSelected((prevValue) => [
-            ...prevValue,
-            selectedLocation
+            ...prevValue
         ]);
     }
 
@@ -217,7 +195,6 @@ const AdvanceJobFilterBar = (props) => {
         setTypeSelected(selectedType)
     }
 
-    // LOOK AT THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
     const setType = (selectedType) => {
         setTypeSelected((prevValue) => {
             return (Array.from(new Set([...prevValue, selectedType])))
@@ -246,32 +223,32 @@ const AdvanceJobFilterBar = (props) => {
         <ul>             
             <li>
             <p>Skills</p>
-            <Autocomplete
-                multiple
-                limitTags={1}
-                options={skillsList}
-                onChange={handleSkillChange}
-                disableCloseOnSelect
-                value={skillSelected}
-                renderOption={(props, option, { selected }) => (
-                    <p onClick={() => setSkill(option)} style={{margin: '0'}}>
-                        <li {...props} >
-                        <Checkbox
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
+                <Autocomplete
+                    multiple
+                    limitTags={1}
+                    options={skillsList}
+                    onChange={handleSkillChange}
+                    disableCloseOnSelect
+
+                    renderOption={(props, option, { selected }) => (
+                        <p onClick={() => handleSkillSelected(option)} style={{margin: '0'}}>
+                            <li {...props} >
+                            <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                            />
+                            {option}
+                            </li>
+                        </p>
+                    )}
+                    style={{ alignItems: 'center' }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Select skills" placeholder="Skills" 
                         />
-                        {option}
-                        </li>
-                    </p>
-                )}
-                style={{ alignItems: 'center' }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select skills" placeholder="Skills" 
-                    />
-                )}
-            />
+                    )}
+                />
             </li>
 
             <li>
@@ -324,7 +301,7 @@ const AdvanceJobFilterBar = (props) => {
                     <TextField {...params} label="Select Location" placeholder="Location" 
                     />
                 )}
-                />
+            />
             </li>
             <li>
             <p>Job Type</p>

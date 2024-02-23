@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import NotLoginAction from './NotLoginAction';
 import AlertNotification from './AlertNotification';
+import UserJobSkeleton from './Skeleton/UserJobSkeleton';
 
 const JobsList = (props) => {
 
@@ -31,6 +32,7 @@ const JobsList = (props) => {
     const [isNotLogin, setIsNotLogin] = useState(false)
     const [isSendingInterest, setIsSendingInterest] = useState(false)
     const [alertResponse, setAlertResponse] = useState()
+    const [skeletonActive, setSkeletonActive] = useState(false)
     let totalJobPosted = useRef(1)
 
     const onLoadAllJobs = async(page) => {
@@ -62,9 +64,9 @@ const JobsList = (props) => {
 
     useEffect(() => {
         const fetchData = async() => {
-            setBackdropActive(true)
+            setSkeletonActive(true)
             await onLoadAllJobs()
-            setBackdropActive(false)
+            setSkeletonActive(false)
         }
         fetchData()
     }, [])
@@ -138,11 +140,88 @@ const JobsList = (props) => {
 
     
   return (
-    <div className={props.filterClicked ? "container-jobs-list-75vw" : 'container-jobs-list'} >
-        <div className='jobs-list'>
-        {props.searchData ? 
-            props.searchData.length > 0 ?
-                props.searchData.map((item, index) => {
+    <>
+        { skeletonActive ?
+        <UserJobSkeleton />
+    :
+        <div className={props.filterClicked ? "container-jobs-list-75vw" : 'container-jobs-list'} >
+            <div className='jobs-list'>
+            {props.searchData ? 
+                props.searchData.length > 0 ?
+                    props.searchData.map((item, index) => {
+                        return (
+                            <div id="job-card" key={item.id}>
+                                <div className='user-image-name'>
+                                    <div className='user-image'>
+                                        <img className='user-image' src={item.user_profile_picture} />
+                                    </div>
+                                    <div className='user-name'>
+                                        <Link to={`/jobs/${item.id}/`}>
+                                            <h3>{item.job_title}</h3>
+                                        </Link>
+                                        <Link to={`/profile/company/?id=${item.user_posted.id}`} >
+                                            <span>{item.user_posted.name}</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                                <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
+                                    <div className='user-info' >
+                                    {isHover === index &&
+                                        <div className='user-card-button'>
+                                            <Button clickedButton={() => onClickInterest(item.id)} buttonType="button" label={isSendingInterest ? "Sending ..." :"Interested"}/>
+                                            <Button clickedButton={() => onDetailClicked(item.id)} buttonType="button" label="Detail"/>
+                                        </div> 
+                                    }
+                                        <ul>
+                                            <li>
+                                                <LocationOnIcon className='icon-user-list'  />
+                                                {item?.joblocation.slice(0, 2).map((loc, i) => (
+                                                    <span key={loc.location.id}>{loc.location.location}
+                                                    {i < item?.joblocation.slice(0, 2).length-1 && <span>&nbsp;/</span>}
+                                                    </span>
+                                                    
+                                                ))}
+                                            </li>
+                                            <li>
+                                                <AttachMoneyIcon /><span>{item.jobsalaryrates.nominal} / {item.jobsalaryrates.paid_period}</span>
+                                            </li>
+                                            <li>
+                                                <PsychologyIcon /><span>{item.experience_level}</span>
+                                            </li>
+                                            <li>
+                                                <AccessTimeIcon /> 
+                                                {item.jobemploymenttype.slice(0, 3).map((type, index) => {
+                                                    return (
+                                                    <React.Fragment key={index}>
+                                                        <span>{type.employment_type.type}</span>
+                                                        {index < item.jobemploymenttype.slice(0, 3).length - 1 && <span>/</span>}
+                                                    </React.Fragment>
+                                                    )
+                                                })}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className='user-skills'>
+                                        <li className='user-skills-list'>
+                                            <ul>
+                                                {item?.jobskills.slice(0, 3).map((item, i) => (
+                                                    <li key={i}>{item.skill?.skill_name}</li>
+                                                ))}
+                                            </ul>
+                                        </li>
+                                    </div>
+                                    <div className='job-list-deadline'>
+                                        <p>Apply before: {format(new Date(item.deadline), 'MM-dd-yyyy')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )} 
+                    )
+                    :
+                    <p>{noJobStatus}</p>
+            :
+            allJobsData.length > 0 ?
+                allJobsData.map((item, index) => {
                     return (
                         <div id="job-card" key={item.id}>
                             <div className='user-image-name'>
@@ -209,105 +288,34 @@ const JobsList = (props) => {
                                 </div>
                             </div>
                         </div>
-                    )} 
-                )
+                    )
+                })
                 :
                 <p>{noJobStatus}</p>
-        :
-        allJobsData.length > 0 ?
-            allJobsData.map((item, index) => {
-                return (
-                    <div id="job-card" key={item.id}>
-                        <div className='user-image-name'>
-                            <div className='user-image'>
-                                <img className='user-image' src={item.user_profile_picture} />
-                            </div>
-                            <div className='user-name'>
-                                <Link to={`/jobs/${item.id}/`}>
-                                    <h3>{item.job_title}</h3>
-                                </Link>
-                                <Link to={`/profile/company/?id=${item.user_posted.id}`} >
-                                    <span>{item.user_posted.name}</span>
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
-                            <div className='user-info' >
-                            {isHover === index &&
-                                <div className='user-card-button'>
-                                    <Button clickedButton={() => onClickInterest(item.id)} buttonType="button" label={isSendingInterest ? "Sending ..." :"Interested"}/>
-                                    <Button clickedButton={() => onDetailClicked(item.id)} buttonType="button" label="Detail"/>
-                                </div> 
-                            }
-                                <ul>
-                                    <li>
-                                        <LocationOnIcon className='icon-user-list'  />
-                                        {item?.joblocation.slice(0, 2).map((loc, i) => (
-                                            <span key={loc.location.id}>{loc.location.location}
-                                            {i < item?.joblocation.slice(0, 2).length-1 && <span>&nbsp;/</span>}
-                                            </span>
-                                            
-                                        ))}
-                                    </li>
-                                    <li>
-                                        <AttachMoneyIcon /><span>{item.jobsalaryrates.nominal} / {item.jobsalaryrates.paid_period}</span>
-                                    </li>
-                                    <li>
-                                        <PsychologyIcon /><span>{item.experience_level}</span>
-                                    </li>
-                                    <li>
-                                        <AccessTimeIcon /> 
-                                        {item.jobemploymenttype.slice(0, 3).map((type, index) => {
-                                            return (
-                                            <React.Fragment key={index}>
-                                                <span>{type.employment_type.type}</span>
-                                                {index < item.jobemploymenttype.slice(0, 3).length - 1 && <span>/</span>}
-                                            </React.Fragment>
-                                            )
-                                        })}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className='user-skills'>
-                                <li className='user-skills-list'>
-                                    <ul>
-                                        {item?.jobskills.slice(0, 3).map((item, i) => (
-                                            <li key={i}>{item.skill?.skill_name}</li>
-                                        ))}
-                                    </ul>
-                                </li>
-                            </div>
-                            <div className='job-list-deadline'>
-                                <p>Apply before: {format(new Date(item.deadline), 'MM-dd-yyyy')}</p>
-                            </div>
-                        </div>
-                    </div>
-                )
-            })
-            :
-            <p>{noJobStatus}</p>
-        }
-        
+            }
+            
+            </div>
+            <div className='container-pagination'>
+                <Pagination
+                    type= {props.searchData ? "jobSearchList" : "allJobList"}
+                    totalData={props.searchData ? props.totalUser : totalJobPosted.current}
+                    loadJobList={onLoadAllJobs}
+                    loadJobSearchList={props.loadJobSearch}
+                    paginationReset={resetPage}
+                />
+            </div>
+            {isNotLogin && 
+                <NotLoginAction 
+                    boxTitle="Interested? Please use Work Match account."
+                    boxTagline="Build your profile, apply to this job with a free Work Match account."
+                    close={onCloseIsNotLogin}     
+                />
+            }
+            {backdropActive && <Backdrop />}
+            {alertResponse && <AlertNotification alertData={alertResponse}/>}
         </div>
-        <div className='container-pagination'>
-            <Pagination
-                type= {props.searchData ? "jobSearchList" : "allJobList"}
-                totalData={props.searchData ? props.totalUser : totalJobPosted.current}
-                loadJobList={onLoadAllJobs}
-                loadJobSearchList={props.loadJobSearch}
-                paginationReset={resetPage}
-            />
-        </div>
-        {isNotLogin && 
-            <NotLoginAction 
-                boxTitle="Interested? Please use Work Match account."
-                boxTagline="Build your profile, apply to this job with a free Work Match account."
-                close={onCloseIsNotLogin}     
-            />
         }
-        {backdropActive && <Backdrop />}
-        {alertResponse && <AlertNotification alertData={alertResponse}/>}
-    </div>
+    </>
   )
 }
 

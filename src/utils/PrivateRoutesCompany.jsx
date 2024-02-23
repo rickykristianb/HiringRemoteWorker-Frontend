@@ -7,7 +7,7 @@ const PrivateRoutesCompany = () => {
     const userType = localStorage.getItem("userType")
     
     return (
-        userType === "company" ? <Outlet /> : <Navigate to={"/jobs/"} />
+        userType === "company" ? <Outlet /> : <Navigate to={"/users/"} />
     )
 }
 

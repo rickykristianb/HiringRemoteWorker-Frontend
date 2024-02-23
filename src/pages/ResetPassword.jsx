@@ -4,16 +4,13 @@ import { useForm } from "react-hook-form";
 import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
 import AuthContext from '../Context/AuthContext';
-import { Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
 
-    const [loading, setLoading] = useState(false)
     const [alert, setAlert] = useState()
     const [resendActivationEmail, setResendActivationEmail] = useState("")
     const [activateResendActivationEmailButton, setActivateResendActivationEmailButton] = useState(false)
-    const navigate = useNavigate()
 
     let { resendActivationLink } = useContext(AuthContext)
 
@@ -28,17 +25,12 @@ const ResetPassword = () => {
 
     const resetPassword = async (e) => {
       try {
-        const response = await fetch("/auth/users/reset_password/", {
-          method: "POST",
+        const response = await fetch(`/api/user/accounts/reset_password/${e.email}`, {
+          method: "GET",
           headers: {
             "content-type": "application/json"
-          },
-          body: JSON.stringify({
-            "email": e.email
-          })
+          }
         })
-        console.log(response);
-        console.log(response.statusText);
         if (response.ok){
           setAlert({
             "success": `Reset link has been sent to your email. Please check ${e.email}`

@@ -46,7 +46,7 @@ const UserProfile = (props) => {
 
   const onGetProfile = async () => {
     const id = clickedUserId
-    
+    console.log("MASUKKK SAVE GET PROFILE");
     try {
       setGetProfileLoading(true);
       if (id !== null){

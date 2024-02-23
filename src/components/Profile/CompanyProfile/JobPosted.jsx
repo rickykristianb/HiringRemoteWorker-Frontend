@@ -283,7 +283,12 @@ const JobPosted = (props) => {
             />
           </div>
         }
-        {isNotLogin && <NotLoginAction close={onCloseIsNotLogin} />}
+        {isNotLogin &&
+          <NotLoginAction close={onCloseIsNotLogin} 
+            boxTitle="Interested? Please use Work Match account."
+            boxTagline="Build your profile, apply to this job with a free Work Match account."
+          />
+        }
         {alertResponse && <AlertNotification alertData={alertResponse} />}
     </div>
   )

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import AuthContext from './AuthContext';
 
 const NotificationContext = createContext();
@@ -10,7 +10,7 @@ export const NotificationProvider = ({ children }) => {
     let { authToken } = useContext(AuthContext)
     const userToken = authToken?.access
     
-    const onLoadTotalUnreadNotification = async() => {
+    const onLoadTotalUnreadNotification = useCallback(async() => {
         const response = await fetch(`/api/job/get_total_unread_notification/`,{
           method: "GET",
           headers: {
@@ -22,14 +22,12 @@ export const NotificationProvider = ({ children }) => {
         if (response.ok){
           setTotalUnreadNotification(data)
         }
-      }
+      })
 
       const contextData = {
         onLoadTotalUnreadNotification: onLoadTotalUnreadNotification,
         totalUnreadNotification: totalUnreadNotification
       }
-
-      console.log(contextData);
 
       return (
         <NotificationContext.Provider value={contextData}>

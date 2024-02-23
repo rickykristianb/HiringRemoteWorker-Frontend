@@ -218,6 +218,7 @@ const PersonalInterestedJobs = () => {
                 />
             </div>
             <br />
+            <div className='interested-job-list'>
             {isFilterActive ?
                 withdrawFetchedData.length > 0 ?
                     withdrawFetchedData.map((item) => {
@@ -233,21 +234,22 @@ const PersonalInterestedJobs = () => {
                         )
                     })
                 :
-                <div className='interested-job-no-data'>
+                <div className="interested-job-no-data">
                     <p>No interested jobs match with your filter.</p>
-                </div>
+                </div>                
             :
                 allInterestedJobs.length > 0 ?
-                    allInterestedJobs.map((item) => {
-                        return (
-                            htmlLayout(item)
-                        )
-                    })
+                allInterestedJobs.map((item) => {
+                                return (
+                                    htmlLayout(item)
+                                )
+                            })
                 :
-                <div className='interested-job-no-data'>
+                <div className="interested-job-no-data">
                     <p>No interested job at the moment. </p>
-                </div>
+                </div>   
             }
+            </div>
         </div>
         {openWithdrawConfirmation && <DeleteConfirmation deleteLabel="Are you sure want to withdraw this job?" onClickYes={onClickYesWithdraw} onClickNo={onClickNo} />}
     </div>

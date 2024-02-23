@@ -89,6 +89,7 @@ const ProfileIntroduction = (props) => {
                 setIsSaved(true)
                 updateUserData(profileChange)
                 setAlertResponse({"success": data.success})
+                props.setNewName(profileChange["name"])
             } else if (response.status === 401){
                 localStorage.removeItem("authToken")
                 navigate("/login")

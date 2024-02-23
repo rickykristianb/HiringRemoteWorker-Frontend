@@ -1,4 +1,7 @@
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
     /* font: 'Montserrat', sans-serif;
     color-hex: #4e6e81;
@@ -13,7 +16,7 @@
     */
 
 
-body {
+body { 
     margin: 0;
     padding: 0;
     font-family: 'Montserrat', sans-serif;
@@ -407,13 +410,13 @@ li {
 .user-card {
     background-color: #d8e6ef;
     width: 350px;
-    height: 359px;
+    height: 376px;
     border-radius: 10px;
-    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3);
+    box-shadow: 0px 2px 5px 0px rgba(78, 110, 110, 0.3);
 }
 
 .user-image {
-    background-color: green;
+    background-color: #ffff;
     border-radius: 50%;
     width: 100px;
     height: 100px;
@@ -690,7 +693,7 @@ li {
 
 #looking-candidate-container {
     position: fixed;
-    z-index: 9999;
+    z-index: 99000099;
     display: flex;
     align-items: center;
     bottom: 20px;
@@ -1838,9 +1841,8 @@ input[type="radio"]:checked + .button-label {
     left: 13%;
     width: 70vw;
     background-color: #ffff;
-    border: 1px solid #4e6e81;
     border-radius: 5px;
-    box-shadow: 1px -2px 39px -1px rgba(78,110,110,0.75);
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3); 
 }
 
 .message-detail-reply {
@@ -1852,9 +1854,8 @@ input[type="radio"]:checked + .button-label {
     width: 70vw;
     overflow-y: visible;
     background-color: #ffff;
-    border: 1px solid #4e6e81;
     border-radius: 5px;
-    box-shadow: 1px -2px 39px -1px rgba(78,110,110,0.75);
+    box-shadow: 0 2px 5px 0px rgba(78, 110, 110, 0.3); 
 }
 
 .message-detail-reply-expanded {
@@ -3323,6 +3324,7 @@ input[type="radio"]:checked + .button-label {
     grid-template-columns: 1.3fr 0.7fr;
     padding: 10px;
     border: 0.1px solid rgba(128, 128, 128, 0.2);
+    width: 98%;
 }
 
 #interested-job-detail>h2:hover,
@@ -3340,12 +3342,22 @@ input[type="radio"]:checked + .button-label {
     width: 150px;
 }
 
+.interested-job-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 75%;
+    width: 100%;
+    overflow-y: auto;
+    /* background-color: red; */
+}
+
 .interested-job-no-data {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 75%;
-    /* background-color: red; */
 }
 
 /* NOTIFICATION */
@@ -3660,4 +3672,43 @@ input[type="radio"]:checked + .button-label {
 #company-profile-skeleton-pagination {
     display: flex;
     gap: 10px;
+}
+
+/* NEWWWWWWWWWWWW */
+#salary-skeleton > span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-skills-list-skeleton ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-top: 0;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.user-skills-list-skeleton ul li {
+    padding: 2px 10px;
+    background-color: #d8e6ef;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.container-user-list-skeleton {
+    display: flex;
+    width: 95vw;
+    padding-top: 10px;
+    padding-left: 55px;
+    /* height: 600px; */
+    /* margin: 20px auto 20px auto; */
+    flex-direction: row;
+    align-items: flex-start;
+    /* align-content: center; */
+    /* background-color: blue; */
+    flex-direction: column;
 }

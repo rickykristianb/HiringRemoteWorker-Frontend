@@ -264,7 +264,7 @@ const onSaveEditProfile = async (e) => {
             <p><b>Location</b></p>
           </div>
           <div className='profile-info-data'>
-            <p>{panelProfileData?.userlocation.location.location}</p>
+            <p>{panelProfileData?.userlocation?.location.location}</p>
           </div>
         </div>
         <div className='profile-info'>
@@ -280,7 +280,7 @@ const onSaveEditProfile = async (e) => {
             <p><b>Profile</b></p>
           </div>
           <div className='profile-info-data'>
-            <p>{panelProfileData?.bio.split("\n").map((line, i) => {
+            <p>{panelProfileData?.bio?.split("\n").map((line, i) => {
               return (
                 <Fragment key={i}>
                   {i > 0 && <br />}

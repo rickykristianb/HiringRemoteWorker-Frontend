@@ -70,7 +70,9 @@ const Headers = (props) => {
   }, [])
 
   useEffect(() => {
-    onLoadTotalUnreadNotification()
+    if (loginUserType){
+      onLoadTotalUnreadNotification()
+    }
   }, [])
 
   const onClickNotification = () => {
@@ -78,7 +80,7 @@ const Headers = (props) => {
   }
 
   return (
-    <nav className="nav">
+    <nav className="nav max-md:hidden">
       <div>        
         <a href="#">
           <Logo className="logo-header" sx={{ alignSelf: "flex-end"}}/>

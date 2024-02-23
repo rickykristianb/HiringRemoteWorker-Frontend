@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Divider } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';

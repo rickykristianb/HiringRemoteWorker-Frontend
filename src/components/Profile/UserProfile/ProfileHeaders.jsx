@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ProfileHeaders = (props) => {
     const navigate = useNavigate()
+    const [newSetSavedName, setNewSetSavedName] = useState(null)
 
     const [loginUserId, setLoginUserId] = useState()
     useEffect(() => {
@@ -68,6 +69,10 @@ const ProfileHeaders = (props) => {
         navigate(`/messages/?email=${data}`)
     }
 
+    const onSavedNewName = (name) => {
+        setNewSetSavedName(name)
+    }
+
   return (
     <div className='profile_detail_header'>
         <div className='profilepicture-rate-name'>
@@ -77,6 +82,7 @@ const ProfileHeaders = (props) => {
                     src={profilePicture} // Replace with the actual path or URL of your image
                     alt={profile.name}
                     className="profile_image"
+                    loading='lazy'
                     />
                 </div>
                 <div className='change-progress-image-button'>
@@ -97,10 +103,10 @@ const ProfileHeaders = (props) => {
             </div>
             <div className='rate-name'>
                 <div className='profile-rate'>
-                    <RateGenerator rating={props.userData.userRate} />
+                    <RateGenerator rating={Math.round(props.userData?.userRate * 10) / 10} />
                 </div>
                 <div className='user-fullname'>
-                    <h1>{props.userData.name}</h1>
+                    <h1>{newSetSavedName ? newSetSavedName : props.userData.name}</h1>
                 </div>
             </div>
             <Location userData={props.userData.location} clickedUserId={props.clickedUserId} />
@@ -110,7 +116,7 @@ const ProfileHeaders = (props) => {
                 </div>
             }
         </div>
-        <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} />
+        <ProfileIntroduction userData={props.userData} clickedUserId={props.clickedUserId} setNewName={onSavedNewName} />
     </div>
   )
 }

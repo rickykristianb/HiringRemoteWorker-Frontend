@@ -6,16 +6,13 @@ import { useForm } from 'react-hook-form'
 import AuthContext from '../Context/AuthContext'
 
 const UserActivationConfirmation = () => {
-
-    const params = new URLSearchParams(window.location.search);
-    const uid = params.get("uid");
-    const token = params.get("token");
+    
+    const { uid, token } = useParams()
     
     const [ buttonLabel, setButtonLabel ] = useState("Activate")
     const [ alert, setAlert ] = useState()
     const [ resendActivate, setResendActivate ] = useState(false)
     
-    // const [ activationSuccess, setActivationSuccess] = useState()
 
     let { resendActivationLink, resendLoading, resendActivationAlert } = useContext(AuthContext)
 
@@ -43,10 +40,8 @@ const UserActivationConfirmation = () => {
     };
             
     useEffect(() => {
-        console.log("MASUK USE EFFECT")
         console.log(activationSuccess.current);
         if (activationSuccess.current) {
-            console.log("BENAR NIH")
             const timeoutId = setTimeout(() => {
                 navigate("/login/");
               }, 5000);
@@ -56,42 +51,25 @@ const UserActivationConfirmation = () => {
         activationSuccess.current = false
     }, [activationSuccess.current]);
 
-
     const sendActivationConfirmation = async () => {
         setButtonLabel("Activating ...");
         try {
-            let response = await fetch(`/auth/users/activation/`, {
-                method: "POST",
+            let response = await fetch(`/api/user/accounts/activate/${uid}/${token}`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    uid: uid,
-                    token: token
-                })
+                }
             });
-    
-            if (response.ok) {
-                setAlert({
-                    success: "Your account has been activated. We'll redirect you to the login page in 5 seconds.",
-                });
+            if (response.status === 204) {
+                setAlert({"success": "You account has been activated. You'll redirected to login page in 5 seconds."});
                 activationSuccess.current = true;
             } else if (response.status === 403) {
-                let data = await response.json();
-                setAlert({
-                    error: data.error
-                });
+                setAlert({"error": "Your account was activated. Please login."})
             } else if (response.status === 400) {
-                setAlert({
-                    error: "Bad Request, user may have been accidentally deleted."
-                });
+                setAlert({"error": "No account associated with this activation link, please register first."})
             }
         } catch (error) {
-            if (error.name === "SyntaxError" && error.message.includes("Unexpected end of JSON input")) {
-                console.error("Truncated data: Not all of the JSON data was received");
-            } else {
-                console.error(error);
-            }
+            console.error(error);
         } finally {
             setButtonLabel("Activate");
         }

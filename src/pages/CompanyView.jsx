@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import TuneIcon from '@mui/icons-material/Tune';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import TextField from '@mui/material/TextField';
@@ -33,7 +33,6 @@ const CompanyView = () => {
     const showDataPage = useRef()
     const [pageClicked, setPageClicked] = useState(false)
     const [isPaginationReset, setIsPaginationReset] = useState(false)
-
 
     const onLoadSearchBarData = async() => {
         const response = await fetch("/api/user/search_bar_data/", {
@@ -85,7 +84,6 @@ const CompanyView = () => {
       }, []);
 
     const onLoadSearchUser = async({page}) => {
-        console.log("MASUK SINI KAH");
         try{
             setBackdropActive(true)
             let item = searchValue
@@ -148,8 +146,6 @@ const CompanyView = () => {
 
     // GET RESULT FROM THE ADVANCED USER FILTER
     const advanceFilter = async (page) => {
-        
-        setBackdropActive(true)
         if (!page){
             page = 1
         } else{
@@ -171,11 +167,9 @@ const CompanyView = () => {
                 setIsShowButtonClicked(false)
             }, 1) 
         }
-        setBackdropActive(false)
     }
 
     const advanceFilterPageClicked = async (page) => {
-        console.log("SINI KAH");
         setBackdropActive(true)
         if (!page){
             page = 1
@@ -190,7 +184,7 @@ const CompanyView = () => {
             },
         })
         const data = await response.json()
-        console.log(data);
+
         if (response.ok){
             showData.current = data
             setSearchResultData()
@@ -208,7 +202,6 @@ const CompanyView = () => {
         setRateSelected(data["rate"])
         setLocationSelected(data["location"])
         setJobTypeSelected(data["type"])
-        // console.log("INI CAPTURED DATA", skillSelected);
     }
 
     useEffect(() => {   
@@ -305,6 +298,7 @@ const CompanyView = () => {
                         </Tooltip>
                     </ul>
                 </div>
+                
                 {showData.current
                 ?
                     <UsersList
