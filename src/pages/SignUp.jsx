@@ -84,13 +84,13 @@ const SignUp = () => {
     }
   
   return (
-    <div className='container-register'>
-      <div className='container-register-form'>
-        <div className='register-form-header'>
+    <div className='container-login-reset-password-register'>
+      <div className='container-login-for-container-reset-password-form-container-register-form'>
+        <div className='self-center mb-6'>
           <p>SIGN UP</p>
         </div>
         <Divider />
-        <form onSubmit={handleSubmit(submitRegistration)} >
+        <form onSubmit={handleSubmit(submitRegistration)} className='form-container-login-reset-password-register'>
           <div className='container-username'>
             <label>Username</label>
             <input {...register("username", {required: "Username is required", "pattern": {
@@ -159,10 +159,10 @@ const SignUp = () => {
             }) }
           </div>
           <div className='container-user-type'>
-            <div className='user-type-header'>
+            <div>
                 <p>Are you looking for..</p>
             </div>
-            <div className='user-type-selection'>
+            <div className='flex flex-row gap-2 mt-4'>
                 <input {...register("user_type")} 
                     id="option1"
                     type="radio"
@@ -171,14 +171,14 @@ const SignUp = () => {
                     
                     defaultChecked 
                     disabled={ isSubmitting ? true : false } />
-                <label for="option1" class="button-label">Job</label>
+                <label for="option1" class="button-label cursor-pointer bg-transparent border border-gray-300 text-dark-basic w-[190px] max-sm:w-[140px] transition-all duration-300 rounded-md py-2 px-4 inline-flex items-center justify-center hover:bg-dark-basic hover:text-white">Job</label>
                 <input {...register("user_type")} 
                     id="option2"
                     type="radio"
                     value="company"
                     name="user_type"
                     disabled={ isSubmitting ? true : false } />
-                <label for="option2" class="button-label">Candidate</label>
+                <label for="option2" class="button-label cursor-pointer bg-transparent border border-gray-300 text-dark-basic w-[190px] max-sm:w-[140px] transition-all duration-300 rounded-md py-2 px-4 inline-flex items-center justify-center hover:bg-dark-basic hover:text-white">Candidate</label>
             </div>
         </div>
           <Button label={ isSubmitting ? "Sign-ing Up" : "Sign Up"} buttonType="input" disabled={isSubmitting ? true : false} />         

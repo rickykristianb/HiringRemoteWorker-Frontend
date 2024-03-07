@@ -21,11 +21,11 @@ const CompanyPanel = () => {
   }, [location.search]);
 
   return (
-    <div id="company-panel-container">
-      <div id="company-panel-menu">
+    <div className='grid grid-cols-4 my-20 mx-20 md:mx-10'>
+      <div id="company-panel-menu-asd" className='col-start-1 col-end-1'>
         <PanelMenu menuClicked={onMenuClicked} params={menuClicked}  />
       </div>
-      <div className='company-panel-content'>
+      <div className='company-panel-content-asd col-start-2 col-end-5'>
         {(() => {
           switch(menuClicked){
             case "profile":

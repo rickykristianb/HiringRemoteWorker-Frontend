@@ -46,7 +46,6 @@ const UserProfile = (props) => {
 
   const onGetProfile = async () => {
     const id = clickedUserId
-    console.log("MASUKKK SAVE GET PROFILE");
     try {
       setGetProfileLoading(true);
       if (id !== null){
@@ -151,52 +150,44 @@ const UserProfile = (props) => {
       {!menuClicked ?
         getProfileLoading
          ?
-        <div className='profile_container'>
+        <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
           <UserProfileSkeleton />
         </div>
         :
-        <div className='profile_container'>
-          <div className='profile-header'>
+        <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
+          <div className='flex flex-wrap bg-soft-basic rounded-lg p-10 max-sm:p-5 shadow-box-shadow max-sm:mt-16'>
             <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
           </div>
-          <br />
-          <br />
-          <br />
-          <br />
-          <div className='profile-menu-content-container'>
-            <div id='profile-menu-wrapper'>
+
+          <div className='flex flex-col gap-10 max-sm:gap-4 rounded-lg shadow-box-shadow p-10 max-sm:p-2 h-[550px]'>
+            <div id='flex justify-center'>
               <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
             </div>
             <Divider />
-            <div className='profile-menu-action'>
+            <div className='h-full overflow-y-scroll'>
               {menuAppear(menuClicked)}
             </div>
           </div>
 
-          <div id='user-profile-rating'>
+          <div className='rounded-lg shadow-box-shadow p-10'>
               <UserRatings ratingData={ratingData} />
           </div>
         </div>
       :
-        <div className='profile_container'>
-          <div className='profile-header'>
+        <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
+          <div className='flex flex-wrap bg-soft-basic rounded-lg p-10 max-sm:p-5 shadow-box-shadow max-sm:mt-16'>
             <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
           </div>
-          <br />
-          <br />
-          <br />
-          <br />
-          <div className='profile-menu-content-container'>
-            <div id='profile-menu-wrapper'>
+          <div className='flex flex-col gap-10 max-sm:gap-4 rounded-lg shadow-box-shadow p-10 max-sm:p-2 h-[550px]'>
+            <div className='flex justify-center w-full'>
               <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
             </div>
             <Divider />
-            <div className='profile-menu-action'>
+            <div className='h-full overflow-scroll'>
               {menuAppear(menuClicked)}
             </div>
           </div>
-
-          <div id='user-profile-rating'>
+          <div className='rounded-lg shadow-box-shadow p-10 '>
               <UserRatings ratingData={ratingData} />
           </div>
         </div>

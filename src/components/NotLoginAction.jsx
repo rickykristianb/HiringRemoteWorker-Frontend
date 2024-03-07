@@ -19,14 +19,15 @@ const NotLoginAction = (props) => {
     }
 
   return (
-    <div id='not-login-action-container' onClick={props.close}>
-        <div id='not-location-action-layout' onClick={(e) => e.stopPropagation()}>
-            <CloseIcon id='not-location-action-close-button' onClick={props.close} />
-                <h1>{props.boxTitle}</h1>
+    <div className='flex justify-center items-center z-5 fixed top-0 left-0 bg-pop-up-bg w-screen h-screen overflow-y-scroll' onClick={props.close}>
+        <div className='flex flex-col justify-center items-center gap-5 bg-white p-[40px] pt-0 w-[480px] max-sm:w-[350px] rounded-lg shadow-lg text-center shadow-box-shadow' onClick={(e) => e.stopPropagation()}>
+            <CloseIcon className='relative left-[210px] top-[20px] max-sm:left-[150px]' onClick={props.close} />
+                <h1 className='text-[30px] leading-8 mt-4'>{props.boxTitle}</h1>
                 <span>{props.boxTagline}</span>
-            <br />
-            <Button clickedButton={() => onClickSignUp()} customClassName="not-login-action-sign-up-button" buttonType="button" label="Sign-up" />
-            <Button clickedButton={() => onClickLogin()} customClassName="not-login-action-login-button" buttonType="button" label="Login (Demo Account Inside)" />
+            <div className='flex flex-col gap-2 mt-5'>
+                <Button clickedButton={() => onClickSignUp()} customClassName="not-login-action-sign-up-button" buttonType="button" label="Sign-up" />
+                <Button clickedButton={() => onClickLogin()} customClassName="not-login-action-login-button" buttonType="button" label="Login (Demo Account Inside)" />
+            </div>
         </div>
     </div>
   )

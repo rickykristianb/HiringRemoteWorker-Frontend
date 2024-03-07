@@ -151,11 +151,11 @@ const ViewInterestedUserProfile = (props) => {
     }
 
   return (
-    <div id='interested-user-profile-container'>
-        <div id='interested-user-profile-wrapper'>
-            <div id='interested-user-profile-action-wrapper'>
-                <div id='interested-user-profile-action-button'>
-                    <h2>Status</h2>
+    <div className='flex items-center justify-center fixed w-screen h-screen top-0 left-0 bg-pop-up-bg'>
+        <div className='bg-white w-[80vw] h-[95vh] rounded-xl shadow-box-shadow p-10' >
+            <div className='flex justify-between'>
+                <div className='flex items-center gap-4'>
+                    <p className='text-2xl font-bold'>Status</p>
                     {isChangeStatus ?
                     <>
                         <Select
@@ -181,23 +181,23 @@ const ViewInterestedUserProfile = (props) => {
             <br />
             <Divider />
             <div id='interested-user-profile-detail-wrapper'>
-                <div id='interested-user-profile-detail-header'>
-                    <div className='interested-user-profile-image-container'>
+                <div className='flex gap-10'>
+                    <div className='w-[150px] h-[150px] rounded-full shadow-box-shadow'>
                         <img
                             src={userData?.profilePicture} // Replace with the actual path or URL of your image
                             alt={"profile-picture"}
-                            className="interested-user-profile-image"
+                            className="w-[150px] h-[150px] rounded-full shadow-box-shadow"
                         />
                     </div>
-                    <div id='interested-user-profile-name'>
-                        <h1>{userData?.name}</h1>
-                        <div id="interested-user-table-rate">
-                            <RateGenerator id="interested-user-profile-rating" rating={userData?.rating} />
+                    <div>
+                        <p className='text-3xl font-bold'>{userData?.name}</p>
+                        <div className='pl-20'>
+                            <RateGenerator rating={userData?.rating} />
                         </div>
                     </div>
                 </div>
                 <br />
-                <div id='interested-user-profile-detail-container'>
+                <div className='h-full flex flex-col gap-4'>
                     <br />
                     <div id='interested-user-profile-detail'>
                         <Button clickedButton={() => sendMessage()} buttonType="button" label="Send Message" />
@@ -238,7 +238,7 @@ const ViewInterestedUserProfile = (props) => {
                     </div>
                     <div id='interested-user-profile-detail'>
                         <p><b>Skills: </b></p>
-                        <ul>
+                        <ul className='flex flex-wrap '>
                             {userData?.skills.map((item) => {
                                 return <li key={item.skills.id}>{item.skills.skill_name}</li>
                             })}
@@ -259,17 +259,15 @@ const ViewInterestedUserProfile = (props) => {
                                             expandIcon={<ExpandMoreIcon />}
                                             aria-controls="panel1a-content"
                                             id="panel1a-header"
-                                            sx={{backgroundColor: "rgba(216, 230, 239, 1)", boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}
+                                            sx={{height:"80px",backgroundColor: "rgba(216, 230, 239, 1)", boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}
                                         >
                                             <Typography>
-                                            <div className='experience-detail'>
-                                            <div className='jobTitle'>
-                                                <p>{experience.job_name}</p>
-                                            </div>
-                                                <div className='experience-date-list'>
-                                                <p><i>{experience.start_date}</i></p>
-                                                <p id='date-dash'>-</p>
-                                                <p><i>{experience.end_date ? experience.end_date : "present"}</i></p>
+                                            <div className='flex'>
+                                                <p className='font-bold text-lg'>{experience.job_name}</p>
+                                                <div className='flex gap-2 absolute right-16'>
+                                                    <p><i>{experience.start_date}</i></p>
+                                                    <p id='date-dash'>-</p>
+                                                    <p><i>{experience.end_date ? experience.end_date : "present"}</i></p>
                                                 </div>                 
                                             </div>
                                         </Typography>

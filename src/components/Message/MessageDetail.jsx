@@ -90,36 +90,50 @@ const MessageDetail = (props) => {
     }
 
   return (
-    <div className={isReply ? 'message-detail-container-reply' : 'message-detail-container' } >
-        <div className={isReply ? (isExpanded ? "message-detail-reply-expanded" : "message-detail-reply") : prevEmailExpanded ? "message-detail-prevEmailExpanded" : 'message-detail'} >
+    <div className={isReply ? 'message-detail-container-reply max-sm:w-full max-sm:h-[100%] rounded-lg' : 'message-detail-container max-sm:w-full max-sm:h-[100%] rounded-lg' } >
+        <div className={isReply ? (isExpanded ? "message-detail-reply-expanded max-sm:top-0 max-sm:left-0 max-sm:w-screen max-sm:h-[1305px] rounded-lg" : "message-detail-reply max-sm:top-0 max-sm:left-0 max-sm:w-screen max-sm:h-[853px] rounded-lg") : prevEmailExpanded ? "message-detail-prevEmailExpanded max-sm:top-0 max-sm:left-0 max-sm:w-screen max-sm:h-[1310px] rounded-lg" : 'message-detail max-sm:top-0 max-sm:left-0 max-sm:w-screen max-sm:h-[853px] rounded-lg'} >
             {/* HEADER DATA */}
-            <CloseIcon className="message-detail-close-button" onClick={props.clickedClosed} />
-            <h1>{props.data.data.data.subject}</h1>
-            <div className='sender-date-message'>
-                <div className='sender-message'>
+            <div className='max-sm:flex max-sm:items-center max-sm:justify-end max-sm:pr-2 max-sm:w-[100%] max-sm:mb-4 max-sm:bg-dark-basic max-sm:mx-0 max-sm:rounded-t-xl'>
+                <CloseIcon className="message-detail-close-button max-sm:static max-sm:my-2 max-sm:text-white" onClick={props.clickedClosed} />
+            </div>
+            
+            <div className='w-full flex flex-wrap'>
+                <p className='text-3xl max-w-full max-sm:max-w-sm break-all leading-8 mb-5'>{props.data.data.data.subject}</p>
+            </div>
+            <hr className='mb-8' />
+
+            <div className='flex justify-between'>
+                <div className='flex gap-20'>
                     <p id="sender-name" onClick={() => console.log(props.data.data.data.id)}>From: <u onClick={() => onClickFromSender(props.data.data.data.sender.id)}>{props.data.data.data.sender.name}</u></p>
                 </div>
-                <div className='date-message'>
+                <div className='flex gap-5 max-sm:hidden sm:flex'>
                     <p>{props.data.data.data.created.date}</p>
                     <p>{props.data.data.data.created.time}</p>
                 </div>      
             </div>
+            {/* FOR MOBILE */}
+            <div className='flex justify-end w-full max-sm:flex sm:hidden max-sm:relative max-sm:mt-4'>
+                <div className='flex gap-5'>
+                    <p>{props.data.data.data.created.date}</p>
+                    <p>{props.data.data.data.created.time}</p>
+                </div>
+            </div> 
 
             {/* SHOWING BUTTON TO SHOW PREV EMAIL OF THE REPLY */}
             {isReply && 
-                <p onClick={toggleExpanded}>
+                <p onClick={toggleExpanded} className='cursor-pointer my-5'>
                     Show Email <KeyboardDoubleArrowDownIcon className={`rotating-button ${isRotate ? "show-email-rotated": ""}`} sx={{fontSize: "18px"}} />
                 </p>
             }
             
             {!isReply && props.data.data.data.prev_reply_message &&
-                <p onClick={togglePrevEmailExpanded}>
+                <p onClick={togglePrevEmailExpanded} className='cursor-pointer my-5'>
                     Prev Email <KeyboardDoubleArrowDownIcon className={`rotating-button ${isRotate ? "show-email-rotated": ""}`} sx={{fontSize: "18px"}} />
                 </p>
             }
 
             {prevEmailExpanded && 
-                <div className="sender-body-message" >
+                <div className="sender-body-message max-sm:mb-4" >
                     <p className='body-content'>{props.data.data.data.prev_reply_message.split('\n').map((line, i) => (
                         <Fragment key={i}>
                             {i > 0 && <br />}
@@ -129,7 +143,7 @@ const MessageDetail = (props) => {
                 </div>
             }
 
-            <br />
+            <br className='max-sm:hidden sm:block' />
             
             {/* SHOWING MESSAGE BODY IN FRONT PAGE (NOT CLICKING REPLY) */}
             {!isReply && !isExpanded &&
@@ -145,7 +159,7 @@ const MessageDetail = (props) => {
 
             {isExpanded && 
                 <div className={`expandable ${isExpanded ? 'show' : ''}`} id="nav">
-                    <div className='sender-body-message'>
+                    <div className='sender-body-message max-sm:mt-0'>
                         <p className='body-content'>{props.data.data.data.body.split('\n').map((line, i) => (
                             <Fragment key={i}>
                                 {i > 0 && <br />}
@@ -192,7 +206,7 @@ const MessageDetail = (props) => {
             {isReply && 
                 <div className='form-replay-container'>
                     <form onSubmit={handleSubmit(onClickSendReply)} className='form-replay' >
-                        <textarea {...register("message_body", {required: "Please specify your message subject"})} rows="30" className="send-message-textarea-reply" placeholder='Message' disabled={ isSubmitting }/> 
+                        <textarea {...register("message_body", {required: "Please specify your message subject"})} rows="18" className="send-message-textarea-reply" placeholder='Message' disabled={ isSubmitting }/> 
                         {errors.message_body && <span className='error-field'>{errors.message_body.message}</span>}
                         <br />
                         <Button buttonType="button" label={isSubmitting ? "Sending ..." : "Send"} />

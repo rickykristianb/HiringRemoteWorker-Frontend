@@ -66,31 +66,32 @@ const Footer = () => {
   return (
     <div className='container-footer'>
         <div className='container-contact-message'>
-            <div className='container-contact-info'>
+            <div className='flex p-5 justify-center'>
                 <div>
-                    <h2>Interested with this project?</h2>
+                    <p className='text-2xl font-bold'>Interested with this project?</p>
+                    <br />
                     <ul>
-                        <li className='footer-info'>
+                        <li>
                             <a href="tel:6282168897862" target='blank'>
-                                <div className='footer-info'>
+                                <div className='flex gap-4'>
                                     <PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    <span> +6282168897862</span>
+                                    +6282168897862
                                 </div>
                             </a>
                         </li>
-                        <li className='footer-info'>
+                        <li>
                             <a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'>
-                                <div className='footer-info'>
+                                <div className='flex gap-4'>
                                     <WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    <span> +6282168897862</span>
+                                    +6282168897862
                                 </div>
                             </a>
                         </li>
                         <li>
                             <a href="mailto:contact@rickykristianbutarbutar.com" target='blank'>
-                                <div className='footer-info'>
+                                <div className='flex gap-4'>
                                     <MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    <span>contact@rickykristianbutarbutar.com</span>
+                                    contact@rickykristianbutarbutar.com
                                 </div>
                             </a>
                         </li>
@@ -104,34 +105,32 @@ const Footer = () => {
                     </ul> 
                 </div>      
             </div>
-            <div className='container-send-message'>
-                <div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+            <div className='flex items-center justify-center'>
+                <div className='max-lg:w-screen px-6 max-sm:mt-10 items-center'>
+                    <form onSubmit={handleSubmit(onSubmit)} >
                         <label>Name </label><br />
-                        <input {...register("name", {required: "Name is required"})} className="sendEmailInput" ></input><br />
+                        <input {...register("name", {required: "Name is required"})} className="w-[450px] h-6 max-sm:w-full mb-2" ></input><br />
                         {errors.name && <span className='error-field' >{errors.name.message}</span>}
-                        <br />
+                        <br className={!errors.name?.message && "hidden"} />
                         <label>Email</label><br />
                         <input {...register("email", {
                             required: "Email is required", 
                             pattern: {
                                 value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                                 message: "Please Insert Correct Email"
-                            }})} className="sendEmailInput" ></input><br />
+                            }})} className="w-[450px] h-6  max-sm:w-full mb-2" ></input><br />
                         {errors.email && <span className='error-field'>{errors.email.message}</span>}
-                        <br />
+                        <br className={!errors.name?.message && "hidden"} />
                         <label>Message</label><br />
-                        <textarea {...register("messageBody", {required: "Message is required"})} rows="10" className="sendEmailTextArea" ></textarea><br />
+                        <textarea {...register("messageBody", {required: "Message is required"})} rows="10" className="w-[450px] max-sm:w-full" ></textarea><br />
                         {errors.messageBody && <span className='error-field'>{errors.messageBody.message}</span>}
-                        <br />
-                        <br />
                         <Button buttonType="input" label={ isSubmitting ? "Sending..." : "Send Message"} disabled={isSubmitting ? true : false} />
                         { alert && <AlertNotification alertData={alert} />}
                     </form>
                 </div>
             </div>
         </div>
-        <div className='container-creator'>
+        <div className='flex justify-center mt-12 bg-white w-full items-center py-3'>
             <div>
                 <p>© Ricky Kristian Butar Butar</p>
             </div>

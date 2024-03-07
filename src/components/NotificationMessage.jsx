@@ -1,8 +1,6 @@
 import { Divider } from '@mui/material'
 import AuthContext from 'Context/AuthContext'
 import React, { useContext, useEffect, useState } from 'react'
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import AddRating from './AddRating';
 import AlertNotification from './AlertNotification';

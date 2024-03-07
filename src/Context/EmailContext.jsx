@@ -91,6 +91,14 @@ export const EmailProvider = ({ children }) => {
         }
     }
 
+    const onLoadSubjectForMobile = (body) => {
+        if (body.length > 40){
+            return <p>{body.slice(0, 40)}...</p>
+        } else {
+            return body
+        }
+    }
+
     const onMessageClicked = async ({index, type}) => {
         let messageDetailData;
         switch (type){
@@ -295,6 +303,7 @@ export const EmailProvider = ({ children }) => {
         setIsRead:setIsRead,
         messageUnreadCount:messageUnreadCount,
         onLoadBody:onLoadBody,
+        onLoadSubjectForMobile:onLoadSubjectForMobile,
         onMessageClicked:onMessageClicked,
         onMessageDetailCloseClicked:onMessageDetailCloseClicked,
         onDeleteMessage:onDeleteMessage,

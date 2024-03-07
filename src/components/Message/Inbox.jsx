@@ -25,13 +25,13 @@ const Inbox = () => {
         isRead,
         setIsRead,
         onLoadBody,
+        onLoadSubjectForMobile,
         onMessageClicked,
         onMessageDetailCloseClicked,
         onDeleteMessage,
         alertDeleteResponse, 
         setAlertDeleteResponse,
         setAlertResponse,
-        // getTotalInbox,
         totalInboxMessage,
         unreadMessageCount
         
@@ -63,13 +63,17 @@ const Inbox = () => {
         await onLoadMessages()
         setRefreshIsClicked(false)
         setIsRead([])
-        // getTotalInbox()
         unreadMessageCount()
     }
 
     const onInboxMessageClicked = (index) => {
         setAlertResponse(null)
         {!isHoverDeleteIcon.current && onMessageClicked({index, type: type.current})}
+    }
+
+    const onInboxMessageClickedMobile = (index) => {
+        setAlertResponse(null)
+        onMessageClicked({index, type: type.current})
     }
 
     const onMouseHover = () => {
@@ -81,65 +85,133 @@ const Inbox = () => {
     }
 
   return (
-    <div className='inbox-container'>
-    <div className='inbox-header'>
-        <h3>Inbox</h3>
-        {messages.length !== 0 && 
+    <>
+        {/* INBOX FOR LARGE DEVICE */}
+        <div className='max-md:hidden'>
+            <div className='flex flex-row justify-between items-center mb-4'>
+                <h3 className='font-bold text-xl leading-10'>Inbox</h3>
+                {messages.length !== 0 && 
+                    <div>
+                        {!refreshIsClicked ?
+                            <Tooltip title="Refresh" placement='top' arrow>
+                                <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                            </Tooltip>
+                        :
+                            <Refresh style={{backgroundColor: "white"}} />
+                        }
+                    </div>
+                }
+            </div>
+            {messages.length !== 0 ? 
+            messages.map((item, index) => (
+                <div key={index} className={(item.is_read === true || isRead.includes(index)) ? "inbox-read" :'inbox'} 
+                    onClick={isHoverDeleteIcon.current ? null : () => onInboxMessageClicked(index)} 
+                    onMouseEnter={() => onHoverMouse(index)}
+                    onMouseLeave={() => onLeaveMouse()} >
+                    
+                    <div className='sender-name-container'>
+                        <p><b>{item.sender.name}</b></p>
+                    </div>
+                    <div>
+                        <p><b>{item.subject}</b></p>
+                        <p>{onLoadBody(item.body)}</p>
+                    </div>
+                    {hover === index ?
+                        <div className='inbox-delete-button' >
+                            <Tooltip title="Delete" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
+                                <DeleteIcon onClick={() => onDeleteMessage(index)} sx={{fontSize: "40px", cursor: "pointer"}} />
+                            </Tooltip>
+                        </div>
+                    :
+                    <div className='date-container'>
+                        <p>{item.created.date}</p>
+                    </div>
+                    }
+                </div>
+            ))
+            :
             <div>
+                <p className='leading-10'>There is no new message yet.</p>
+                <br />
                 {!refreshIsClicked ?
-                    <Tooltip title="Refresh" placement='top' arrow>
-                        <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
-                    </Tooltip>
+                    <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
                 :
                     <Refresh style={{backgroundColor: "white"}} />
                 }
             </div>
-        }
+            }
+            <br />
+            <Pagination type="inbox" totalData={totalInboxMessage} />
+            {isVisible && (<MessageDetail data={{data: messageData, type: "inbox"}} clickedClosed={onMessageDetailCloseClicked} />) }
+            <AlertNotification alertData={alertDeleteResponse}/>
+        </div>
         
-    </div>
-        {messages.length !== 0 ? 
-        messages.map((item, index) => (
-            <div key={index} className={(item.is_read === true || isRead.includes(index)) ? "inbox-read" :'inbox'} 
-                onClick={isHoverDeleteIcon.current ? null : () => onInboxMessageClicked(index)} 
-                onMouseEnter={() => onHoverMouse(index)}
-                onMouseLeave={() => onLeaveMouse()} >
-                
-                <div className='sender-name-container'>
-                    <p><b>{item.sender.name}</b></p>
-                </div>
-                <div>
-                    <p><b>{item.subject}</b></p>
-                    <p>{onLoadBody(item.body)}</p>
-                </div>
-                {hover === index ?
-                    <div className='inbox-delete-button' >
-                        <Tooltip title="Delete" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
-                            <DeleteIcon onClick={() => onDeleteMessage(index)} sx={{fontSize: "40px", cursor: "pointer"}} />
-                        </Tooltip>
+        {/* INBOX FOR MOBILE LAYOUT */}
+        <div className='md:hidden max-md:block'>
+            <div className='flex flex-row justify-between items-center mb-4'>
+                <h3 className='font-bold text-xl leading-10 max-md:pl-4 max-md:mt-[150px]'>Inbox</h3>
+                {messages.length !== 0 && 
+                    <div className='max-md:mt-[150px] max-md:pr-6'>
+                        {!refreshIsClicked ?
+                            <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                        :
+                            <Refresh style={{backgroundColor: "white"}} />
+                        }
                     </div>
+                }
+            </div>
+
+            <div className='h-[800px] max-md:px-4'>
+                {messages.length !== 0 ? 
+                messages.map((item, index) => (
+                    <div key={index} className={(item.is_read === true || isRead.includes(index)) ? "bg-read-messages border border-border-messages h-[160px] p-2" :'bg-soft-basic border border-border-messages h-[160px] p-2'} 
+                        onClick={() => onInboxMessageClickedMobile(index)} 
+                    >
+                        
+                        <div className='sender-name-container'>
+                            <p><b>{item.sender.name}</b></p>
+                        </div>
+                        <div className='h-[100px]'>
+                            <p className='leading-10'><b>{onLoadSubjectForMobile(item.subject)}</b></p>
+                            <p>{onLoadBody(item.body)}</p>
+                        </div>
+                        {hover === index ?
+                            <div className='inbox-delete-button' >
+                                <Tooltip title="Delete" arrow onMouseEnter={() => onMouseHover()} onMouseLeave={() => onMouseLeave()} >
+                                    <DeleteIcon onClick={() => onDeleteMessage(index)} sx={{fontSize: "40px", cursor: "pointer"}} />
+                                </Tooltip>
+                            </div>
+                        :
+                        <div className='flex justify-end mr-2 items-center'>
+                            <p>{item.created.date}</p>
+                        </div>
+                        }
+                    </div>
+                ))
                 :
-                <div className='date-container'>
-                    <p>{item.created.date}</p>
+                <div>
+                    <p className='leading-10'>There is no new message yet.</p>
+                    <br />
+                    {!refreshIsClicked ?
+                        <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
+                    :
+                        <Refresh style={{backgroundColor: "white"}} />
+                    }
                 </div>
                 }
             </div>
-        ))
-        :
-        <div>
-            <p>There is no new message yet.</p>
+
             <br />
-            {!refreshIsClicked ?
-                <RefreshIcon onClick={() => onRefreshIconClicked()} className='refresh-icon' />
-            :
-                <Refresh style={{backgroundColor: "white"}} />
-            }
+            <div className='max-md:px-4'>
+                <Pagination type="inbox" totalData={totalInboxMessage} />
+            </div>
+            
+            {isVisible && (<MessageDetail data={{data: messageData, type: "inbox"}} clickedClosed={onMessageDetailCloseClicked} />) }
+            <AlertNotification alertData={alertDeleteResponse}/>
         </div>
-        }
         <br />
-        <Pagination type="inbox" totalData={totalInboxMessage} />
-        {isVisible && (<MessageDetail data={{data: messageData, type: "inbox"}} clickedClosed={onMessageDetailCloseClicked} />) }
-        <AlertNotification alertData={alertDeleteResponse}/>
-    </div>
+    </>
+    
   )
 }
 

@@ -144,30 +144,30 @@ const Pagination = (props) => {
             <>  
                 {totalPages !== 0 
                 &&
-                <>
-                <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='prev-next-button'>&lt;&lt; Prev</a>
-                    <ul className='pagination-number'>
-                        {paginateNumber.map((item, index) => (
-                            <li key={index} className={
-                                pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
-                                    item === 1 ?
-                                         "page-number-clicked"
-                                         :
-                                         "number-li"
-                                    :
-                                isCLicked === false ? 
-                                    (item === 1 ? 
-                                        "page-number-clicked" 
-                                        : "number-li") 
-                                    : isCLicked === item ? 
-                                        "page-number-clicked" 
-                                        : "number-li"
-                                    } 
-                                onClick={item === "..."? null : () => onClickPageNumber(item)} >{item}</li>
-                        ))}
-                    </ul>
-                <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='prev-next-button'>Next &gt;&gt;</a>
-                </>              
+                <div className='flex justify-between sm:gap-[250px] max-sm:px-4 max-sm:w-screen'>
+                <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='cursor-pointer'>&lt;&lt; Prev</a>
+                <ul className='flex gap-2 justify-center max-sm:gap-4'>
+                    {paginateNumber.map((item, index) => (
+                        <li key={index} className={
+                            pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
+                                item === 1 ?
+                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl"
+                                        :
+                                        "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0"
+                                :
+                            isCLicked === false ? 
+                                (item === 1 ? 
+                                    "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl" 
+                                    : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0") 
+                                : isCLicked === item ? 
+                                    "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl" 
+                                    : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0"
+                                } 
+                            onClick={item === "..."? null : () => onClickPageNumber(item)} >{item}</li>
+                    ))}
+                </ul>
+                <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='cursor-pointer'>Next &gt;&gt;</a>
+                </div>              
                 }
             </>
             
@@ -232,8 +232,7 @@ const Pagination = (props) => {
     }
 
   return (
-
-    <div className='pagination-container'>
+    <div className='flex gap-[200px] justify-center items-center'>
         {onCheckPaginationConditional({type: props.type})}
     </div>
   )

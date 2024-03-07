@@ -22,14 +22,14 @@ const AppliedJobStatus = (props) => {
     useEffect(() => {
         onLoadStatus()
     }, [])
-
   return (
-    <div id="applied-job-status-container">
-        <div id='applied-job-status-wrapper'>
-            <CloseIcon id='close-icon-change-status' onClick={props.close} />
-            <p>CHANGE USER STATUS</p>
+    <div className='flex justify-center items-center z-10 fixed top-0 left-0 w-screen h-screen bg-pop-up-bg'>
+        <div className='flex flex-col h-[190px] bg-white p-10 rounded-xl shadow-box-shadow'>
+            <CloseIcon className='self-end' onClick={props.close} />
+            <p className='self-center'>CHANGE USER STATUS</p>
             <Divider />
-            <ul>
+            <br />
+            <ul className='flex gap-4'>
                 {status.map((item, i) => {
                     return <li 
                                 key={i}

@@ -240,9 +240,9 @@ const AdvanceUserFilterBar = (props) => {
               
 
   return (
-    <div className='filter-box'>
-        <CloseIcon onClick={ props.barClicked } className='filter-close-button' />
-        <ul>             
+    <div className='flex flex-col justify-start z-3 py-3 px-10 w-[450px] border-dark-basic shadow-box-shadow mb-4 max-xl:fixed max-xl:bottom-11 max-xl:w-screen max-xl:bg-white border-t-0.5 border-soft-basic'>
+        <CloseIcon onClick={ props.barClicked } className='justify-end xl:relative left-[100%] top-[0.4%] max-xl:self-end' />
+        <ul className="flex flex-col mt-10 gap-4">             
             <li>
             <p>Skills</p>
             <Autocomplete
@@ -383,23 +383,24 @@ const AdvanceUserFilterBar = (props) => {
             />
             </li>
         </ul>
-        <a 
+        <a className='self-end '
             onClick={() => onShowButtonClicked()}
             onMouseEnter={onMouseEnterShowButton}
             onMouseLeave={onMouseLeaveShowButton}
         >
+        <br />
         <Button
             buttonType="button"
             label={
                 loadingFilter
                 ?
-                <span className='show-refresh-button'>
+                <span className='flex flex-row gap-1'>
                     Show {mouseEnterShowButton ? <RefreshHover /> : <Refresh />}
                 </span>
                 : 
                 <span>Show &#40;{totalUserFiltered}&#41;</span>   
             }
-            customClassName="filter-show-button"
+            customClassName="show-advance-filter-button"
             />
         </a>
     </div>

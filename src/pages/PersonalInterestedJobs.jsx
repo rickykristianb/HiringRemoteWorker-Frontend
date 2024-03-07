@@ -182,77 +182,172 @@ const PersonalInterestedJobs = () => {
 
     const htmlLayout = (item) => {
         return (
-            <div key={item.id} id='interested-job'>
-                <div id='interested-job-detail'>
-                    <h2 onClick={() => onOpenJobDetail(item.job.id)}>{item.job.job_title}</h2>
-                    <span onClick={() => onOpenUserPostedJob(item.job.user_posted_id)}>{item.job.user_posted}</span>
-                    <br />
-                    <br />
-                    <p><span className={statusClassName(item.status.status)}>{item.status.status}</span> {statusProcessing(item.status.status)}</p>
+            <>
+                <div className='sm:block max-sm:hidden w-full'>
+                    <div key={item.id} id='interested-job' className='p-5 pl-2'>
+                        <div id='interested-job-detail'>
+                            <p className='text-2xl font-bold leading-10' onClick={() => onOpenJobDetail(item.job.id)}>{item.job.job_title}</p>
+                            <span onClick={() => onOpenUserPostedJob(item.job.user_posted_id)}>{item.job.user_posted}</span>
+                            <br />
+                            <br />
+                            <p><span className={statusClassName(item.status.status)}>{item.status.status}</span> {statusProcessing(item.status.status)}</p>
+                        </div>
+                        <div id='interested-job-date'>
+                            <p className='leading-10 text-gray-600 text-opacity-[0.5]'>Applied On: {item.applied_on?.split("T")[0] + "," + item.applied_on?.split("T")[1].split(".")[0]}</p>
+                            <p className='text-gray-600 text-opacity-[0.5]'>Status Updated On: {item.last_status_updated_on?.split("T")[0] + "," + item.last_status_updated_on?.split("T")[1].split(".")[0]}</p>
+                            <br />
+                            {(item.status.status !== "Accepted" && item.status.status !== "Withdraw") &&
+                                <Button clickedButton={() => onClickWithdraw({jobId:item.job.id, dataId:item.id})} buttonType="button" label="Withdraw" />
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div id='interested-job-date'>
-                    <p>Applied On: {item.applied_on?.split("T")[0] + "," + item.applied_on?.split("T")[1].split(".")[0]}</p>
-                    <p>Status Updated On: {item.last_status_updated_on?.split("T")[0] + "," + item.last_status_updated_on?.split("T")[1].split(".")[0]}</p>
-                    <br />
-                    {(item.status.status !== "Accepted" && item.status.status !== "Withdraw") &&
-                        <Button clickedButton={() => onClickWithdraw({jobId:item.job.id, dataId:item.id})} buttonType="button" label="Withdraw" />
-                    }
+                
+                {/* FOR MOBILE */}
+                <div className='max-sm:block sm:hidden w-[98%]'>
+                    <div key={item.id} className='flex border border-border-messages w-full p-5 pl-2 sm:hidden max-sm:block'>
+                        <div>
+                            <p className='text-2xl font-bold leading-10' onClick={() => onOpenJobDetail(item.job.id)}>{item.job.job_title}</p>
+                            <span onClick={() => onOpenUserPostedJob(item.job.user_posted_id)}>{item.job.user_posted}</span>
+                            <br />
+                            <br />
+                            <div className='flex  gap-4'>
+                                <div className={`${statusClassName(item.status.status)} w-28 flex justify-center`}>
+                                    <p>{item.status.status}</p>
+                                </div> 
+                                <p>{statusProcessing(item.status.status)}</p>
+                            </div>
+                        </div>
+                        <br />
+                        <div id='interested-job-date'>
+                            <div className='text-sm flex justify-between text-gray-600 text-opacity-[0.5]'>
+                                <p>Applied On:</p>
+                                <p>{item.applied_on?.split("T")[0] + "," + item.applied_on?.split("T")[1].split(".")[0]}</p>
+                            </div>
+                            <div className='text-sm flex justify-between text-gray-600 text-opacity-[0.5]'>
+                                <p>Status Updated On:</p>
+                                <p>{item.last_status_updated_on?.split("T")[0] + "," + item.last_status_updated_on?.split("T")[1].split(".")[0]}</p>
+                            </div>
+                        </div>
+                        <br />
+                        <div className='w-full flex justify-end'>
+                            {(item.status.status !== "Accepted" && item.status.status !== "Withdraw") &&
+                                <Button clickedButton={() => onClickWithdraw({jobId:item.job.id, dataId:item.id})} buttonType="button" label="Withdraw" />
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </>
+            
         )
     }
 
   return (
-    <div id='interested-jobs-container'>
-        <div id='interested-jobs-wrapper'>
-            <h1>Interested Jobs</h1>
-            <Divider />
-            <br />
-            <div id='interested-jobs-status-filter-wrapper'>
-                <Select
-                    id='interested-jobs-status-filter'
-                    options={loadedStatus.map((item) => ({id: item.id, value: item.status, label: item.status}))}
-                    value={{value: statusFilterSelected, label: statusFilterSelected}}
-                    onChange={(selectedOption) => onChangeStatusFilter(selectedOption)}
-                    placeholder="Filter"
-                />
+    <>
+        <div className='flex justify-center items-center sm:block max-sm:hidden'>
+            <div id='interested-jobs-wrapper'>
+                <p  className='text-3xl font-bold'>Interested Jobs</p>
+                <Divider />
+                <br />
+                <div id='interested-jobs-status-filter-wrapper'>
+                    <Select
+                        id='interested-jobs-status-filter'
+                        options={loadedStatus.map((item) => ({id: item.id, value: item.status, label: item.status}))}
+                        value={{value: statusFilterSelected, label: statusFilterSelected}}
+                        onChange={(selectedOption) => onChangeStatusFilter(selectedOption)}
+                        placeholder="Filter"
+                    />
+                </div>
+                <br />
+                <div className='flex flex-col items-center h-[75%] w-full overflow-y-auto scroll-smooth'>
+                {isFilterActive ?
+                    withdrawFetchedData.length > 0 ?
+                        withdrawFetchedData.map((item) => {
+                            return (
+                                htmlLayout(item)
+                            )
+                        })
+                    :
+                    filterData.length > 0 ?
+                        filterData.map((item) => {
+                            return (
+                                htmlLayout(item)
+                            )
+                        })
+                    :
+                    <div className="interested-job-no-data">
+                        <p>No interested jobs match with your filter.</p>
+                    </div>                
+                :
+                    allInterestedJobs.length > 0 ?
+                    allInterestedJobs.map((item) => {
+                                    return (
+                                        htmlLayout(item)
+                                    )
+                                })
+                    :
+                    <div className="interested-job-no-data">
+                        <p>No interested job at the moment. </p>
+                    </div>   
+                }
+                </div>
             </div>
-            <br />
-            <div className='interested-job-list'>
-            {isFilterActive ?
-                withdrawFetchedData.length > 0 ?
-                    withdrawFetchedData.map((item) => {
-                        return (
-                            htmlLayout(item)
-                        )
-                    })
-                :
-                filterData.length > 0 ?
-                    filterData.map((item) => {
-                        return (
-                            htmlLayout(item)
-                        )
-                    })
-                :
-                <div className="interested-job-no-data">
-                    <p>No interested jobs match with your filter.</p>
-                </div>                
-            :
-                allInterestedJobs.length > 0 ?
-                allInterestedJobs.map((item) => {
-                                return (
-                                    htmlLayout(item)
-                                )
-                            })
-                :
-                <div className="interested-job-no-data">
-                    <p>No interested job at the moment. </p>
-                </div>   
-            }
-            </div>
+            {openWithdrawConfirmation && <DeleteConfirmation deleteLabel="Are you sure want to withdraw this job?" onClickYes={onClickYesWithdraw} onClickNo={onClickNo} />}
         </div>
-        {openWithdrawConfirmation && <DeleteConfirmation deleteLabel="Are you sure want to withdraw this job?" onClickYes={onClickYesWithdraw} onClickNo={onClickNo} />}
-    </div>
+
+        {/* FOR MOBILE */}
+        <div className='flex justify-center items-center sm:hidden max-sm:block mt-14'>
+            <div className='flex flex-col justify-center p-5 w-screen h-[800px]'>
+                <p  className='text-3xl font-bold'>Interested Jobs</p>
+                <Divider />
+                <br />
+                <div id='interested-jobs-status-filter-wrapper'>
+                    <Select
+                        id='interested-jobs-status-filter'
+                        options={loadedStatus.map((item) => ({id: item.id, value: item.status, label: item.status}))}
+                        value={{value: statusFilterSelected, label: statusFilterSelected}}
+                        onChange={(selectedOption) => onChangeStatusFilter(selectedOption)}
+                        placeholder="Filter"
+                    />
+                </div>
+                <br />
+                <div className='flex flex-col items-center h-[75%] w-full overflow-y-auto scroll-smooth'>
+                {isFilterActive ?
+                    withdrawFetchedData.length > 0 ?
+                        withdrawFetchedData.map((item) => {
+                            return (
+                                htmlLayout(item)
+                            )
+                        })
+                    :
+                    filterData.length > 0 ?
+                        filterData.map((item) => {
+                            return (
+                                htmlLayout(item)
+                            )
+                        })
+                    :
+                    <div className="interested-job-no-data">
+                        <p>No interested jobs match with your filter.</p>
+                    </div>                
+                :
+                    allInterestedJobs.length > 0 ?
+                    allInterestedJobs.map((item) => {
+                                    return (
+                                        htmlLayout(item)
+                                    )
+                                })
+                    :
+                    <div className="interested-job-no-data">
+                        <p>No interested job at the moment. </p>
+                    </div>   
+                }
+                </div>
+            </div>
+            {openWithdrawConfirmation && <DeleteConfirmation deleteLabel="Are you sure want to withdraw this job?" onClickYes={onClickYesWithdraw} onClickNo={onClickNo} />}
+        </div>
+    </>
+    
   )
 }
 

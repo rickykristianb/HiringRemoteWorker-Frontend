@@ -45,13 +45,13 @@ const ResetPassword = () => {
   
 
   return (
-    <div className='container-resetpassword'>
-        <div className='container-resetpassword-form'>
-            <div className='resetpassword-form-header'>
+    <div className='container-login-reset-password-register'>
+        <div className='container-login-for-container-reset-password-form-container-register-form'>
+            <div className='self-center mb-6'>
             <p>RESET PASSWORD</p>
             </div>
             <Divider />
-            <form onSubmit={handleSubmit(resetPassword)}>
+            <form onSubmit={handleSubmit(resetPassword)} className='form-container-login-reset-password-register'>
                 <label>Email</label>
                 <input {...register("email", {required: "Email is required", "pattern" :{
                   "value": /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,

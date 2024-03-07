@@ -164,8 +164,8 @@ const Language = (props) => {
 
 
   return (
-    <div className='profile_language'>
-      <h1>Language</h1>
+    <div>
+      <p className='text-[32px] font-bold'>Language</p>
       <br />
         <div className='language-list'>
         {languageList.map((languageItem, index) => {

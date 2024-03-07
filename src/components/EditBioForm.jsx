@@ -38,14 +38,17 @@ const EditBioForm = (props) => {
   }, [])
         
   return (
-    <div className='edit-company-profile-container'>
-      <div className='company-profile-form-container' >
-        <div id='edit-company-profile-title'>
+    <div id="edit-company-profile-container" className='flex justify-center bg-pop-up-bg fixed top-0 left-0 z-10 items-center w-screen h-screen'>
+      <div className='flex flex-col bg-white w-[1000px] h-[800px] max-sm:w-[95%] max-sm:h-[80%] rounded-lg shadow-box-shadow' >
+        <div className='flex flex-col pt-10 justify-center items-center'>
           <p>EDIT COMPANY PROFILE</p>
+        </div>
+        <br />
+        <div className='w-full px-12 max-sm:px-8'>
           <Divider />
         </div>
         <div id='company-profile-form-container-in'>
-          <form onSubmit={handleSubmit(props.saveEditProfile)} className='company-profile-form'>
+          <form onSubmit={handleSubmit(props.saveEditProfile)} className='company-profile-form max-sm:px-8'>
             <label for="name" >Name</label>
             <input {...register("name", {"required": "Name is required"})} 
                 id="name"

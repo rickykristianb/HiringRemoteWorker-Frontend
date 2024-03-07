@@ -80,7 +80,6 @@ const UsersList = (props) => {
 
   useEffect(() => {
     if (props.searchData?.length === 0){
-      console.log("MASK");
       setNoUserStatus(<p>No user at the moment.</p>)
     } else {
       setNoUserStatus()
@@ -99,40 +98,45 @@ const UsersList = (props) => {
     { skeletonActive ?
       <UserJobSkeleton />
     :
-      <div className={props.filterClicked ? "container-user-list-75vw" : 'container-user-list'} >
-        <div className='user-list'>
-          
-          {props.searchData ? 
+    <div>
+      <div className={props.filterClicked ? "flex justify-center items-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10" : 'flex justify-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10'} >
+         {/* FOR SEARCHING USER */}
+          {
+            props.searchData ? 
             props.searchData.length > 0  ? 
-              props.searchData.map((item, index) => {
+              props.searchData?.map((item, index) => {
               return (
-                <div className='user-card' key={index} >
-                  <div className='user-image-name'>
-                    <div className='user-image'>
-                      <img className='user-image' src={item["profile_picture"]} alt="user" loading='lazy' />
+                <div className='card-container' key={index} >
+                  <div className='grid grid-cols-3 gap-4 m-5 h-[110] '>
+                    <div className='bg-white col-start-1 rounded-full w-[100px] h-[100px] flex justify-center'>
+                      <img className='bg-white rounded-full w-full h-full flex justify-center' src={item["profile_picture"]} alt="user" loading='lazy' />
                     </div>
-                      <div className='user-name'>
-                        <h3>{item.name}</h3>
-                        <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
-                      </div>
+                    <div className='flex col-span-2 flex-col gap-4 justify-center'>
+                      <h3 className='text-lg font-bold bg-dar'>{item.name}</h3>
+                      <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
+                    </div>
                   </div>
-                  <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
-                    <div className='user-info' >
+                  <div onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
+                    <div className='bg-white flex' >
                       {isHover === index &&
-                      <div className='user-card-button'>
+                      <div className='flex justify-center items-center gap-10 z-1 w-[350px] h-[204px] absolute'
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E")`,
+                        }}
+                      >
                         <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
                         <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
                       </div> 
                       }
                       
-                      <ul>
-                        <li>
-                            <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
+                      <ul className='flex flex-col gap-2 pl-5 mt-5'>
+                        <li className='flex gap-3'>
+                            <LocationOnIcon className='content-end'  /><span> {item.userlocation && item.userlocation.location.location}</span>
                         </li>
-                        <li>
+                        <li className='flex gap-3'>
                             <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
                         </li>
-                        <li className='emp-type-user-list'>
+                        <li className='flex gap-3'>
                           <AccessTimeIcon />
                             {item.useremploymenttype.slice(0, 2).map((type, index) => {
                               return (
@@ -143,26 +147,22 @@ const UsersList = (props) => {
                               )
                             })}
                         </li>
-                        <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                        <li className='flex gap-3'><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
                       </ul>
                     </div>
-                    <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
-                      <li className='user-skills-list'>
-                        <ul>
+                    <div className='bg-white' onMouseEnter={() => onMouseHover(index)}>
+                      <li>
+                        <ul className='flex justify-center flex-wrap pt-2 mt-0 gap-3 mb-0'>
                           {item.skills.slice(0, 4).map((skill, index) => (
-                            skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
+                            skill.skills.skill_name !== "Project Management" ? <li className='p-[10px] bg-soft-basic rounded-lg mb-3' key={index}>{skill.skills.skill_name}</li> : null
                           ))}
                         </ul>
                       </li>
                     </div>                
                   </div>
                   
-                  <div className='user-rate-status'>
-                    <ul>
-                        <div className='user-list-rating'>
-                          <RateGenerator rating={Math.round(item.rate_ratio * 10)/10} />
-                        </div>
-                    </ul>
+                  <div className='pl-24 py-1'>
+                    <RateGenerator rating={Math.round(item.rate_ratio * 10)/10} />
                   </div>
                 </div>
                 )}
@@ -170,36 +170,41 @@ const UsersList = (props) => {
                 :
                   <p>{noUserStatus}</p>
             :
+            // HOMEPAGE SHOWING ALL USER
             allUserData.length > 0 ?
               allUserData.map((item, index) => {
               return (
-                <div className='user-card' key={index} >
-                  <div className='user-image-name'>
-                    <div className='user-image'>
-                      <img className='user-image' src={item["profile_picture"]} alt="user" loading='lazy' />
+                <div className='card-container' key={index} >
+                  <div className='grid grid-cols-3 gap-4 m-5 h-[110]'>
+                    <div className='bg-white col-start-1 rounded-full w-[100px] h-[100px] flex justify-center'>
+                      <img className='bg-white rounded-full w-full h-full flex justify-center' src={item["profile_picture"]} alt="user" loading='lazy' />
                     </div>
-                      <div className='user-name'>
-                        <h3>{item.name}</h3>
+                      <div className='flex col-span-2 flex-col gap-4 justify-center'>
+                        <h3 className='text-xl font-bold break-words'>{item.name}</h3>
                         <p>{item.short_intro && item.short_intro.length >= 40 ? `${item.short_intro.slice(0, 40)}...` : item.short_intro}</p>
                       </div>
                   </div>
-                  <div className="user-info-skill-container" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
-                    <div className='user-info' >
+                  <div onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => onMouseLeaveHover()}>
+                    <div className='bg-white flex' >
                       {isHover === index &&
-                      <div className='user-card-button'>
+                      <div className='flex justify-center items-center gap-10 z-1 w-[350px] h-[204px] absolute'
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E")`,
+                        }}
+                      >
                         <Button clickedButton={() => onSendMessageClicked(item.email)} buttonType="button" label="Send Message"/>
                         <Button clickedButton={() => onProfileClicked(item.id)} buttonType="button" label="Profile"/>
                       </div> 
                       }
                       
-                      <ul>
-                        <li>
-                            <LocationOnIcon className='icon-user-list'  /><span> {item.userlocation && item.userlocation.location.location}</span>
+                      <ul className='flex flex-col gap-2 pl-5 mt-5'>
+                        <li className='flex gap-3'>
+                            <LocationOnIcon className='content-end'  /><span> {item.userlocation && item.userlocation.location.location}</span>
                         </li>
-                        <li>
+                        <li className='flex gap-3'>
                             <AttachMoneyIcon />{item.expectedsalary && <span> {item.expectedsalary.nominal} / {item.expectedsalary.paid_period}</span>}
                         </li>
-                        <li className='emp-type-user-list'>
+                        <li className='flex gap-3'>
                         <AccessTimeIcon /> 
                             {item.useremploymenttype.slice(0, 2).map((type, index) => {
                               return (
@@ -210,26 +215,22 @@ const UsersList = (props) => {
                               )
                             })}
                         </li>
-                        <li><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
+                        <li className='flex gap-3'><PsychologyIcon /><span> {countExp(item.experiences["total_exp"])}</span></li>
                       </ul>
                     </div>
-                    <div className='user-skills' onMouseEnter={() => onMouseHover(index)}>
-                      <li className='user-skills-list'>
-                        <ul>
+                    <div className='bg-white' onMouseEnter={() => onMouseHover(index)}>
+                      <li>
+                        <ul className='flex justify-center flex-wrap pt-2 mt-0 gap-3 mb-0'>
                           {item.skills.slice(0, 4).map((skill, index) => (
-                            skill.skills.skill_name !== "Project Management" ? <li key={index}>{skill.skills.skill_name}</li> : null
+                            skill.skills.skill_name !== "Project Management" ? <li className='p-[10px] bg-soft-basic rounded-lg mb-3' key={index}>{skill.skills.skill_name}</li> : null
                           ))}
                         </ul>
                       </li>
                     </div>                
                   </div>
                   
-                  <div className='user-rate-status'>
-                    <ul>
-                        <div className='user-list-rating'>
-                          <RateGenerator rating={Math.round(item.rate_ratio * 10)/10} />
-                        </div>
-                    </ul>
+                  <div className='pl-24 py-1'>
+                      <RateGenerator rating={Math.round(item.rate_ratio * 10)/10} />
                   </div>
                 </div>
                 )
@@ -238,8 +239,7 @@ const UsersList = (props) => {
               <p>{noUserStatus}</p>
           }
         </div>
-
-        <div className='container-pagination'>
+        <div className='my-12 flex justify-center'>
             <Pagination 
               type={props.searchData ? "userSearchList" : "userList"} 
               totalData={props.searchData ? props.totalUser : totalUser.current} 

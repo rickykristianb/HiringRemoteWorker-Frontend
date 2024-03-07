@@ -276,7 +276,6 @@ export const AuthProvider = ({children}) => {
           // Set loading to false regardless of the outcome
           setLoading(false);
       }
-      console.log(JSON.parse(localStorage.getItem("authToken"))["access"]);
   };
   
     useEffect( () => {

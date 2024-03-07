@@ -123,7 +123,6 @@ const CompanyProfile = () => {
           profilePicture: tempSaveData.profilePicture  // Use the correct method name
         })
         setLocationUserData(tempSaveData.location)
-        console.log(tempSaveData["bio"]);
         setBioUserData({bio: tempSaveData["bio"]})
         setLocationFieldError()
       }
@@ -235,30 +234,30 @@ const CompanyProfile = () => {
       {getProfileLoading ?
         <CompanyProfileSkeleton />
       :
-        <div className="company-profile-container">
+        <div className="flex flex-col gap-16 my-14 max-sm:mt-44 max-sm:mx-8 justify-center items-center">
+          <div className='xl:w-[1000px] max-xl:px-12 max-sm:px-0 w-full max-sm:w-full flex flex-col gap-16'>
             <CompanyProfileHeader 
-              userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-              clickedUserId={clickedUserId} 
-              clickEdit={openEditForm} 
-            />
-            <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
-            <JobPosted clickedUserId={clickedUserId} />
-            <div id='add-rating-company'>
-              <UserRatings userId={clickedUserId} ratingData={ratingData} />
-            </div>
-
-            {isEdit && 
-              <EditBioForm 
                 userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
-                locationFieldError={locationFieldError}
-                onChangeHeaderFormInput={onChangeHeaderFormInput}
-                onChangeBioForm={onChangeBioFormInput}
-                onChangeLocationForm={onChangeLocationForm}
-                saveEditProfile={onSaveEditProfile} 
-                onClickCancel={onClickCancelEdit}
-              />}
-            <AlertNotification alertData={alertResponse} />
-            { isBackDropActive && <Backdrop /> }
+                clickedUserId={clickedUserId} 
+                clickEdit={openEditForm} 
+              />
+              <CompanyBio userData={bioUserData} clickedUserId={clickedUserId} />
+              <JobPosted clickedUserId={clickedUserId} />
+              <UserRatings userId={clickedUserId} ratingData={ratingData} />
+
+              {isEdit && 
+                <EditBioForm 
+                  userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 
+                  locationFieldError={locationFieldError}
+                  onChangeHeaderFormInput={onChangeHeaderFormInput}
+                  onChangeBioForm={onChangeBioFormInput}
+                  onChangeLocationForm={onChangeLocationForm}
+                  saveEditProfile={onSaveEditProfile} 
+                  onClickCancel={onClickCancelEdit}
+                />}
+              <AlertNotification alertData={alertResponse} />
+              { isBackDropActive && <Backdrop /> }
+          </div>
         </div>
       }
     </>

@@ -34,11 +34,12 @@ const Messages = () => {
   }
 
   return (
-    <div className='messages-container'>
-        <div className='message-menu'>
+    <>
+      <div className='grid grid-cols-4 mt-20 mx-20 md:mx-10 h-[900px] max-md:hidden'>
+        <div className='col-start-1 col-end-1'>
             <MessageMenu menuClicked={onMenuClicked} />
         </div>
-        <div className='message-action'>
+        <div className='col-start-2 col-end-5'>
         {(() => {
           switch(menuClicked){
             case "send-message":
@@ -54,7 +55,31 @@ const Messages = () => {
           }
         })()}
         </div>
-    </div>
+      </div>
+
+      {/* MESSAGES FOR MOBILE LAYOUT */}
+      <div className='max-md:block md:hidden'>
+        <div>
+            <MessageMenu menuClicked={onMenuClicked} />
+        </div>
+        <div>
+          {(() => {
+            switch(menuClicked){
+              case "send-message":
+                return <SendMessage />;
+              case "inbox":
+                return <Inbox />;
+              case "sent":
+                return <SentMessages />;
+              case "deleted":
+                return <DeletedMessages />;
+              default:
+                return email ? <SendMessage recipient={email} /> :<Inbox />
+            }
+          })()}
+        </div>
+      </div>
+    </>
   )
 }
 

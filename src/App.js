@@ -9,10 +9,13 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import PrivateRoutesCompany from "utils/PrivateRoutesCompany";
 import PrivateRoutesPersonal from "utils/PrivateRoutesPersonal";
 import PrivateRoutesLogin from 'utils/PrivateRoutesLogin';
+import PrivateRoutesMobile from 'utils/PrivateRoutesMobile';
 import { AuthProvider } from "./Context/AuthContext";
 import { ProfileProvider } from "./Context/ProfileContext";
 import { EmailProvider } from "./Context/EmailContext";
 import { NotificationProvider } from "Context/NotificationContext";
+import { SearchBarProvider } from 'Context/SearchBarContext';
+import { AdvanceFilterProvider } from 'Context/AdvanceFilterContext';
 import LoginPage from "./pages/LoginPage";
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
@@ -45,77 +48,83 @@ function App() {
         <ProfileProvider>
           <EmailProvider>
             <NotificationProvider>
-              <Headers />
-                <Routes >
-                  <Route element={<PrivateRoutes />} >
-                    <Route path="/messages/" element={<Messages />} />
-                    <Route path="/reply/message/" element={<ReplyMessage />} />
-                    <Route path="/add-job/" element={<AddNewJob />} />
-                    <Route path="/job-detail-panel/:jobId/" element={
-                      <Suspense fallback={<LazyLoad />} >
-                        <LazyJobDetailPanel />
-                      </Suspense>}
-                    />
-                  </Route>
+              <SearchBarProvider>
+                <AdvanceFilterProvider>
+                  <Headers />
+                    <Routes >
+                      <Route element={<PrivateRoutes />} >
+                        <Route path="/messages/" element={<Messages />} />
+                        <Route path="/reply/message/" element={<ReplyMessage />} />
+                        <Route path="/add-job/" element={<AddNewJob />} />
+                        <Route path="/job-detail-panel/:jobId/" element={
+                          <Suspense fallback={<LazyLoad />} >
+                            <LazyJobDetailPanel />
+                          </Suspense>}
+                        />
+                      </Route>
 
-                  {/* PRIVATE ROUTE COMPANY */}
-                  <Route element={<PrivateRoutesCompany />} >
-                    <Route path="/company-panel/" element={
-                      <Suspense fallback={<LazyLoad />} >
-                        <LazyCompanyPanel />
-                      </Suspense> } exact
-                    />
-                    <Route path="/users/" element={
-                      <Suspense fallback={<LazyLoad />} >
-                        <LazyCompanyView />
-                      </Suspense>} exact
-                    />
-                  </Route>
+                      {/* PRIVATE ROUTE COMPANY */}
+                      <Route element={<PrivateRoutesCompany />} >
+                          <Route element={<PrivateRoutesMobile />} >
+                            <Route path="/company-panel/" element={
+                              <Suspense fallback={<LazyLoad />} >
+                                <LazyCompanyPanel />
+                              </Suspense> } exact
+                            />
+                          </Route>
+                          <Route path="/users/" element={
+                            <Suspense fallback={<LazyLoad />} >
+                              <LazyCompanyView />
+                            </Suspense>} exact
+                          />
+                      </Route>
 
-                  {/* PRIVATE ROUTE PERSONAL */}
-                  <Route element={<PrivateRoutesPersonal />} >
-                    <Route path="/" element={
-                    <Suspense fallback={<LazyLoad />}>
-                        <LazyPersonalView />
-                      </Suspense>} exact
-                  />
-                    <Route path="/interested-jobs/" element={
-                      <Suspense fallback={<LazyLoad />}>
-                        <LazyPersonalInterestedJobs />
-                      </Suspense>} exact
-                    />
-                  </Route>
+                      {/* PRIVATE ROUTE PERSONAL */}
+                      <Route element={<PrivateRoutesPersonal />} >
+                        <Route path="/" element={
+                        <Suspense fallback={<LazyLoad />}>
+                            <LazyPersonalView />
+                          </Suspense>} exact
+                      />
+                        <Route path="/interested-jobs/" element={
+                          <Suspense fallback={<LazyLoad />}>
+                            <LazyPersonalInterestedJobs />
+                          </Suspense>} exact
+                        />
+                      </Route>
 
-                    <Route path="/profile/company/" element={
-                      <Suspense fallback={<LazyLoad />} >
-                        <LazyCompanyProfile />
-                      </Suspense>}
-                    />
-                  
-                  <Route path="/profile/" element={
-                    <Suspense fallback={<LazyLoad />}>
-                      <LazyUserProfile />
-                    </Suspense> }
-                  />
-                  
-                  <Route path="/jobs/:jobId/" element={
-                    <Suspense fallback={<LazyLoad />}>
-                      <LazyJobDetail />
-                    </Suspense>} exact
-                  />
+                        <Route path="/profile/company/" element={
+                          <Suspense fallback={<LazyLoad />} >
+                            <LazyCompanyProfile />
+                          </Suspense>}
+                        />
+                      
+                      <Route path="/profile/" element={
+                        <Suspense fallback={<LazyLoad />}>
+                          <LazyUserProfile />
+                        </Suspense> }
+                      />
+                      
+                      <Route path="/jobs/:jobId/" element={
+                        <Suspense fallback={<LazyLoad />}>
+                          <LazyJobDetail />
+                        </Suspense>} exact
+                      />
 
-                  <Route element={<PrivateRoutesLogin />} >
-                    <Route path="/login/" element={<LoginPage />} />
-                  </Route>
-                  <Route path="/reset-password/" element={<ResetPassword />}/>
-                  <Route path="/password/reset/confirm/:uid/:token" element={<NewPassword />}/>
-                  <Route path="/register/" element={<SignUp />} />
-                  <Route path="accounts/activate/:uid/:token" element={<UserActivationConfirmation />} />
-                  <Route path='*' exact element={<NotFound label={"Page Not Found"} />} />
-                  <Route path='/user-not-found/' exact element={<NotFound label={"User Not Found"} />} />
-                  <Route path='/job-not-found/' exact element={<NotFound label={"Job Not Found"} />} />
-                </Routes>
-              <Footer />
+                      <Route element={<PrivateRoutesLogin />} >
+                        <Route path="/login/" element={<LoginPage />} />
+                      </Route>
+                      <Route path="/reset-password/" element={<ResetPassword />}/>
+                      <Route path="/password/reset/confirm/:uid/:token" element={<NewPassword />}/>
+                      <Route path="/register/" element={<SignUp />} />
+                      <Route path="accounts/activate/:uid/:token" element={<UserActivationConfirmation />} />
+                      <Route path='*' exact element={<NotFound label={"Page Not Found"} />} />
+                      <Route path='/user-not-found/' exact element={<NotFound label={"User Not Found"} />} />
+                      <Route path='/job-not-found/' exact element={<NotFound label={"Job Not Found"} />} />
+                    </Routes>
+                  <Footer />
+                </AdvanceFilterProvider>
+              </SearchBarProvider>
             </NotificationProvider>
           </EmailProvider>
         </ProfileProvider>
