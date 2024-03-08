@@ -65,51 +65,49 @@ const Footer = () => {
 
   return (
     <div className='container-footer'>
-        <div className='container-contact-message'>
-            <div className='flex p-5 justify-center'>
-                <div>
-                    <p className='text-2xl font-bold'>Interested with this project?</p>
-                    <br />
-                    <ul>
-                        <li>
-                            <a href="tel:6282168897862" target='blank'>
-                                <div className='flex gap-4'>
-                                    <PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    +6282168897862
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'>
-                                <div className='flex gap-4'>
-                                    <WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    +6282168897862
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="mailto:contact@rickykristianbutarbutar.com" target='blank'>
-                                <div className='flex gap-4'>
-                                    <MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
-                                    contact@rickykristianbutarbutar.com
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <ul className='social-media'>
-                                <li><a href="https://github.com/rickykristianb" target='blank'><GitHubIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
-                                <li><a href="https://www.linkedin.com/in/rickykbb/" target='blank'><LinkedInIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
-                                <li><a href="https://www.instagram.com/rickykrisb/" target="blank"><InstagramIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
-                            </ul>
-                        </li>
-                    </ul> 
-                </div>      
+        <div className='flex justify-evenly w-full max-sm:flex-wrap'>
+            <div className='flex flex-col p-5 pl-0'>
+                <p className='text-2xl font-bold'>Interested with this project?</p>
+                <br />
+                <ul className='flex flex-col gap-4'>
+                    <li>
+                        <a href="tel:6282168897862" target='blank'>
+                            <div className='flex gap-4'>
+                                <PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                +6282168897862
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'>
+                            <div className='flex gap-4'>
+                                <WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                +6282168897862
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mailto:contact@rickykristianbutarbutar.com" target='blank'>
+                            <div className='flex gap-4'>
+                                <MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
+                                contact@rickykristianbutarbutar.com
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <ul className='social-media'>
+                            <li><a href="https://github.com/rickykristianb" target='blank'><GitHubIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
+                            <li><a href="https://www.linkedin.com/in/rickykbb/" target='blank'><LinkedInIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
+                            <li><a href="https://www.instagram.com/rickykrisb/" target="blank"><InstagramIcon sx={{ fontSize: 30, color: "#4e6e81" }} /></a></li>
+                        </ul>
+                    </li>
+                </ul>     
             </div>
             <div className='flex items-center justify-center'>
                 <div className='max-lg:w-screen px-6 max-sm:mt-10 items-center'>
                     <form onSubmit={handleSubmit(onSubmit)} >
                         <label>Name </label><br />
-                        <input {...register("name", {required: "Name is required"})} className="w-[450px] h-6 max-sm:w-full mb-2" ></input><br />
+                        <input {...register("name", {required: "Name is required"})} className="w-[450px] h-6 max-sm:w-full mb-2 outline-none" ></input><br />
                         {errors.name && <span className='error-field' >{errors.name.message}</span>}
                         <br className={!errors.name?.message && "hidden"} />
                         <label>Email</label><br />
@@ -118,11 +116,11 @@ const Footer = () => {
                             pattern: {
                                 value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                                 message: "Please Insert Correct Email"
-                            }})} className="w-[450px] h-6  max-sm:w-full mb-2" ></input><br />
-                        {errors.email && <span className='error-field'>{errors.email.message}</span>}
+                            }})} className="w-[450px] h-6  max-sm:w-full mb-2 outline-none" ></input><br />
+                        {errors.email && <span className='error-field'>{errors.email.message}<br /></span>}
                         <br className={!errors.name?.message && "hidden"} />
                         <label>Message</label><br />
-                        <textarea {...register("messageBody", {required: "Message is required"})} rows="10" className="w-[450px] max-sm:w-full" ></textarea><br />
+                        <textarea {...register("messageBody", {required: "Message is required"})} rows="10" className="w-[450px] max-sm:w-full outline-none" ></textarea><br />
                         {errors.messageBody && <span className='error-field'>{errors.messageBody.message}</span>}
                         <Button buttonType="input" label={ isSubmitting ? "Sending..." : "Send Message"} disabled={isSubmitting ? true : false} />
                         { alert && <AlertNotification alertData={alert} />}

@@ -526,17 +526,6 @@ li {
     flex-wrap: wrap;
 }
 
-.container-contact-message {
-    display: flex;
-    flex-wrap: wrap;
-    /* background-color: cyan; */
-    width: 90vw;
-    margin-top: 20px;
-    padding-left: 5px;
-    padding-right: 10px;
-    justify-content: center;
-    gap: 20%;
-}
 
 .container-contact-info {
     display: flex;
