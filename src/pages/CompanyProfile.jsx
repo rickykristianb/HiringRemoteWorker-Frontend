@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import CompanyProfileHeader from 'components/Profile/CompanyProfile/CompanyProfileHeader'
 import EditBioForm from 'components/EditBioForm';
 import CompanyBio from 'components/Profile/CompanyProfile/CompanyBio';
-import AlertDialog from 'components/AlertDialog';
 import AlertNotification from 'components/AlertNotification';
 import AuthContext from 'Context/AuthContext';
 import Backdrop from 'components/Backdrop';
@@ -19,7 +18,6 @@ const CompanyProfile = () => {
     const [headerUserData, setHeaderUserData] = useState([])
     const [bioUserData, setBioUserData] = useState([])
     const [locationUserData, setLocationUserData] = useState([])
-    const [locationChangeUserData, setLocationChangeUserData] = useState([])
     const [locationFieldError, setLocationFieldError] = useState()
     const [tempSaveData, setTempSaveData] = useState([])
     const [isEdit, setIsEdit] = useState(false)
@@ -156,10 +154,6 @@ const CompanyProfile = () => {
         id: option["id"],
         location: option["value"]
       })
-
-      setLocationChangeUserData({
-        location: option["id"]
-      })
     }
 
     const onSaveEditProfile = async (e) => {
@@ -234,7 +228,7 @@ const CompanyProfile = () => {
       {getProfileLoading ?
         <CompanyProfileSkeleton />
       :
-        <div className="flex flex-col gap-16 my-14 max-sm:mt-44 max-sm:mx-8 justify-center items-center">
+        <div className="flex flex-col gap-16 my-14 max-sm:mt-44 max-sm:mx-4 justify-center items-center">
           <div className='xl:w-[1000px] max-xl:px-12 max-sm:px-0 w-full max-sm:w-full flex flex-col gap-16'>
             <CompanyProfileHeader 
                 userData={{headerData: headerUserData, bioData: bioUserData, locationData: locationUserData}} 

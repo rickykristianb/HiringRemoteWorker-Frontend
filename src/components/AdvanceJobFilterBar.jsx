@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React, { useRef } from 'react'
 import { useState, useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
@@ -216,7 +216,7 @@ const AdvanceJobFilterBar = (props) => {
 
   return (
     <>
-        <div className='flex flex-col justify-start z-3 py-3 px-10 w-[450px] border-dark-basic shadow-box-shadow mb-4 max-xl:fixed max-xl:bottom-11 max-xl:w-screen max-xl:bg-white border-t-0.5 border-soft-basic'>
+        <div className='flex flex-col justify-start z-3 py-3 px-10 w-[450px] md:h-full border-dark-basic shadow-box-shadow mb-4 max-xl:fixed max-xl:bottom-11 max-xl:w-screen max-xl:bg-white border-t-0.5 border-soft-basic'>
             <CloseIcon onClick={ props.barClicked } className='justify-end xl:relative left-[100%] top-[0.4%] max-xl:self-end' />
             <ul className="flex flex-col mt-10 gap-4">             
                 <li>

@@ -97,7 +97,7 @@ const InterestedUsers = (props) => {
     { field: 'name', headerName: 'Name', width: 220 },
     { field: 'rateRatio', headerName: 'Rate', width: 150,
       renderCell: (params) => ( 
-      <div id="interested-user-table-rate">
+      <div className='pl-20'>
         <RateGenerator rating={params.value} />
       </div>
       )

@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import JobsList from 'components/JobsList'
 import Backdrop from 'components/Backdrop';
-import FilterBar from 'components/FilterBar';
 import AdvanceJobFilterBar from 'components/AdvanceJobFilterBar';
-import TextField from '@mui/material/TextField';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
@@ -108,7 +106,7 @@ const PersonalView = () => {
 
     return (
         <div className='container-search'>
-            { filterJobClicked && (
+            <div className={`${filterJobClicked ? "blocked" : "hidden"}`}>
                 <AdvanceJobFilterBar barClicked={ onAdvanceFilterJobClick } 
                     getAdvancedFilterData={advanceFilter} 
                     filteredData={filteredData}
@@ -117,7 +115,7 @@ const PersonalView = () => {
                     resetPage={resetPage} // RESET PAGINATION NUMBER TO 1
                     includeRate={false}
                 />
-            )}
+            </div>
             <div className='flex w-screen mt-6 max-sm:mt-2 items-center flex-col max-lg:mt-0'>
                 <div className='search-input'>
                     <ul>

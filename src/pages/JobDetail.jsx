@@ -16,7 +16,6 @@ import JobDetailSkeleton from 'components/Skeleton/JobDetailSkeleton';
 const JobDetail = (props) => {
   const navigate = useNavigate()
   const { user, authToken} = useContext(AuthContext)
-  const [clickedUserId, setClickedUserId] = useState()
   const location = useLocation();
 
   let userToken = null
@@ -29,7 +28,6 @@ const JobDetail = (props) => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
-    setClickedUserId(id)
   }, [location.search])
 
   const { jobId } = useParams();
@@ -60,7 +58,6 @@ const JobDetail = (props) => {
       navigate("/job-not-found/")
     } else {
       if(response.ok){
-        console.log(data);
         setJobData(data)
       }
     }
@@ -121,7 +118,6 @@ const JobDetail = (props) => {
   }
 
   const onProcessInterestedClick = async (jobId) => {
-    console.log("ID: ", jobId);
     try{
         setIsSendingInterest(true)
         const response = await fetch(`/api/job/interest_job/${jobId}/`, {
@@ -211,11 +207,13 @@ const JobDetail = (props) => {
                   </Link>
                   <div className='flex items-center gap-2 my-6'>
                     <LocationOnIcon />
-                    {jobData.joblocation?.map((item, i) => {
-                      return (
-                        <p key={i}>{item.location.location} </p>
-                      )
-                    })}
+                    <ul className='flex flex-wrap gap-2'>
+                      {jobData.joblocation?.map((item, i) => {
+                        return (
+                          <li key={i}>{item.location.location} </li>
+                        )
+                      })}
+                    </ul>
                   </div>
                   <div className='flex items-center gap-2 my-6'>
                     <AccessTimeIcon />
@@ -328,13 +326,15 @@ const JobDetail = (props) => {
                   <Link to={`/profile/company/?id=${jobData.user_posted?.id}`}>
                     <p className='hover:underline my-6'>{jobData.user_posted?.name}</p>
                   </Link>
-                  <div className='flex items-center gap-2 my-6'>
+                  <div className='flex items-start gap-2 my-6'>
                     <LocationOnIcon />
-                    {jobData.joblocation?.map((item, i) => {
-                      return (
-                        <p key={i}>{item.location.location} </p>
-                      )
-                    })}
+                    <ul className='flex flex-wrap gap-2'>
+                      {jobData.joblocation?.map((item, i) => {
+                        return (
+                          <li key={i}>{item.location.location} </li>
+                        )
+                      })}
+                    </ul>
                   </div>
                   <div className='flex items-center gap-2 my-6'>
                     <AccessTimeIcon />

@@ -98,8 +98,8 @@ export const SearchBarProvider = ({children}) => {
             console.error("Encounter an error: ", error);
         } finally {
             setBackdropSearchUserActive(false)
-        }   
-        console.log(totalSearchBarJob);
+            window.scrollTo(0,0);
+        }
     }
 
     useEffect(() => {
@@ -108,7 +108,6 @@ export const SearchBarProvider = ({children}) => {
 
     // GET RESULT FROM THE SEARCH BAR FILTER
     const onClickedSearchJobItem = async({item, page}) => {
-        console.log("ITEM NYA:", item);
         setSearchJobBarValue(item)
         loading.current = true
         const response = await fetch(`/api/job/get_search_job_result/?search=${item}&page=${page}`, {
@@ -125,6 +124,7 @@ export const SearchBarProvider = ({children}) => {
             totalSearchBarJob.current = data["total_user"]
         }
         loading.current = false
+        window.scrollTo(0,0);
     }
 
 
@@ -179,6 +179,7 @@ export const SearchBarProvider = ({children}) => {
             console.error("An unexpected error occurred: ", error);
         } finally {
             setBackdropSearchJobActive(false)
+            window.scrollTo(0,0);
         }
     }
 
@@ -201,6 +202,7 @@ export const SearchBarProvider = ({children}) => {
         }
         totalSearchBarUser.current = data["total_user"]
         setBackdropSearchUserActive(false)
+        window.scrollTo(0,0);
     }
 
 

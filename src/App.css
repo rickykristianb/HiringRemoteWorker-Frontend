@@ -2598,17 +2598,6 @@ input[type="radio"]:checked + .button-label {
     margin-bottom: 0;
   }
 
-  #job-name-date-wrapper{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 20px;
-  }
-
-  #job-name-date-wrapper > h2 {
-    margin: 0px;
-  }
-
   #comment-wrapper {
     display: flex;
     gap: 20px;
@@ -2637,19 +2626,6 @@ input[type="radio"]:checked + .button-label {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  #add-rating-wrapper {
-    display: flex;
-    flex-direction: column;
-    padding: 2%;
-    z-index: 100;
-    position: absolute;
-    width: 50vw;
-    background-color: #ffff;
-    border: 1px solid #4e6e81;
-    border-radius: 5px;
-    box-shadow: 1px -2px 39px -1px rgba(78,110,110,0.75);
   }
 
   #rating-title-close-icon > p {

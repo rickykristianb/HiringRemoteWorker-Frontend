@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import RateGenerator from './RateGenerator'
-import { Divider } from '@mui/material'
-import { Link, useLocation } from 'react-router-dom'
 import AuthContext from 'Context/AuthContext'
 
 const UserRatings = (props) => {
@@ -39,11 +37,11 @@ const UserRatings = (props) => {
             props.ratingData.map((item) => {
                 return (
                     <div key={item.id} id='rating-detail-container' className='flex flex-col gap-5 p-10'>
-                        <p className='pl-20'><RateGenerator rating={item.rate_value} /></p>
-                        <div id='job-name-date-wrapper'>
-                            <p className='text-2xl font-bold'>{item.job_name}</p>
+                        <div className='flex justify-between'>
+                            <p className='pl-20'><RateGenerator rating={item.rate_value} /></p>
                             <p>{item.created_at.split("T")[0]}</p>
                         </div>
+                        <p className='text-2xl font-bold'>{item.job_name}</p>
                         <p onClick={() => clickUserName(item.from_user.id)}><b>{item.from_user.name}</b></p>
                         <div id='comment-wrapper'>
                             <p>Comment:</p>

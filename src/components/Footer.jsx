@@ -65,8 +65,8 @@ const Footer = () => {
 
   return (
     <div className='container-footer'>
-        <div className='flex justify-evenly w-full max-sm:flex-wrap'>
-            <div className='flex flex-col p-5 pl-0'>
+        <div className='flex justify-evenly w-full max-sm:flex-wrap py-10'>
+            <div className='flex flex-col p-5 pt-0 pl-0'>
                 <p className='text-2xl font-bold'>Interested with this project?</p>
                 <br />
                 <ul className='flex flex-col gap-4'>

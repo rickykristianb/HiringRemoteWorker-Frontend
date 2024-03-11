@@ -1,13 +1,19 @@
 // DIRECT USER TO USER VIEW (candidate list) HOMEPAGE
-import React from 'react'
+import AuthContext from 'Context/AuthContext'
+import React, { useContext } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
 const PrivateRoutesCompany = () => {
 
+    const { user } = useContext(AuthContext);
+
     const userType = localStorage.getItem("userType")
     
     return (
-        userType === "company" ? <Outlet /> : <Navigate to={"/users/"} />
+        user 
+        ?
+        userType === "company" ? <Outlet /> : <Navigate to={"/"} />
+        : <Navigate to={"/login/"} />
     )
 }
 

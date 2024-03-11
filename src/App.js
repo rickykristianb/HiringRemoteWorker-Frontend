@@ -5,6 +5,7 @@ import {
   Route
 } from "react-router-dom";
 import "./App.css"
+import ScrollToTop from 'utils/ScrollToTop';
 import PrivateRoutes from "./utils/PrivateRoutes";
 import PrivateRoutesCompany from "utils/PrivateRoutesCompany";
 import PrivateRoutesPersonal from "utils/PrivateRoutesPersonal";
@@ -43,7 +44,8 @@ function App() {
   return (
 
     <div className="App">
-      <Router>
+      <Router scrollRestoration={true}>
+        <ScrollToTop />
         <AuthProvider>
         <ProfileProvider>
           <EmailProvider>
@@ -82,10 +84,10 @@ function App() {
                       {/* PRIVATE ROUTE PERSONAL */}
                       <Route element={<PrivateRoutesPersonal />} >
                         <Route path="/" element={
-                        <Suspense fallback={<LazyLoad />}>
+                          <Suspense fallback={<LazyLoad />}>
                             <LazyPersonalView />
                           </Suspense>} exact
-                      />
+                        />
                         <Route path="/interested-jobs/" element={
                           <Suspense fallback={<LazyLoad />}>
                             <LazyPersonalInterestedJobs />

@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import EmailContext from '../Context/EmailContext'
-import AuthContext from '../Context/AuthContext'
 
 const Pagination = (props) => {
 
@@ -19,7 +18,7 @@ const Pagination = (props) => {
     const [totalPages, setTotalPages] = useState(0)
     const [pageResetNumberOne, setPageResetNumberOne] = useState(false)
     const page = useRef(1)  // default page 1
-    const maxNumber = 2;
+    const maxNumber = 5;
     const countTotalPages = useRef(0)
 
 
@@ -46,6 +45,7 @@ const Pagination = (props) => {
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
         setIsDisabled(item)
+        window.scrollTo(0,0);
     }
 
     const getTotalPages = () => {
@@ -54,7 +54,7 @@ const Pagination = (props) => {
         if (props.type === "userList" || props.type === "userSearchList") {
             totalDataPerPage = 12     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
         } 
-        if (props.type === "allJobList" || props.type == "jobSearchList"){
+        if (props.type === "allJobList" || props.type === "jobSearchList"){
             totalDataPerPage = 12
         }
         if (props.type === "jobPosted"){
@@ -109,6 +109,7 @@ const Pagination = (props) => {
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
+                    window.scrollTo(0,0);
                 }
                 break;
 
@@ -134,6 +135,7 @@ const Pagination = (props) => {
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)
+                    window.scrollTo(0,0);
                 }
                 break;
         }        
@@ -144,29 +146,29 @@ const Pagination = (props) => {
             <>  
                 {totalPages !== 0 
                 &&
-                <div className='flex justify-between sm:gap-[250px] max-sm:px-4 max-sm:w-screen'>
-                <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='cursor-pointer'>&lt;&lt; Prev</a>
-                <ul className='flex gap-2 justify-center max-sm:gap-4'>
-                    {paginateNumber.map((item, index) => (
-                        <li key={index} className={
-                            pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
-                                item === 1 ?
-                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl"
-                                        :
-                                        "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0"
-                                :
-                            isCLicked === false ? 
-                                (item === 1 ? 
-                                    "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl" 
-                                    : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0") 
-                                : isCLicked === item ? 
-                                    "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-0 max-sm:text-dark-basic max-sm:text-2xl" 
-                                    : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-0"
-                                } 
-                            onClick={item === "..."? null : () => onClickPageNumber(item)} >{item}</li>
-                    ))}
-                </ul>
-                <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='cursor-pointer'>Next &gt;&gt;</a>
+                <div className='flex justify-between items-center sm:gap-[250px] max-sm:w-screen'>
+                    <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='cursor-pointer'>&lt;&lt; Prev</a>
+                    <ul className='flex gap-2 justify-center max-sm:gap-4'>
+                        {paginateNumber.map((item, index) => (
+                            <li key={index} className={
+                                pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
+                                    item === 1 ?
+                                            "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold"
+                                            :
+                                            "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]"
+                                    :
+                                isCLicked === false ? 
+                                    (item === 1 ? 
+                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold" 
+                                        : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]")
+                                    : isCLicked === item ? 
+                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold" 
+                                        : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]"
+                                    } 
+                                onClick={item === "..."? null : () => onClickPageNumber(item)} >{item}</li>
+                        ))}
+                    </ul>
+                    <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='cursor-pointer'>Next &gt;&gt;</a>
                 </div>              
                 }
             </>

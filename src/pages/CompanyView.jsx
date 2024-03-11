@@ -1,15 +1,11 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import TuneIcon from '@mui/icons-material/Tune';
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
-import FilterBar from 'components/FilterBar';
 import AdvanceUserFilterBar from 'components/AdvanceUserFilterBar';
 import UsersList from 'components/UsersList';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import Backdrop from 'components/Backdrop';
-import SearchBox from 'components/SearchBoxPersonal';
 import SearchJobContext from 'Context/SearchBarContext';
 import AdvanceFilterContext from 'Context/AdvanceFilterContext';
 import SearchBoxCompany from 'components/SearchBoxCompany';
@@ -24,17 +20,12 @@ const CompanyView = () => {
     const showData = useRef()
 
     let {
-        searchResultUserSearchBarValue,
-        setSearchResultUserSearchBarValue,
-        setIsPaginationReset,
         isPaginationReset,
         resetPage,
         totalSearchBarUser,
         onLoadSearchUser,
         backdropSearchJobActive,
         setBackdropSearchJobActive,
-        showSearchJobBarData,
-        onClickedSearchUserItem,
         searchUserResultData
     } = useContext(SearchJobContext)
 
@@ -105,7 +96,7 @@ const CompanyView = () => {
 
   return (
         <div className='container-search'>
-             { filterUserClicked && (
+            <div className={`${filterUserClicked ? "block" : "hidden" }`}>
                 <AdvanceUserFilterBar barClicked={ onAdvanceFilterUserClick } 
                     getAdvancedFilterData={advanceFilter} 
                     filteredData={filteredData}
@@ -114,7 +105,8 @@ const CompanyView = () => {
                     resetPage={resetPage} // RESET PAGINATION NUMBER TO 1
                     includeRate={true}
                 />
-            )}
+            </div> 
+                
             <div className='flex w-screen mt-6 max-sm:mt-2 items-center flex-col max-lg:mt-0'>
                 <div className='search-input'>
                     <ul>

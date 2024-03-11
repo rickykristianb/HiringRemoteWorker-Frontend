@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useForm } from 'react-hook-form';
 import Button from './Button';
 import AuthContext from 'Context/AuthContext';
-import AlertNotification from './AlertNotification';
 import { Divider } from '@mui/material';
 
 const AddRating = (props) => {
@@ -22,8 +21,8 @@ const AddRating = (props) => {
     const [alertRating, setAlertRating] = useState()
     const [alertResponse, setAlertResponse] = useState()
 
-    const { register, handleSubmit, setError, reset, formState, formState: {
-        isDirty, dirtyFields, errors, isValid, isSubmitSuccessful, isSubmitting
+    const { register, handleSubmit, formState: {
+        errors, isSubmitting
     }} = useForm({
         mode: "onChange",
         defaultValues:{
@@ -86,8 +85,9 @@ const AddRating = (props) => {
     }
 
   return (
-    <div id="add-rating-wrapper">
+    <div className='flex flex-col p-10 z-10 w-[50vw] max-xl:w-[80%] max-sm:w-[95%] bg-white rounded-lg shadow-box-shadow'>
         <CloseIcon onClick={props.close} id="close-icon-add-rating" />
+        <br className='md:hidden max-sm:block' />
         <div id='rating-title-close-icon'>
             <p><span>This job has finished. Please add the rating.</span></p>
         </div>
@@ -124,9 +124,10 @@ const AddRating = (props) => {
             {alertRating && <span className='error-field' >{alertRating}</span>}
         </div>
         <p><b>{jobData.job_title}</b></p>
+        <br />
         <form onSubmit={handleSubmit(onSubmitCompanyRating)}>
             <textarea {...register("comment", {required: "Comment is required"})} 
-                className='rating-comment-input'
+                className='rating-comment-input border outline-none'
                 rows={5}
                 disabled={isSubmitting ? true : false}
             ></textarea>
