@@ -353,59 +353,6 @@ const AdvanceJobFilterBar = (props) => {
         </div>
     </>
     
-                </li>
-                <li>
-                <p>Job Type</p>
-                <Autocomplete
-                    multiple
-                    limitTags={1}
-                    options={typeList}
-                    onChange={handleTypeChange}
-                    disableCloseOnSelect
-                    renderOption={(props, option, { selected }) => (
-                        <p onClick={() => setType(option)} style={{margin: '0'}}>
-                            <li {...props} >
-                            <Checkbox
-                                icon={icon}
-                                checkedIcon={checkedIcon}
-                                style={{ marginRight: 8 }}
-                                checked={selected}
-                            />
-                            {option}
-                            </li>
-                        </p>
-                    )}
-                    style={{ alignItems: 'center' }}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Select type" placeholder="Types" 
-                        />
-                    )}
-                />
-                </li>
-            </ul>
-            <a className='self-end '
-                onClick={() => onShowButtonClicked()}
-                onMouseEnter={onMouseEnterShowButton}
-                onMouseLeave={onMouseLeaveShowButton}
-            >
-            <br />
-            <Button
-                buttonType="button"
-                label={
-                    loadingFilter
-                    ? 
-                    <span className='flex flex-row gap-1'>
-                        Show {mouseEnterShowButton ? <RefreshHover /> : <Refresh />}
-                    </span>
-                    : 
-                    <span>Show &#40;{totalUserFiltered}&#41;</span>   
-                }
-                customClassName="show-advance-filter-button"
-                />
-            </a>
-        </div>
-    </>
-    
   )
 }
 
