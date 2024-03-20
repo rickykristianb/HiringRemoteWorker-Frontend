@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useRef } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import { BroadcastChannel } from "broadcast-channel";
@@ -48,6 +49,7 @@ export const AuthProvider = ({children}) => {
         }
       })
       const data = await response.json()
+
 
       if (response.ok){
         let localLoginProfilePicture = localStorage.getItem("login_user_profile_picture")
@@ -118,13 +120,18 @@ export const AuthProvider = ({children}) => {
         if (data === "personal"){
           window.location.href = "/"
           loginChannel.postMessage("personal-login");
+          window.location.href = "/"
+          loginChannel.postMessage("personal-login");
         } else if (data === "company"){
+          window.location.href = "/users/"
+          loginChannel.postMessage("company-login")
           window.location.href = "/users/"
           loginChannel.postMessage("company-login")
         }
         localStorage.setItem("userType", data)
       }
     }
+
 
 
     const userRegistration = async (e) => {
@@ -186,6 +193,8 @@ export const AuthProvider = ({children}) => {
       try{
         const response = await fetch(`/api/user/accounts/resend_activation/${email ? email : newRegisteredEmail}`, {
           method: "GET",
+        const response = await fetch(`/api/user/accounts/resend_activation/${email ? email : newRegisteredEmail}`, {
+          method: "GET",
           headers: {
             "content-type": "application/json"
           },
@@ -194,7 +203,17 @@ export const AuthProvider = ({children}) => {
         if (response.status === 204){
           setResendActivationAlert({
             "success": `Activation link has been sent. Please check your email ${email ? email : newRegisteredEmail}`
+        })
+        console.log(response.status);
+        if (response.status === 204){
+          setResendActivationAlert({
+            "success": `Activation link has been sent. Please check your email ${email ? email : newRegisteredEmail}`
           })
+        } else if (response.status === 400){
+            setResendActivationAlert({
+              "error": "No activation required. User is active."
+            })
+        }
         } else if (response.status === 400){
             setResendActivationAlert({
               "error": "No activation required. User is active."
@@ -296,6 +315,7 @@ export const AuthProvider = ({children}) => {
     }, [authToken, loading]);
 
     const ResetPasswordConfirm = async (e) => {
+        await fetch("/users/reset_password_confirm/", {
         await fetch("/users/reset_password_confirm/", {
             method: "POST",
             headers: {
