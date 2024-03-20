@@ -4,6 +4,9 @@ import Divider from '@mui/material/Divider';
 import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
 import AuthContext from '../Context/AuthContext';
+import GoogleOauthLogin from 'components/GoogleOauthLogin';
+import Tooltip from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
 
 const SignUp = () => {
   const [passwordHide, setPasswordHide] = useState(true);
@@ -12,6 +15,7 @@ const SignUp = () => {
   const [password, setPassword] = useState(null) // password field value
   const [rePassword, setRePassword] = useState(null) // re type password field value
   const [passwordMatch, setPasswordMatch] = useState(true)  // alert for password type
+  const [tooltipOpen, setToolTipOpen] = useState(false)
 
   let { 
     alert, 
@@ -74,7 +78,6 @@ const SignUp = () => {
         try{
           await userRegistration(e)
             if (successRegistration.current){
-              console.log("REGISTRASI SUKSES STATUS: ",successRegistration)
               reset()
             }
         } catch(error){
@@ -82,7 +85,7 @@ const SignUp = () => {
         }
       }
     }
-  
+
   return (
     <div className='container-login-reset-password-register'>
       <div className='container-login-for-container-reset-password-form-container-register-form'>
@@ -183,6 +186,15 @@ const SignUp = () => {
         </div>
           <Button label={ isSubmitting ? "Sign-ing Up" : "Sign Up"} buttonType="input" disabled={isSubmitting ? true : false} />         
         </form> 
+        <br />
+        <Divider />
+        
+          <div className='flex flex-col justify-center items-center my-4' onMouseEnter={() => setToolTipOpen(true)} onMouseLeave={() => setToolTipOpen(false)}>
+            <GoogleOauthLogin label={"Sign-up with Google"} />
+            <Tooltip className='bg-dark-basic' TransitionComponent={Zoom} placement="bottom" title={"Sign-up using Google account is applicable to candidates only. For company, please register manually and select Candidate."} arrow open={tooltipOpen}></Tooltip>
+          </div>
+          
+        
         { successRegistration.current 
         &&
         <div className='success-register-container'>

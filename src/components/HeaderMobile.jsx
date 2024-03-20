@@ -57,7 +57,7 @@ const HeaderMobile = ({closeHeader, menuOpen}) => {
   ]
 
   return (
-    <div className={`flex flex-col h-screen bg-soft-basic absolute z-7  ${menuOpen ? 'right-0' : '-right-[200px] top-0'} shadow-box-shadow w-[200px] transition-all duration-300 ease-in origin-right`}>
+    <div className={`flex flex-col h-screen bg-white absolute z-7  ${menuOpen ? 'right-0' : '-right-[200px] top-0'} shadow-box-shadow w-[200px] transition-all duration-300 ease-in origin-right`}>
       <CloseIcon className="self-end relative top-5 right-3" sx={{ fontSize: "30px" }} onClick={closeHeader} />
       <br /> 
       <div >

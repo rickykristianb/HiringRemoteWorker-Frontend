@@ -363,8 +363,6 @@ li {
     height: 48px;
     border-radius: 50%;
     align-self: center;
-    /* position: absolute;
-    left: 50%; */
     border-top: 4px solid #4e6e81;
     border-right: 4px solid transparent;
     box-sizing: border-box;

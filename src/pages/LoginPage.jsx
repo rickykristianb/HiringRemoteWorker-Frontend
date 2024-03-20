@@ -6,6 +6,7 @@ import Button from '../components/Button';
 import { Link } from 'react-router-dom';
 import AuthContext from '../Context/AuthContext';
 import DemoAccountInfo from 'components/DemoAccountInfo';
+import GoogleOauthLogin from 'components/GoogleOauthLogin';
 
 const LoginPage = () => {
 
@@ -63,6 +64,9 @@ const LoginPage = () => {
         <Link to={"/reset-password/"} className='self-end py-4'>
           <p>Forget Password? </p>
         </Link>
+        <div className='w-full flex justify-center mt-2 mb-6'>
+          <GoogleOauthLogin label={"Sign in with Google"} />
+        </div>
         <Divider />
         <div className='flex justify-center mt-4 flex-col items-center gap-4'>
           <p>Don't have account yet?</p>
