@@ -5,9 +5,9 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 
-const UserJobSkeleton = () => {
+const UserJobSkeleton = (props) => {
   return (
-    <div className='flex w-screen max-sm:mt-2 items-center flex-col max-lg:mt-0' >
+    <div className={props.filterClicked ? 'flex justify-center items-center flex-wrap gap-10 max-lg:mt-0 max-sm:mt-2' : 'flex w-screen max-sm:mt-2 items-center flex-col max-lg:mt-0'} >
       <div className='flex justify-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10'>
       {Array.from({length: 12}).map(() => (
         <div className='card-container' >

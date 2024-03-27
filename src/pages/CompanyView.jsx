@@ -6,9 +6,9 @@ import AdvanceUserFilterBar from 'components/AdvanceUserFilterBar';
 import UsersList from 'components/UsersList';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import Backdrop from 'components/Backdrop';
-import SearchJobContext from 'Context/SearchBarContext';
 import AdvanceFilterContext from 'Context/AdvanceFilterContext';
 import SearchBoxCompany from 'components/SearchBoxCompany';
+import SearchBarContext from 'Context/SearchBarContext';
 
 const CompanyView = () => {
     const [advancedFilterResultData, setAdvancedFilterResultData] = useState()
@@ -17,6 +17,7 @@ const CompanyView = () => {
     const [experienceSelected, setExperienceSelected] = useState()
     const [rateSelected, setRateSelected] = useState()
     const [locationSelected, setLocationSelected] = useState()
+    const [backdropAdvanceSearchUserActive, setBackdropAdvanceSearchUserActive] = useState()
     const showData = useRef()
 
     let {
@@ -24,10 +25,9 @@ const CompanyView = () => {
         resetPage,
         totalSearchBarUser,
         onLoadSearchUser,
-        backdropSearchJobActive,
-        setBackdropSearchJobActive,
-        searchUserResultData
-    } = useContext(SearchJobContext)
+        searchUserResultData,
+        backdropSearchUserActive,
+    } = useContext(SearchBarContext)
 
     const {
         onAdvanceFilterUserClick,
@@ -56,7 +56,7 @@ const CompanyView = () => {
     }
 
     const advanceFilterPageClicked = async (page) => {
-        setBackdropSearchJobActive(true)
+        setBackdropAdvanceSearchUserActive(true)
         if (!page){
             page = 1
         } else{
@@ -74,7 +74,7 @@ const CompanyView = () => {
             showData.current = data
             searchUserResultData.current = null
         }
-        setBackdropSearchJobActive(false)
+        setBackdropAdvanceSearchUserActive(false)
     }
 
     const filteredData = (data) => {
@@ -91,7 +91,14 @@ const CompanyView = () => {
 
     const onButtonShowFilterClicked = () => {
         searchUserResultData.current = null
-        showData.current = advancedFilterResultData     
+        showData.current = advancedFilterResultData
+        if (window.innerWidth < 768) {
+            onAdvanceFilterUserClick()
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            })
+        }
     }
 
   return (
@@ -150,7 +157,7 @@ const CompanyView = () => {
                 />
                 }
             </div>
-            {backdropSearchJobActive && <Backdrop />}
+            {(backdropAdvanceSearchUserActive || backdropSearchUserActive) && <Backdrop />}
         </div>
     )
 }

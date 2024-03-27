@@ -18,10 +18,11 @@ const UsersList = (props) => {
   const [resetPage, setResetPage] = useState(false)
   const [backdropActive, setBackdropActive] = useState(false)
   const [skeletonActive, setSkeletonActive] = useState(false)
+  const [paginationLoadSkeletonActive, setPaginationLoadSkeletonActive] = useState(false)
 
   const onLoadAllUser = async(page) => {
     try{
-      setBackdropActive(true)
+      setSkeletonActive(true)
       if (!page){
         page = 1
       }
@@ -34,11 +35,11 @@ const UsersList = (props) => {
       const data = await response.json()
       setAllUserData(data["data"])
       totalUser.current = data["total_user"]
-      setBackdropActive(false)
+      setSkeletonActive(false)
     } catch (error){
       console.error("Encounter an error: ", error);
     } finally {
-      setBackdropActive(false)
+      setSkeletonActive(false)
     }
     
   }
@@ -96,7 +97,7 @@ const UsersList = (props) => {
   return (
     <>
     { skeletonActive ?
-      <UserJobSkeleton />
+      <UserJobSkeleton filterClicked={props.filterClicked} />
     :
     <div>
       <div className={props.filterClicked ? "flex justify-center items-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10" : 'flex justify-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10'} >

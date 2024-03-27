@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import AlertNotification from '../components/AlertNotification';
 import Button from '../components/Button';
 import AuthContext from '../Context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
 

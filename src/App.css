@@ -617,13 +617,6 @@ li {
 
 /* LOGIN PAGE ---------------------------------------------------------------------- */
 
-.success-register-container {
-    display: flex;
-    flex-direction: column;
-    color: red;
-    width: 450px;
-}
-
 .container-username,
 .container-password,
 .container-retype-password,
@@ -741,12 +734,6 @@ li {
     width: 10px;
 }
 
-/* RESET PASSWORD */
-.new-password-field {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
 /* USER TYPE */
 
@@ -1520,7 +1507,6 @@ input[type="radio"]:checked + .button-label {
     justify-content: center;
     padding-left: 13px;
     padding-right: 13px;
-    border-radius: 5px;
     background-color: rgba(216, 230, 239, 1);
     transition: background 0.3s;
 }
@@ -1540,7 +1526,6 @@ input[type="radio"]:checked + .button-label {
     padding-right: 13px;
     padding-top: 5px;
     padding-bottom: 5px;
-    border-radius: 5px;
     background-color: #4e6e81;
     transition: background 0.3s;
     color: #fff;

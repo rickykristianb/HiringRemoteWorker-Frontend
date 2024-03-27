@@ -73,7 +73,6 @@ const SignUp = () => {
     }
 
     const submitRegistration = async (e) => {
-      console.log(e);
       if (passwordMatch) {
         try{
           await userRegistration(e)
@@ -197,7 +196,7 @@ const SignUp = () => {
         
         { successRegistration.current 
         &&
-        <div className='success-register-container'>
+        <div className='flex flex-col gap-4 mt-4 text-red-500'>
           <p>Registration successful, please check your email to activate your account before login!</p>
           <p>If you don't receive any activation link, please click Resend Activation button</p>
           <Button label={loading ? "Sending ..." : "Resend Activation"} buttonType="button" clickedButton={ onResendActivationClick } />

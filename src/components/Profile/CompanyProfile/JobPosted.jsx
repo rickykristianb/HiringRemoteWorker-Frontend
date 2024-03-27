@@ -9,6 +9,7 @@ import Pagination from 'components/Pagination';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from 'Context/AuthContext';
 import NotLoginAction from 'components/NotLoginAction';
+import Loading from 'components/Loading';
 
 const JobPosted = (props) => {
 
@@ -23,6 +24,7 @@ const JobPosted = (props) => {
   const [isNotLogin, setIsNotLogin] = useState(false)
   const [isPaginationReset, setIsPaginationReset] = useState(false)
   const [isSendingInterest, setIsSendingInterest] = useState(false)
+  const [loading, setLoading] = useState(false)
   const pageNumber = useRef(1)
 
   const { user, authToken } = useContext(AuthContext)
@@ -37,10 +39,26 @@ const JobPosted = (props) => {
 
   const location = useLocation();
   useEffect(() => {
-    onLoadJobPosted()
+    const onFirstLoadJobPosted = async() => {
+      const searchParams = new URLSearchParams(location.search);
+      const id = searchParams.get('id');
+      const response = await fetch(`/api/job/all_user_jobs/${id}/?page=1`,{
+        method: "GET",
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+      const data = await response.json()
+      if (response.ok){
+        setJobPostedData(data["data"])
+        setTotalJobPosted(data["total_data"])
+      }
+    }
+    onFirstLoadJobPosted()
   }, [])
 
   const onLoadJobPosted = async(page) => {
+    setLoading(!loading)
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
     if (!page){
@@ -59,6 +77,7 @@ const JobPosted = (props) => {
       setJobPostedData(data["data"])
       setTotalJobPosted(data["total_data"])
     }
+    setLoading(false)
   }
 
   const onClickAddButton = () => {
@@ -294,6 +313,11 @@ const JobPosted = (props) => {
           />
         }
         {alertResponse && <AlertNotification alertData={alertResponse} />}
+        {loading &&
+          <div className='fixed top-0 left-0 w-full h-full '>
+            <Loading />
+          </div>
+        }
     </div>
   )
 }

@@ -4,14 +4,15 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { Divider } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
-import Button from 'components/Button';
+import { Divider } from '@mui/material';
 import { format } from 'date-fns';
 import AuthContext from 'Context/AuthContext';
 import NotLoginAction from 'components/NotLoginAction';
 import AlertNotification from 'components/AlertNotification';
 import JobDetailSkeleton from 'components/Skeleton/JobDetailSkeleton';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 
 const JobDetail = (props) => {
   const navigate = useNavigate()
@@ -39,6 +40,7 @@ const JobDetail = (props) => {
   const [alertResponse, setAlertResponse] = useState()
   const [loginUserId, setLoginUserId] = useState()
   const [getJobDetailLoading, setGetJobDetailLoading] = useState(false)
+  const [jobIsSaved, setJobIsSaved] = useState(false)
 
   useEffect(() => {
     setLoginUserId(localStorage.getItem("userId"))
@@ -88,9 +90,26 @@ const JobDetail = (props) => {
     }
   }
 
+  const onCheckSavedJobs = async() => {
+    const response = await fetch(`/api/job/check_saved_job/${jobId}`, {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `JWT ${userToken}`
+      }
+    });
+    const data = await response.json()
+    if (response.status === 302){
+      setJobIsSaved(true)
+    } else if (response.status === 404){
+      setJobIsSaved(false)
+    }
+  }
+
   useEffect(() => {
     onLoadJobDetail()
     onCheckAppliedJobs()
+    onCheckSavedJobs()
   }, [])
 
   const onGenerateStatusHighlight = (status) => {
@@ -162,6 +181,48 @@ const JobDetail = (props) => {
       }
     } else {
       onOpenIsNotLogin()
+    }
+  }
+
+  const saveJob = async(id) => {
+    try{
+        const response = await fetch(`/api/job/save_job/`, {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                "Authorization": `JWT ${userToken}`
+            },
+            body: JSON.stringify(
+                {
+                    "id": id
+                }
+                )
+        });
+        const data = await response.json()
+        if (response.ok){
+            setJobIsSaved(true)
+            setAlertResponse({"success": data["success"]})
+        } else {
+          console.log(data);
+            // setAlertResponse({"error": data["error"]})
+        }
+    } catch (error){
+        setAlertResponse({"error": error})
+    }
+  }
+
+  const deleteSavedJob = async(id) => {
+    const response = await fetch(`/api/job/delete_saved_job/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `JWT ${userToken}`
+      }
+    });
+    const data = await response.json()
+    if (response.ok){
+      setJobIsSaved(false)
+      setAlertResponse({"success": data["success"]})
     }
   }
 
@@ -258,13 +319,20 @@ const JobDetail = (props) => {
                   :
                   (loginUserId !== jobData.user_posted?.id) && 
                     (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed" && userType !== "company") &&
-                      <Button 
-                        buttonType="button" 
-                        label={isSendingInterest ? "Sending..." : "Interested"}
-                        clickedButton={() => onInterestedClicked(jobData.id)} 
-                        customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
-                        isDisabled={jobData.status === "closed" ? true : false}
-                      />
+                      <div className='flex h-12 w-64 ml-5'>
+                        <div className='w-[80%] flex justify-center items-center border-1.5 border-dark-basic rounded-l-lg cursor-pointer text-xl text-white bg-dark-basic hover:bg-white hover:text-dark-basic transition-all duration-200'
+                          onClick={() => onInterestedClicked(jobData.id)}
+                        >
+                          <p>{isSendingInterest ? "Sending..." : "Interested"}</p>
+                        </div>
+                        <div className='flex justify-center items-center w-[20%] border-dark-basic border-1.5 border-l-0 rounded-r-lg cursor-pointer'>
+                        {jobIsSaved ?
+                          <BookmarkAddedIcon sx={{width: "35px", height: "35px"}} className='text-bookmark-saved-button hover:w-[40px] hover:h-[40px]' onClick={() => deleteSavedJob(jobData.id)} />
+                          :
+                          <BookmarkAddIcon sx={{width: "35px", height: "35px"}} className='hover:w-[40px] hover:h-[40px]' onClick={() => saveJob(jobData.id)} />
+                        }
+                        </div>
+                      </div>
                   }   
               </div>
               <br />
@@ -379,15 +447,22 @@ const JobDetail = (props) => {
                   :
                   (loginUserId !== jobData.user_posted?.id) && 
                     (jobData.status !== "Finished" && jobData.status !== "Onprogress" && jobData.status !== "Closed" && userType !== "company") &&
-                      <div className='pl-5'>
+                      <div className='sticky top-10'>
                         <br />
-                        <Button 
-                          buttonType="button" 
-                          label={isSendingInterest ? "Sending..." : "Interested"}
-                          clickedButton={() => onInterestedClicked(jobData.id)} 
-                          customClassName={jobData.status === "closed" ? "disabled-button" : "input-button"}
-                          isDisabled={jobData.status === "closed" ? true : false}
-                        />
+                        <div className='flex h-10 w-full'>
+                          <div className='w-[20%] flex justify-center items-center border-1.5 border-r-0 rounded-l-lg border-dark-basic cursor-pointer'>
+                            {jobIsSaved ?
+                              <BookmarkAddedIcon onClick={() => deleteSavedJob(jobData.id)} sx={{width: "40px", height: "40px", color: "red"}} />
+                            :
+                              <BookmarkAddIcon onClick={() => saveJob(jobData.id)} />
+                            }
+                          </div>
+                          <div className='w-[80%] flex justify-center items-center border-1.5 border-dark-basic rounded-r-lg cursor-pointer text-xl text-white bg-dark-basic hover:bg-white hover:text-dark-basic transition-all duration-200'
+                            onClick={() => onInterestedClicked(jobData.id)}
+                          >
+                          <p>{isSendingInterest ? "Sending..." : "Interested"}</p>
+                        </div>
+                      </div>
                       </div>
                       
                   }   

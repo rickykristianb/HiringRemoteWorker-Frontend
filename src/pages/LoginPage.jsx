@@ -7,11 +7,17 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../Context/AuthContext';
 import DemoAccountInfo from 'components/DemoAccountInfo';
 import GoogleOauthLogin from 'components/GoogleOauthLogin';
+import Loading from 'components/Loading';
 
 const LoginPage = () => {
 
+  const { 
+    googleLoginStatus, 
+    loginUser, 
+    alert, 
+    googleLoginLoading } = useContext(AuthContext)
+
   const [passwordHide, setPasswordHide] = useState(true);
-  const [loading, setLoading] = useState(false);
   
   const onClickPasswordIcon = () => {
     setPasswordHide(!passwordHide);
@@ -26,9 +32,6 @@ const LoginPage = () => {
         "password": "",
       }
     })
-
-  let { loginUser, alert } = useContext(AuthContext)
-
 
   return (
     <div className='container-login-reset-password-register'>
@@ -76,6 +79,8 @@ const LoginPage = () => {
         </div>
       </div>
       <DemoAccountInfo />
+      {googleLoginStatus && <AlertNotification alertData={{"success": "Login Success"}} />}
+      {googleLoginLoading && <Loading />}
     </div>
   )
 }

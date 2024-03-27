@@ -7,11 +7,14 @@ import Button from './Button';
 import Backdrop from './Backdrop';
 import Pagination from './Pagination';
 import AuthContext from 'Context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { format } from 'date-fns';
 import NotLoginAction from './NotLoginAction';
 import AlertNotification from './AlertNotification';
 import UserJobSkeleton from './Skeleton/UserJobSkeleton';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import SaveJobContext from 'Context/SaveJobContext';
 
 const JobsList = (props) => {
 
@@ -22,8 +25,16 @@ const JobsList = (props) => {
       userToken = authToken.access
     }
 
+    const {
+        // saveJob,
+        // deleteSavedJob,
+        onCheckAllSavedJobs
+    } = useContext(SaveJobContext)
+
     const [isHover, setIsHover] = useState(false)
     const [allJobsData, setAllJobsData] = useState([])
+    const [allJobsDataCheckSaved, setAllJobsDataCheckSaved] = useState([])
+    const [allSearchJobsDataCheckSaved, setAllSearchJobsDataCheckSaved] = useState([])
     const [backdropActive, setBackdropActive] = useState(false)
     const [noJobStatus, setNoJobStatus] = useState()
     const [resetPage, setResetPage] = useState(false)
@@ -78,7 +89,6 @@ const JobsList = (props) => {
     }
 
     const onProcessInterestedClick = async (jobId) => {
-        
         try{
             setIsSendingInterest(true)
             const response = await fetch(`/api/job/interest_job/${jobId}/`, {
@@ -136,26 +146,202 @@ const JobsList = (props) => {
         }, 1)
     }, [props.paginationReset])
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const updatedJobsData = await Promise.all(allJobsData.map(async (item) => {
+                    const result = await fetch(`/api/job/check_saved_job/${item.id}`, {
+                        method: "GET",
+                        headers: {
+                          "content-type": "application/json",
+                          "Authorization": `JWT ${userToken}`
+                        }
+                      });
+                      const status = result.status
+                    return {...item, savedStatus: status};
+                }));
+                setAllJobsDataCheckSaved(updatedJobsData)
+            } catch (error) {
+                console.error("Error fetching job save status:", error);
+            }
+        };
+    
+        fetchData();
+    }, [allJobsData]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            console.log("MASUK SINI KAH");
+            try {
+                const updatedJobsData = await Promise.all(props.searchData.map(async (item) => {
+                    const result = await fetch(`/api/job/check_saved_job/${item.id}`, {
+                        method: "GET",
+                        headers: {
+                          "content-type": "application/json",
+                          "Authorization": `JWT ${userToken}`
+                        }
+                      });
+                      const status = result.status
+                    return {...item, savedStatus: status};
+                }));
+                setAllSearchJobsDataCheckSaved(updatedJobsData)
+                console.log(allSearchJobsDataCheckSaved);
+            } catch (error) {
+                console.error("Error fetching job save status:", error);
+            }
+        };
+    
+        fetchData();
+    }, [props.searchData]);
+
+    const deleteSavedJob = async(id) => {
+        const response = await fetch(`/api/job/delete_saved_job/${id}/`, {
+          method: "DELETE",
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `JWT ${userToken}`
+          }
+        });
+        const data = await response.json()
+        if (response.ok){
+            const updatedJobsData = allJobsDataCheckSaved.map(item => {
+                if (item.id === id) {
+                    return { ...item, savedStatus: 500 };
+                }
+                return item;
+            });
+            setAllJobsDataCheckSaved(updatedJobsData);
+            setAlertResponse({"success": data["success"]})
+        } else {
+            setAlertResponse({"error": data["error"] + " from another page. Please refresh"})
+        }
+      }
+
+      const deleteSearchSavedJob = async(id) => {
+        const response = await fetch(`/api/job/delete_saved_job/${id}/`, {
+          method: "DELETE",
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `JWT ${userToken}`
+          }
+        });
+        const data = await response.json()
+        if (response.ok){
+            const updatedJobsData = allSearchJobsDataCheckSaved.map(item => {
+                if (item.id === id) {
+                    return { ...item, savedStatus: 500 };
+                }
+                return item;
+            });
+            setAllSearchJobsDataCheckSaved(updatedJobsData);
+            console.log("DELETE", allSearchJobsDataCheckSaved);
+            setAlertResponse({"success": data["success"]})
+        } else {
+            setAlertResponse({"error": data["error"] + " from another page. Please refresh"})
+        }
+      }
+
+    const saveJob = async(id) => {
+        if (user) {
+            try{
+                const response = await fetch(`/api/job/save_job/`, {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        "Authorization": `JWT ${userToken}`
+                    },
+                    body: JSON.stringify(
+                        {
+                            "id": id
+                        }
+                        )
+                });
+                const data = await response.json()
+                if (response.ok){
+                    const updatedJobsData = allJobsDataCheckSaved.map(item => {
+                        if (item.id === id) {
+                            return { ...item, savedStatus: 302 };
+                        }
+                        return item;
+                    });
+                    setAllJobsDataCheckSaved(updatedJobsData);
+                    setAlertResponse({"success": data["success"]})
+                } else {
+                    setAlertResponse({"error": data["error"] + " from another page. Please refresh"})
+                }
+            } catch (error){
+                setAlertResponse({"error": error})
+            }
+        } else {
+            onOpenIsNotLogin()
+        }
+    }
+
+    const saveSearchJob = async(id) => {
+        if (user) {
+            try{
+                const response = await fetch(`/api/job/save_job/`, {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        "Authorization": `JWT ${userToken}`
+                    },
+                    body: JSON.stringify(
+                        {
+                            "id": id
+                        }
+                        )
+                });
+                const data = await response.json()
+                if (response.ok){
+                    const updatedJobsData = allSearchJobsDataCheckSaved.map(item => {
+                        if (item.id === id) {
+                            return { ...item, savedStatus: 302 };
+                        }
+                        return item;
+                    });
+                    setAllSearchJobsDataCheckSaved(updatedJobsData);
+                    console.log(allSearchJobsDataCheckSaved);
+                    setAlertResponse({"success": data["success"]})
+                } else {
+                    setAlertResponse({"error": data["error"] + " from another page. Please refresh"})
+                }
+            } catch (error){
+                setAlertResponse({"error": error})
+            }
+        } else {
+            onOpenIsNotLogin()
+        }
+    }
+
     
   return (
     <>
         { skeletonActive ?
-        <UserJobSkeleton />
+        <UserJobSkeleton filterClicked={props.filterClicked} />
     :
         <div>
             <div className={props.filterClicked ? 'flex justify-center items-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10' : 'flex justify-center flex-wrap gap-10 mt-10 md:mt-10 max-lg:mt-0 max-sm:mt-10'}>
-            {props.searchData ? 
-                props.searchData.length > 0 ?
-                    props.searchData.map((item, index) => {
+            {(props.searchData && allSearchJobsDataCheckSaved) ?
+                allSearchJobsDataCheckSaved.length > 0 ?
+                    allSearchJobsDataCheckSaved.map((item, index) => {
                         return (
-                            <div className='card-container' key={item.id}>
+                            <div className='card-container flex flex-col' key={item.id}>
+                                <div className='self-end absolute mr-2 mt-2 cursor-pointer'>
+                                    {item.savedStatus === 302 
+                                    ?
+                                        <BookmarkAddedIcon onClick={() => deleteSearchSavedJob(item.id)} sx={{width: "30px", height: "30px"}} className='text-bookmark-saved-button hover:w-[33px] hover:h-[33px]' />
+                                    :
+                                        <BookmarkAddIcon onClick={() => saveSearchJob(item.id)} sx={{width: "30px", height: "30px"}} className='hover:w-[33px] hover:h-[33px]' />
+                                    }
+                                </div>
                                 <div className='grid grid-cols-3 gap-4 m-5 h-[110]'>
                                     <div className='bg-white col-start-1 rounded-full w-[100px] h-[100px] flex justify-center'>
                                         <img className='bg-white rounded-full w-full h-full flex justify-center' src={item.user_profile_picture} />
                                     </div>
                                     <div className='flex col-span-2 flex-col gap-4 justify-center'>
                                         <Link to={`/jobs/${item.id}/`}>
-                                            <h3 className='text-xl font-bold'>{item.job_title}</h3>
+                                            <h3 className='text-xl font-bold'>{item.job_title.slice(0, 36)}{item.job_title.length > 36 && "..."}</h3>
                                         </Link>
                                         <Link to={`/profile/company/?id=${item.user_posted.id}`} >
                                             <span>{item.user_posted.name}</span>
@@ -222,17 +408,25 @@ const JobsList = (props) => {
                     :
                     <p>{noJobStatus}</p>
             :
-            allJobsData.length > 0 ?
-                allJobsData.map((item, index) => {
+            allJobsDataCheckSaved.length > 0 ?
+                allJobsDataCheckSaved.map((item, index) => {
                     return (
-                        <div className='card-container' key={item.id}>
+                        <div className='card-container flex flex-col' key={item.id}>
+                            <div className='self-end absolute mr-2 mt-2 cursor-pointer'>
+                                {item.savedStatus === 302 
+                                ?
+                                    <BookmarkAddedIcon onClick={() => deleteSavedJob(item.id)} sx={{width: "30px", height: "30px"}} className='text-bookmark-saved-button hover:w-[33px] hover:h-[33px]' />
+                                :
+                                    <BookmarkAddIcon onClick={() => saveJob(item.id)} sx={{width: "30px", height: "30px"}} className='hover:w-[33px] hover:h-[33px]' />
+                                }
+                            </div>
                             <div className='grid grid-cols-3 gap-4 m-5 h-[110]'>
                                 <div className='bg-white col-start-1 rounded-full w-[100px] h-[100px] flex justify-center'>
                                     <img className='bg-white rounded-full w-full h-full flex justify-center' src={item.user_profile_picture} />
                                 </div>
                                 <div className='flex col-span-2 flex-col gap-4 justify-center'>
                                     <Link to={`/jobs/${item.id}/`}>
-                                        <h3 className='text-xl font-bold'>{item.job_title}</h3>
+                                        <h3 className='text-xl font-bold'>{item.job_title.slice(0, 36)}{item.job_title.length > 36 && "..."}</h3>
                                     </Link>
                                     <Link to={`/profile/company/?id=${item.user_posted.id}`} >
                                         <span>{item.user_posted.name}</span>

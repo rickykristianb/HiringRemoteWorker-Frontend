@@ -9,7 +9,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import NotificationContext from 'Context/NotificationContext';
 import CompanyLoginAction from 'components/CompanyLoginAction';
 import SearchBoxPersonal from 'components/SearchBoxPersonal';
-import SearchJobContext from 'Context/SearchBarContext';
+import SearchBarContext from 'Context/SearchBarContext';
 import AdvanceFilterContext from 'Context/AdvanceFilterContext';
 
 const PersonalView = () => {
@@ -19,9 +19,9 @@ const PersonalView = () => {
         onLoadJobSearch,
         isPaginationReset,
         resetPage,
-        backdropSearchUserActive,
+        backdropSearchJobActive,
         totalSearchBarJob
-    } = useContext(SearchJobContext)
+    } = useContext(SearchBarContext)
 
     const {
         onAdvanceFilterJobClick,
@@ -101,7 +101,14 @@ const PersonalView = () => {
 
     const onButtonShowFilterClicked = () => {
         searchJobResultData.current = null
-        showData.current = advancedFilterResultData     
+        showData.current = advancedFilterResultData
+        if (window.innerWidth < 768) {
+            onAdvanceFilterJobClick()
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            })
+        }
     }
 
     return (
@@ -166,7 +173,7 @@ const PersonalView = () => {
                 </div>
             </div>
             {backdropActive && <Backdrop />}
-            {backdropSearchUserActive && <Backdrop />}
+            {backdropSearchJobActive && <Backdrop />}
             <CompanyLoginAction />
         </div>
     )

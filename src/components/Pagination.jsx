@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import EmailContext from '../Context/EmailContext'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 const Pagination = (props) => {
 
@@ -45,7 +47,19 @@ const Pagination = (props) => {
         page.current = item  // set the current page that user has clicked
         setIsClicked(item) // set what item is clicked. This is to defined the color of the item number
         setIsDisabled(item)
-        window.scrollTo(0,0);
+        if (props.type === "jobPosted"){
+            var targetElement = document.getElementById("job-posted-container")
+            if (targetElement){
+                targetElement.scrollIntoView({
+                    behavior: "smooth"
+                })
+            }
+        } else{
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
     }
 
     const getTotalPages = () => {
@@ -109,7 +123,19 @@ const Pagination = (props) => {
                     }
                     page.current = page.current - 1
                     setIsClicked(page.current)
-                    window.scrollTo(0,0);
+                    if (type.type === "jobPosted"){
+                        var targetElement = document.getElementById("job-posted-container")
+                        if (targetElement){
+                            targetElement.scrollIntoView({
+                                behavior: "smooth"
+                            })
+                        }
+                    } else{
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+                    }
                 }
                 break;
 
@@ -135,7 +161,19 @@ const Pagination = (props) => {
                     }
                     page.current = page.current + 1
                     setIsClicked(page.current)
-                    window.scrollTo(0,0);
+                    if (type.type === "jobPosted"){
+                        var targetElement = document.getElementById("job-posted-container")
+                        if (targetElement){
+                            targetElement.scrollIntoView({
+                                behavior: "smooth"
+                            })
+                        }
+                    } else{
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+                    }
                 }
                 break;
         }        
@@ -144,31 +182,35 @@ const Pagination = (props) => {
     const pageNumberList = ({paginateNumber, totalPages, type}) => {
         return (
             <>  
-                {totalPages !== 0 
+                {totalPages !== 0 && totalPages !== 1
                 &&
-                <div className='flex justify-between items-center sm:gap-[250px] max-sm:w-screen'>
-                    <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='cursor-pointer'>&lt;&lt; Prev</a>
-                    <ul className='flex gap-2 justify-center max-sm:gap-4'>
+                <div className='flex justify-center items-center gap-2 max-sm:gap-1 max-sm:w-screen'>
+                {page.current !== 1 &&
+                    <a disabled={isDisabled === 1} onClick={() => loadPreviousNextData("prev", type)} className='cursor-pointer bg-soft-basic px-2 py-[4.5px] rounded-md text-dark-basic'>{<NavigateBeforeIcon />}</a>
+                }
+                    <ul className='flex gap-2 justify-center max-sm:gap-0'>
                         {paginateNumber.map((item, index) => (
                             <li key={index} className={
                                 pageResetNumberOne ?  // IF CHANGE THE FILTER, RESET PAGINATION NUMBER TO 1
                                     item === 1 ?
-                                            "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold"
+                                            `page-number-clicked rounded-md max-sm:px-2 max-sm:rounded-none max-sm:rounded-l-md`
                                             :
-                                            "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]"
+                                            `number-li rounded-md max-sm:px-2 max-sm:rounded-none ${item === totalPages && "max-sm:rounded-r-md" }`
                                     :
                                 isCLicked === false ? 
                                     (item === 1 ? 
-                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold" 
-                                        : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]")
+                                        `page-number-clicked max-sm:px-2 rounded-md`
+                                        : `number-li rounded-md max-sm:px-2 max-sm:rounded-none`)
                                     : isCLicked === item ? 
-                                        "page-number-clicked max-sm:bg-white max-sm:w-0 max-sm:p-[3px] max-sm:text-dark-basic max-sm:text-3xl max-sm:font-bold" 
-                                        : "number-li max-sm:w-0 max-sm:bg-white max-sm:p-[3px]"
+                                        `page-number-clicked max-sm:px-2 rounded-md max-sm:rounded-none ${isCLicked === totalPages && "max-sm:rounded-r-md"} ${isCLicked === 1 && "max-sm:rounded-l-md"}`
+                                        : `number-li rounded-md max-sm:px-2 max-sm:rounded-none ${item === totalPages && "max-sm:rounded-r-md"} ${item === 1 && "max-sm:rounded-l-md"}`
                                     } 
                                 onClick={item === "..."? null : () => onClickPageNumber(item)} >{item}</li>
                         ))}
                     </ul>
-                    <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='cursor-pointer'>Next &gt;&gt;</a>
+                    {page.current !== totalPages &&
+                        <a disabled={isDisabled === totalPages} onClick={() => loadPreviousNextData("next", type)} className='cursor-pointer bg-soft-basic px-2 py-[4.5px] rounded-md text-dark-basic'> {<NavigateNextIcon />}</a>
+                    }
                 </div>              
                 }
             </>

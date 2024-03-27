@@ -12,6 +12,8 @@ export const AuthProvider = ({children}) => {
   
 
     const location = useLocation();
+    const [googleLoginStatus, setGoogleLoginStatus] = useState(false)
+    const [googleLoginLoading, setGoogleLoginLoading] = useState(false)
     
     const logoutChannel = new BroadcastChannel("logout");
     const loginChannel = new BroadcastChannel("login");
@@ -36,7 +38,6 @@ export const AuthProvider = ({children}) => {
     const [passwordError, setPasswordError] = useState(null);
     const [rePasswordError, setRePasswordError] = useState(null);
     const [newRegisteredEmail, setNewRegisteredEmail] = useState(null)
-    const [googleUser, setGoogleUser] = useState([]);
     
     const onLoadUserHeader = async(userToken) => {
       // TO CAPTURE PROFILE, IMAGE, AND USERNAME
@@ -190,7 +191,7 @@ export const AuthProvider = ({children}) => {
             "content-type": "application/json"
           },
         })
-        console.log(response.status);
+        
         if (response.status === 204){
           setResendActivationAlert({
             "success": `Activation link has been sent. Please check your email ${email ? email : newRegisteredEmail}`
@@ -312,34 +313,55 @@ export const AuthProvider = ({children}) => {
 
     // GOOGLE OAUTH2
     const googleLogin = useGoogleLogin({
-      onSuccess: (codeResponse) => setGoogleUser(codeResponse),
+      onSuccess: (codeResponse) => sendAccess(codeResponse),
       onError: (error) => console.log('Login Failed:', error)
     });
 
-    useEffect( () => {
-      const sendAccess = async() => {
-        if (googleUser){
-          const response = await fetch(`/auth/google/login/${googleUser.access_token}`, {
-            method: "POST",
-            headers: {
-              "content-type": "application/json"
-            },
-            body: {
-              userData: JSON.stringify(googleUser)
-            }
-          });
-
-          const data = await response.json()
-          if (response.ok){
-            onLoadUserHeader(data.access_token)
-            localStorage.setItem("authToken", JSON.stringify(data))
-            redirectUserPage(data.access_token)
-            setAlert(null)
+    const sendAccess = async(codeResponse) => {
+      setGoogleLoginLoading(true)
+      if (codeResponse && !authToken){
+        const response = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {
+          method: "GET",
+          headers: {
+            "content-type": "application/json"
           }
+        });
+
+        const data = await response.json()
+        if (response.ok){
+          checkUserOnBackend(data)
         }
       }
-      sendAccess()
-    }, [googleUser])
+      setGoogleLoginLoading(false)
+    }
+
+    const checkUserOnBackend = async(userData) => {
+      const response = await fetch(`/api/google-auth/login`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          name: userData.name,
+          picture: userData.picture
+        })
+      });
+      const responseData = await response.json()
+      const { access_token, refresh_token } =  responseData?.response_data
+      if (response.ok){
+        setGoogleLoginStatus(true)
+        const timerId = setTimeout(() => {
+          setGoogleLoginStatus(false)
+        }, 2000)
+
+        clearTimeout(timerId)
+        onLoadUserHeader(access_token)
+        localStorage.setItem("authToken", JSON.stringify({access: access_token, refresh: refresh_token}))
+        redirectUserPage(access_token)
+        setAlert(null)
+      }
+    }
 
     let contextData = {
         user:user,
@@ -355,7 +377,9 @@ export const AuthProvider = ({children}) => {
         resendLoading:resendLoading,
         resendActivationAlert:resendActivationAlert,
         ResetPasswordConfirm:ResetPasswordConfirm,
-        googleLogin
+        googleLogin,
+        googleLoginStatus,
+        googleLoginLoading
     }
 
     return (

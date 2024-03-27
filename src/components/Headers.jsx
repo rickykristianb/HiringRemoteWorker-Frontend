@@ -176,6 +176,10 @@ const Headers = (props) => {
                         <Link to="/interested-jobs/" >
                           <li>Interested Jobs</li>
                         </Link>
+                        <Divider />
+                        <Link to="/saved-jobs/" >
+                          <li>Saved Jobs</li>
+                        </Link>
                       </ul>
                     }
                   </div>

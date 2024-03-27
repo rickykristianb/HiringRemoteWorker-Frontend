@@ -17,6 +17,7 @@ import { EmailProvider } from "./Context/EmailContext";
 import { NotificationProvider } from "Context/NotificationContext";
 import { SearchBarProvider } from 'Context/SearchBarContext';
 import { AdvanceFilterProvider } from 'Context/AdvanceFilterContext';
+import { SaveJobProvider } from 'Context/SaveJobContext';
 import LoginPage from "./pages/LoginPage";
 import ResetPassword from "./pages/ResetPassword";
 import NewPassword from "./pages/NewPassword";
@@ -38,6 +39,7 @@ const LazyCompanyProfile = lazy(() => import('./pages/CompanyProfile'))
 const LazyCompanyPanel = lazy(() => import('pages/CompanyPanel'))
 const LazyCompanyView = lazy(() => import('./pages/CompanyView'))
 const LazyPersonalView = lazy(() => import('./pages/PersonalView'))
+const LazyJobSaved = lazy(() => import('pages/SavedJob'))
 
 function App() {
 
@@ -52,6 +54,7 @@ function App() {
             <NotificationProvider>
               <SearchBarProvider>
                 <AdvanceFilterProvider>
+                <SaveJobProvider >
                   <Headers />
                     <Routes >
                       <Route element={<PrivateRoutes />} >
@@ -93,6 +96,11 @@ function App() {
                             <LazyPersonalInterestedJobs />
                           </Suspense>} exact
                         />
+                        <Route path="/saved-jobs/" element={
+                          <Suspense fallback={<LazyLoad />}>
+                            <LazyJobSaved />
+                          </Suspense>}
+                        />
                       </Route>
 
                         <Route path="/profile/company/" element={
@@ -125,6 +133,7 @@ function App() {
                       <Route path='/job-not-found/' exact element={<NotFound label={"Job Not Found"} />} />
                     </Routes>
                   <Footer />
+                  </SaveJobProvider>
                 </AdvanceFilterProvider>
               </SearchBarProvider>
             </NotificationProvider>

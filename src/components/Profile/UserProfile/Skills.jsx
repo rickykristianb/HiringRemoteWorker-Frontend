@@ -196,7 +196,7 @@ const Skills = (props) => {
 
 
   return (
-    <div >
+    <div className='w-full' >
         <p className='text-[32px] font-bold'>Skills</p>
         <br />
         <div className='skill-level-list'>

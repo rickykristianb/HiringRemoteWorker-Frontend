@@ -12,6 +12,7 @@ import ProfileMenu from 'components/Profile/UserProfile/ProfileMenu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserRatings from 'components/UserRatings';
 import UserProfileSkeleton from 'components/Skeleton/UserProfileSkeleton';
+import ProfileInfo from 'components/Profile/UserProfile/ProfileInfo';
 
 const UserProfile = (props) => {
 
@@ -122,6 +123,7 @@ const UserProfile = (props) => {
 
   useEffect(() => {
       loadUserRatings()
+      setMenuClicked("skills")
   }, [])
 
   const onMenuClicked = (item) => {
@@ -147,44 +149,32 @@ const UserProfile = (props) => {
 
   return (
     <>
-      {!menuClicked ?
-        getProfileLoading
+      {getProfileLoading
          ?
         <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
           <UserProfileSkeleton />
-        </div>
-        :
-        <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
-          <div className='flex flex-wrap bg-soft-basic rounded-lg p-10 max-sm:p-5 shadow-box-shadow max-sm:mt-16'>
-            <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
-          </div>
-
-          <div className='flex flex-col gap-10 max-sm:gap-4 rounded-lg shadow-box-shadow p-10 max-sm:p-2 h-[550px]'>
-            <div id='flex justify-center'>
-              <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
-            </div>
-            <Divider />
-            <div className='h-full overflow-y-scroll'>
-              {menuAppear(menuClicked)}
-            </div>
-          </div>
-
-          <div className='rounded-lg shadow-box-shadow p-10'>
-              <UserRatings ratingData={ratingData} />
-          </div>
         </div>
       :
         <div className='flex flex-col mx-20 max-sm:mx-2 gap-10 my-10'>
           <div className='flex flex-wrap bg-soft-basic rounded-lg p-10 max-sm:p-5 shadow-box-shadow max-sm:mt-16'>
             <ProfileHeaders userData={headerUserData} clickedUserId={clickedUserId} />
           </div>
-          <div className='flex flex-col gap-10 max-sm:gap-4 rounded-lg shadow-box-shadow p-10 max-sm:p-2 h-[550px]'>
-            <div className='flex justify-center w-full'>
+          <div className='flex flex-row gap-5 rounded-lg shadow-box-shadow p-10 max-sm:p-0 max-sm:py-10 max-sm:px-w'>
+            <div className='flex justify-center w-[20%] h-full sticky top-10 max-sm:hidden' >
               <ProfileMenu menuClicked={onMenuClicked} userId={clickedUserId} />
             </div>
             <Divider />
-            <div className='h-full overflow-scroll'>
-              {menuAppear(menuClicked)}
+            <div className='w-[80%] max-sm:w-full'>
+              <ProfileInfo
+                skillsUserData={skillsUserData}
+                expectedRateUserData={expectedRateUserData}
+                experienceUserData={experienceUserData}
+                portfolioUserData={portfolioUserData}
+                educationUserData={educationUserData}
+                employmentTypeData={employmentTypeData}
+                languageUserData={languageUserData}
+                clickedUserId={clickedUserId}
+              />
             </div>
           </div>
           <div className='rounded-lg shadow-box-shadow p-10 '>

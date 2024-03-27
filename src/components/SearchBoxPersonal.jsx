@@ -1,5 +1,6 @@
 import SearchBarContext from 'Context/SearchBarContext'
 import React, { useContext } from 'react'
+import Backdrop from './Backdrop'
 
 const SearchBoxPersonal = (props) => {
 
@@ -11,8 +12,8 @@ const SearchBoxPersonal = (props) => {
         onSearchKeyJobEnter,
         onClickedSearchJobItem,
         searchJobBarValue,
-
-        onChangeSearchJobBox
+        onChangeSearchJobBox,
+        backdropSearchJobActive
     } = useContext(SearchBarContext)
 
   return (
@@ -63,6 +64,8 @@ const SearchBoxPersonal = (props) => {
                 )}
             </ul>
             )}
+
+        {backdropSearchJobActive && <Backdrop />}
     </div>
   )
 }

@@ -251,7 +251,7 @@ const Experience = (props) => {
                   sx={{height: "80px", backgroundColor: "rgba(216, 230, 239, 1)", boxShadow: "0 2px 5px 0px rgba(78, 110, 110, 0.3)"}}
                 >
                   <Typography>
-                  <div className='flex xl:w-[1300px] lg:w-[650px] max-md:w-[320px] justify-between items-center'>
+                  <div className='flex xl:w-[1000px] lg:w-[430px] max-md:w-[320px] max-sm:w-[280px] max-sm:px-2 justify-between items-center'>
                     <div className='jobTitle'>
                       <p>{experience.jobTitle}</p>
                     </div>

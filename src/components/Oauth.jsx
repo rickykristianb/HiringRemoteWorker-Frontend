@@ -13,7 +13,6 @@ const Oauth = () => {
     });
 
     useEffect( () => {
-      console.log(user)
       const sendAccess = async() => {
         const response = await fetch(`/auth/social/google/login/${user.access_token}`, {
           method: "POST",

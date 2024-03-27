@@ -108,14 +108,15 @@ const NewPassword = (match) => {
 
 
   return (
-    <div className='container-resetpassword'>
-        <div className='container-resetpassword-form'>
-            <div className='resetpassword-form-header'>
-            <p>NEW PASSWORD</p>
+    <div className='container-login-reset-password-register'>
+        <div className='container-login-for-container-reset-password-form-container-register-form'>
+            <div className='self-center mb-6'>
+              <p>NEW PASSWORD</p>
             </div>
             <Divider />
+            <br />
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className='new-password-field'>
+                <div className='flex flex-col gap-2'>
                     <label>New Password</label>
                     <div className='password-input'>
                       <input {...register("new_password", {required: "New Password is required"})} className="password-input-field" onChange={(e) => newPasswordOnChange(e)} type={ passwordHide ? 'password' : "text"} disabled={ isSubmitting } />
@@ -131,7 +132,7 @@ const NewPassword = (match) => {
                 </div>
                 
 
-                <div className='retype-password-field'> 
+                <div className='flex flex-col gap-2'> 
                     <label>Retype New Password</label>
                     <div className='password-input'>
                       <input {...register("re_new_password", {required: "Retype new password is required"})} className="password-input-field" onChange={(e) => retypePasswordOnChange(e)} type={ retypePasswordHide ? "password" : "text"} disabled={ isSubmitting } value={ isSubmitSuccessful ? (!alertField ? reset() : null) : null }></input>
@@ -146,7 +147,8 @@ const NewPassword = (match) => {
                     {errors.re_new_password && <span className='error-field'>{errors.re_new_password.message}</span>}
                     {alertField && <span className='error-field'>{alertField}</span>}
         
-                </div>              
+                </div>
+                <br />        
                 <Button label={ isSubmitting ? "Saving" : "Save"} buttonType="input" disabled={isSubmitting ? true : false} />
                 { alert && <AlertNotification alertData={alert} />}
             </form>

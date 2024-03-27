@@ -211,6 +211,7 @@ const PanelJob = () => {
 
   const onClickCancelButtonEditForm = () => {
     setIsEditJob(false)
+    document.body.classList.remove("disable-scroll")
   }
 
   const onClickYesDeletion = () => {

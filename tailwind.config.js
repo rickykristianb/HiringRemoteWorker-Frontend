@@ -43,6 +43,7 @@ module.exports = {
         'mobile-menu-bg': "rgb(181, 192, 208, 0.4)",
         'skills-list': "rgb(211,211,211, 0.5)",
         'input-field-border': "rgb(211,211,211)",
+        'bookmark-saved-button': "#D24545"
       },
       boxShadow: {
         'box-shadow': '0 2px 5px 0px rgba(78, 110, 110, 0.3)',

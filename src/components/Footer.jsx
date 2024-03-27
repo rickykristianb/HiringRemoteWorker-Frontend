@@ -65,14 +65,14 @@ const Footer = () => {
 
   return (
     <div className='container-footer'>
-        <div className='flex justify-evenly w-full max-sm:flex-wrap py-10'>
-            <div className='flex flex-col p-5 pt-0 pl-0'>
-                <p className='text-2xl font-bold'>Interested with this project?</p>
+        <div className='flex justify-evenly w-full max-sm:flex-wrap py-10 '>
+            <div className='px-5'>
+                <p className='text-2xl font-bold'>Hire me. Let's make magic together!</p>
                 <br />
                 <ul className='flex flex-col gap-4'>
                     <li>
                         <a href="tel:6282168897862" target='blank'>
-                            <div className='flex gap-4'>
+                            <div className='flex items-center gap-4'>
                                 <PhoneIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
                                 +6282168897862
                             </div>
@@ -80,7 +80,7 @@ const Footer = () => {
                     </li>
                     <li>
                         <a href="https://api.whatsapp.com/send?phone=6282168897862" target='blank'>
-                            <div className='flex gap-4'>
+                            <div className='flex items-center gap-4'>
                                 <WhatsAppIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
                                 +6282168897862
                             </div>
@@ -88,7 +88,7 @@ const Footer = () => {
                     </li>
                     <li>
                         <a href="mailto:contact@rickykristianbutarbutar.com" target='blank'>
-                            <div className='flex gap-4'>
+                            <div className='flex items-center gap-4'>
                                 <MailIcon sx={{ fontSize: 30, color: "#4e6e81" }} />
                                 contact@rickykristianbutarbutar.com
                             </div>
@@ -103,8 +103,8 @@ const Footer = () => {
                     </li>
                 </ul>     
             </div>
-            <div className='flex items-center justify-center'>
-                <div className='max-lg:w-screen px-6 max-sm:mt-10 items-center'>
+            <div className='flex items-center justify-center max-sm:w-full max-sm:px-5'>
+                <div className='max-sm:mt-10 items-center max-sm:w-full'>
                     <form onSubmit={handleSubmit(onSubmit)} >
                         <label>Name </label><br />
                         <input {...register("name", {required: "Name is required"})} className="w-[450px] h-6 max-sm:w-full mb-2 outline-none" ></input><br />

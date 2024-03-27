@@ -80,7 +80,7 @@ export const SearchBarProvider = ({children}) => {
 
     const onLoadJobSearch = async(page) => {
         try{
-            setBackdropSearchUserActive(true)
+            setBackdropSearchJobActive(true)
             let item = searchJobBarValue
             const response = await fetch(`/api/job/get_search_job_result/?search=${item}&page=${page}`, {
                 method: "GET",
@@ -97,7 +97,7 @@ export const SearchBarProvider = ({children}) => {
         } catch (error){
             console.error("Encounter an error: ", error);
         } finally {
-            setBackdropSearchUserActive(false)
+            setBackdropSearchJobActive(false)
             window.scrollTo(0,0);
         }
     }
@@ -108,6 +108,7 @@ export const SearchBarProvider = ({children}) => {
 
     // GET RESULT FROM THE SEARCH BAR FILTER
     const onClickedSearchJobItem = async({item, page}) => {
+        setBackdropSearchJobActive(true)
         setSearchJobBarValue(item)
         loading.current = true
         const response = await fetch(`/api/job/get_search_job_result/?search=${item}&page=${page}`, {
@@ -125,6 +126,7 @@ export const SearchBarProvider = ({children}) => {
         }
         loading.current = false
         window.scrollTo(0,0);
+        setBackdropSearchJobActive(false)
     }
 
 
@@ -160,7 +162,7 @@ export const SearchBarProvider = ({children}) => {
 
     const onLoadSearchUser = async({page}) => {
         try{
-            setBackdropSearchJobActive(true)
+            setBackdropSearchUserActive(true)
             let item = searchUserBarValue
             const response = await fetch(`/api/user/search_result/?page=${page}`, {
                 method: "POST",
@@ -174,11 +176,11 @@ export const SearchBarProvider = ({children}) => {
                 searchUserResultData.current = data["data"]
             }
             totalSearchBarUser.current = data["total_user"]
-            setBackdropSearchJobActive(false)
+            setBackdropSearchUserActive(false)
         } catch (error){
             console.error("An unexpected error occurred: ", error);
         } finally {
-            setBackdropSearchJobActive(false)
+            setBackdropSearchUserActive(false)
             window.scrollTo(0,0);
         }
     }
