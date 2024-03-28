@@ -23,7 +23,6 @@ const Pagination = (props) => {
     const maxNumber = 5;
     const countTotalPages = useRef(0)
 
-
     const onClickPageNumber = (item) => {
         // When user click the number on the pagination, load the message (call api) based on the type
         setPageResetNumberOne(false) // DO NOT RESET PAGINATION NUMBER TO 1
@@ -66,10 +65,10 @@ const Pagination = (props) => {
         let totalDataPerPage = 0;
 
         if (props.type === "userList" || props.type === "userSearchList") {
-            totalDataPerPage = 12     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
+            totalDataPerPage = 2     // need to match with the backend pagination setting, check your UserListResultsSetPagination page size.
         } 
         if (props.type === "allJobList" || props.type === "jobSearchList"){
-            totalDataPerPage = 12
+            totalDataPerPage = 1
         }
         if (props.type === "jobPosted"){
             totalDataPerPage = 5

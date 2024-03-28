@@ -20,12 +20,9 @@ const UsersList = (props) => {
   const [skeletonActive, setSkeletonActive] = useState(false)
   const [paginationLoadSkeletonActive, setPaginationLoadSkeletonActive] = useState(false)
 
-  const onLoadAllUser = async(page) => {
+  const onLoadAllUser = async(page = 1) => {
     try{
-      setSkeletonActive(true)
-      if (!page){
-        page = 1
-      }
+      setBackdropActive(true)
       const response = await fetch(`/api/user/get_all_candidate_profile/?page=${page}`, {
         method: "GET",
         headers: {
@@ -35,11 +32,10 @@ const UsersList = (props) => {
       const data = await response.json()
       setAllUserData(data["data"])
       totalUser.current = data["total_user"]
-      setSkeletonActive(false)
     } catch (error){
-      console.error("Encounter an error: ", error);
+        console.error("Encounter an error: ", error);
     } finally {
-      setSkeletonActive(false)
+      setBackdropActive(false)
     }
     
   }
@@ -244,7 +240,7 @@ const UsersList = (props) => {
             <Pagination 
               type={props.searchData ? "userSearchList" : "userList"} 
               totalData={props.searchData ? props.totalUser : totalUser.current} 
-              loadUserList ={onLoadAllUser}
+              loadUserList={onLoadAllUser}
               loadUserSearchList={props.loadUserSearch}
               paginationReset={resetPage}
             />

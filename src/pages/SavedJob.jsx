@@ -15,10 +15,7 @@ const SavedJob = () => {
     const [alertResponse, setAlertResponse] = useState()
 
     const { authToken} = useContext(AuthContext)
-    let userToken = null
-    if (authToken){
-      userToken = authToken.access
-    }
+    const { access:userToken } = authToken
 
     useEffect(() => {
         const onLoadUserSavedJob = async() => {
@@ -31,7 +28,6 @@ const SavedJob = () => {
             });
             const data = await response.json()
             if (response.ok){
-                console.log(data);
                 setUserSavedJobs(data)
                 setIsClicked(data[0]?.job)
                 setJobIdClicked(data[0]?.job)
@@ -108,9 +104,9 @@ const SavedJob = () => {
                             <div className='self-end absolute' onClick={() => deleteSavedJob(item.user_posted.job_id)}>
                                 <BookmarkAddedIcon  sx={{width: "30px", height: "30px"}} className='text-bookmark-saved-button hover:w-[33px] hover:h-[33px]' />
                             </div>
-                            <div className='flex'>
-                                <div className='w-[70px] h-[70px]'>
-                                    <img src={item.user_posted.user_profile_picture} alt='user-picture' />
+                            <div className='flex gap-2'>
+                                <div className='w-[60px] h-[60px] rounded-lg bg-dark-basic'>
+                                    <img src={item.user_profile_picture} alt='user-picture' className='w-[60px] h-[60px] rounded-lg' />
                                 </div>
                                 <div className='w-full'>
                                     <p className='text-lg font-bold mb-4'>{item.user_posted.job_title}</p>

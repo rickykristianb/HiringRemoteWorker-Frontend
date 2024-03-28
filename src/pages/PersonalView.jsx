@@ -11,6 +11,7 @@ import CompanyLoginAction from 'components/CompanyLoginAction';
 import SearchBoxPersonal from 'components/SearchBoxPersonal';
 import SearchBarContext from 'Context/SearchBarContext';
 import AdvanceFilterContext from 'Context/AdvanceFilterContext';
+import AuthContext from 'Context/AuthContext';
 
 const PersonalView = () => {
 
@@ -27,6 +28,12 @@ const PersonalView = () => {
         onAdvanceFilterJobClick,
         filterJobClicked,
     } = useContext(AdvanceFilterContext)
+
+    const { user, authToken } = useContext(AuthContext)
+    let userToken = null
+    if (authToken){
+        userToken = authToken.access
+    }
 
     const [skillSelected, setSkillSelected] = useState()
     const [experienceSelected, setExperienceSelected] = useState()
@@ -47,16 +54,28 @@ const PersonalView = () => {
 
 
     const advanceFilter = async (page) => {
+        let endPoint;
+
         if (!page){
             page = 1
         } else{
             page = page.page
         }
-        const response = await fetch(`/api/job/get_advance_filter_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`, {
+
+        const headers = {
+            "content-type": "application/json"
+        }; 
+
+        if (user){
+            endPoint = `/api/job/get_advance_filter_result_authenticated/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`
+            headers.Authorization = `JWT ${userToken}`
+        } else {
+            endPoint = `/api/job/get_advance_filter_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`
+        }
+
+        const response = await fetch(endPoint, {
             method: "GET",
-            headers: {
-                "content-type": "application/json"
-            },
+            headers: headers
         })
         const data = await response.json()
 
@@ -68,17 +87,28 @@ const PersonalView = () => {
     }
 
     const advanceFilterPageClicked = async (page) => {    
+        let endPoint;
         setBackdropActive(true)
         if (!page){
             page = 1
         } else{
             page = page
         }
-        const response = await fetch(`/api/job/get_advance_filter_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`, {
+
+        const headers = {
+            "content-type": "application/json"
+        };
+
+        if (user){
+            endPoint = `/api/job/get_advance_filter_result_authenticated/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`
+            headers.Authorization = `JWT ${userToken}`
+        } else {
+            endPoint = `/api/job/get_advance_filter_result/?skill=${encodeURIComponent(skillSelected)}&experience=${experienceSelected}&location=${locationSelected}&type=${jobTypeSelected}&page=${page}`
+        }
+
+        const response = await fetch(endPoint, {
             method: "GET",
-            headers: {
-                "content-type": "application/json"
-            },
+            headers: headers
         })
         const data = await response.json()
         if (response.ok){

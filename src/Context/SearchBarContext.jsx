@@ -1,10 +1,17 @@
-import { createContext, useState, useEffect, useRef } from "react";
+import { createContext, useState, useEffect, useRef, useContext } from "react";
+import AuthContext from "./AuthContext";
 
 const SearchBarContext = createContext();
 
 export default SearchBarContext;
 
 export const SearchBarProvider = ({children}) => {
+    
+    const { user, authToken } = useContext(AuthContext)
+    let userToken = null
+    if (authToken){
+      userToken = authToken.access
+    }
 
     const [searchResultSearchBarData, setSearchResultSearchBarData] = useState()
     const [searchJobBarValue, setSearchJobBarValue] = useState()
@@ -79,14 +86,24 @@ export const SearchBarProvider = ({children}) => {
     }
 
     const onLoadJobSearch = async(page) => {
+        let endPoint;
         try{
             setBackdropSearchJobActive(true)
+            const headers = {
+                "content-type": "application/json"
+            };  
+
             let item = searchJobBarValue
-            const response = await fetch(`/api/job/get_search_job_result/?search=${item}&page=${page}`, {
+            if (user){
+                endPoint = `/api/job/get_search_job_result_authenticated/?search=${item}&page=${page}`
+                headers.Authorization = `JWT ${userToken}`
+            } else {
+                endPoint = `/api/job/get_search_job_result/?search=${item}&page=${page}`
+            }
+
+            const response = await fetch(endPoint, {
                 method: "GET",
-                headers: {
-                    "content-type": "application/json"
-                },
+                headers: headers
             })
             const data = await response.json()
             if (response.ok){
@@ -108,28 +125,41 @@ export const SearchBarProvider = ({children}) => {
 
     // GET RESULT FROM THE SEARCH BAR FILTER
     const onClickedSearchJobItem = async({item, page}) => {
-        setBackdropSearchJobActive(true)
-        setSearchJobBarValue(item)
-        loading.current = true
-        const response = await fetch(`/api/job/get_search_job_result/?search=${item}&page=${page}`, {
-            method: "GET",
-            headers: {
+        let endPoint;
+        try{
+            const headers = {
                 "content-type": "application/json"
-            },
-        })
-        const data = await response.json()
-        if (response.ok){
-            searchJobResultData.current = data["data"]
-            showSearchJobBarData.current = null   // If basic search applied, filteredUser is cleared so the basic search only will be applied
-            resetPage()  // RESET PAGINATION NUMBER TO 1
-            totalSearchBarJob.current = data["total_user"]
+            }
+
+            let item = searchJobBarValue
+            if (user){
+                endPoint = `/api/job/get_search_job_result_authenticated/?search=${item}&page=${page}`
+                headers.Authorization = `JWT ${userToken}`
+            } else {
+                endPoint = `/api/job/get_search_job_result/?search=${item}&page=${page}`
+            }
+
+            setBackdropSearchJobActive(true)
+            setSearchJobBarValue(item)
+            loading.current = true
+            const response = await fetch(endPoint, {
+                method: "GET",
+                headers: headers
+            })
+            const data = await response.json()
+            if (response.ok){
+                searchJobResultData.current = data["data"]
+                showSearchJobBarData.current = null   // If basic search applied, filteredUser is cleared so the basic search only will be applied
+                resetPage()  // RESET PAGINATION NUMBER TO 1
+                totalSearchBarJob.current = data["total_user"]
+            }
+            loading.current = false
+            window.scrollTo(0,0);
+            setBackdropSearchJobActive(false)
+        } catch {
+
         }
-        loading.current = false
-        window.scrollTo(0,0);
-        setBackdropSearchJobActive(false)
     }
-
-
 
     // FOR COMPANY ---------------------------------------------------------------------------
     const onChangeSearchUserBox = async(e) => {
